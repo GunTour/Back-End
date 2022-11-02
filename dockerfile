@@ -1,10 +1,10 @@
-FROM golang:1.19-alpine3.16
+FROM golang
 
 ##buat folder APP
-RUN mkdir /e-commerce
+RUN mkdir /guntour
 
 ##set direktori utama
-WORKDIR /e-commerce
+WORKDIR /guntour
 
 ##copy seluruh file ke completedep
 ADD . .
