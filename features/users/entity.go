@@ -22,6 +22,7 @@ type Repository interface {
 	Remove(id int) (Core, error)
 	GetAll() ([]Core, error)
 	GetByID(id int) (Core, error)
+	Login(input Core) (Core, error)
 }
 
 type Service interface {
@@ -30,4 +31,5 @@ type Service interface {
 	Delete(id int) (Core, error)
 	ShowAll() ([]Core, error)
 	ShowByID(id int) (Core, error)
+	Login(input Core) (Core, string, error)
 }
