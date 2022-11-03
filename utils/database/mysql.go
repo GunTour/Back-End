@@ -2,6 +2,7 @@ package database
 
 import (
 	"GunTour/config"
+	ur "GunTour/features/users/repository"
 	"fmt"
 
 	"github.com/labstack/gommon/log"
@@ -28,5 +29,5 @@ func InitDB(c *config.AppConfig) *gorm.DB {
 }
 
 func MigrateDB(db *gorm.DB) {
-
+	db.AutoMigrate(&ur.User{})
 }

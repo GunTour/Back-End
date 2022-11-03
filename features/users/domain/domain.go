@@ -1,4 +1,4 @@
-package users
+package domain
 
 import "time"
 
@@ -8,10 +8,13 @@ type Core struct {
 	Email       string
 	Password    string
 	Role        string
+	Phone       string
 	Address     string
 	Dob         string
 	Gender      string
 	UserPicture string
+	DateStart   string
+	DateEnd     string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -21,7 +24,6 @@ type Repository interface {
 	Edit(data Core, id int) (Core, error)
 	Remove(id int) (Core, error)
 	GetAll() ([]Core, error)
-	GetByID(id int) (Core, error)
 	Login(input Core) (Core, error)
 }
 
@@ -30,6 +32,5 @@ type Service interface {
 	Update(data Core, id int) (Core, error)
 	Delete(id int) (Core, error)
 	ShowAll() ([]Core, error)
-	ShowByID(id int) (Core, error)
-	Login(input Core) (Core, string, error)
+	Login(input Core) (Core, error)
 }
