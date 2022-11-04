@@ -70,18 +70,35 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 				return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
 			}
 
-			er := validate.Struct(input)
-			if er != nil {
-				return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
+			if input.FullName != "" {
+				var name FullName
+				name.FullName = input.FullName
+
+				err := validate.Struct(name)
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
+				}
 			}
 
-			valid := helper.Password(input.Password)
-			if valid != "Valid" {
-				return c.JSON(http.StatusBadRequest, FailResponse(valid))
+			if input.Email != "" {
+				var ema Email
+				ema.Email = input.Email
+
+				err := validate.Struct(ema)
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
+				}
+			}
+
+			if input.Password != "" {
+				valid := helper.Password(input.Password)
+				if valid != "Valid" {
+					return c.JSON(http.StatusBadRequest, FailResponse(valid))
+				}
 			}
 
 			cnv := ToCore(input)
-			res, err := uh.srv.Update(cnv, userID)
+			res, err := uh.srv.Update(cnv, c, userID)
 
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))

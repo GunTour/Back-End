@@ -2,9 +2,11 @@ package services
 
 import (
 	"GunTour/features/users/domain"
+	"GunTour/utils/helper"
 	"errors"
 	"strings"
 
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -39,7 +41,7 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 }
 
-func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
+func (us *userService) Update(data domain.Core, c echo.Context, id int) (domain.Core, error) {
 
 	if data.Password != "" {
 		generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
@@ -50,6 +52,18 @@ func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
 		data.Password = string(generate)
 	}
 
+	file, errFile := c.FormFile("user_picture")
+	if file != nil {
+		result, err := helper.UploadFile(c)
+		if err != nil {
+			return domain.Core{}, err
+		}
+		data.UserPicture = result
+	}
+	if errFile != nil {
+		return domain.Core{}, errFile
+	}
+
 	res, err := us.qry.Edit(data, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "column") {
@@ -57,6 +71,7 @@ func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
 		}
 		return domain.Core{}, errors.New("some problem on database")
 	}
+
 	return res, nil
 
 }
