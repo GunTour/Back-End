@@ -23,7 +23,6 @@ type Repository interface {
 	Add(data Core) (Core, error)
 	Edit(data Core, id int) (Core, error)
 	Remove(id int) (Core, error)
-	GetAll() ([]Core, error)
 	Login(input Core) (Core, error)
 }
 
@@ -31,6 +30,5 @@ type Service interface {
 	Insert(data Core) (Core, error)
 	Update(data Core, id int) (Core, error)
 	Delete(id int) (Core, error)
-	ShowAll() ([]Core, error)
 	Login(input Core) (Core, error)
 }

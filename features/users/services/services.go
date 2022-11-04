@@ -75,27 +75,6 @@ func (us *userService) Delete(id int) (domain.Core, error) {
 
 }
 
-func (us *userService) ShowAll() ([]domain.Core, error) {
-
-	res, err := us.qry.GetAll()
-	if err != nil {
-		log.Error(err.Error())
-		if strings.Contains(err.Error(), "table") {
-			return nil, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
-			return nil, errors.New("no data")
-		}
-	}
-
-	if len(res) == 0 {
-		log.Info("no data")
-		return nil, errors.New("no data")
-	}
-
-	return res, nil
-
-}
-
 func (us *userService) Login(input domain.Core) (domain.Core, error) {
 
 	res, err := us.qry.Login(input)

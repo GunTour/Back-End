@@ -62,20 +62,6 @@ func (rq *repoQuery) Remove(id int) (domain.Core, error) {
 
 }
 
-func (rq *repoQuery) GetAll() ([]domain.Core, error) {
-
-	var data []User
-
-	if err := rq.db.Find(&data).Error; err != nil {
-		log.Error("error on get all user", err.Error())
-		return nil, err
-	}
-
-	res := ToCoreArray(data)
-	return res, nil
-
-}
-
 func (rq *repoQuery) Login(input domain.Core) (domain.Core, error) {
 
 	var data User
