@@ -4,6 +4,7 @@ import (
 	"GunTour/features/booking/domain"
 	"GunTour/utils/middlewares"
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -94,7 +95,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse(errors.New("cannot bind data")))
+			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
 		idUser, _ := middlewares.ExtractToken(c)
@@ -115,6 +116,7 @@ func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 		if err != nil {
 			return errors.New("failed to get id booking")
 		}
+		log.Print(id)
 		err = bs.srv.DeleteData(uint(id))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))

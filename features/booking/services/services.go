@@ -64,6 +64,7 @@ func (bs *bookingService) UpdateData(newBooking domain.Core) (domain.Core, error
 }
 
 func (bs *bookingService) DeleteData(idBooking uint) error {
+	log.Print(idBooking)
 	err := bs.qry.Delete(idBooking)
 	if err != nil {
 		return err

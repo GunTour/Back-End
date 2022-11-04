@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/booking/domain"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -75,13 +76,30 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 	if err := rq.db.Where("id = ?", cnv.ID).Updates(&cnv).Error; err != nil {
 		return domain.Core{}, err
 	}
+
+	if newBooking.BookingProductCores != nil {
+		var productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
+		for i := 0; i < len(productCnv); i++ {
+			err := rq.db.Where("id_booking=? AND id_product=?", productCnv[i].ID, productCnv[i].IdProduct).Updates(&productCnv[i]).Error
+			if err != nil {
+				rq.db.Create(&productCnv[i])
+			}
+		}
+
+	}
 	// selesai dari DB
 	newBooking = ToDomain(cnv)
 	return newBooking, nil
 }
 
 func (rq *repoQuery) Delete(idBooking uint) error {
+	log.Println(idBooking)
+	if err := rq.db.Where("id_booking = ?", idBooking).Delete(&BookingProduct{}); err != nil {
+		log.Println("ini pr: ", err.Error)
+		return err.Error
+	}
 	if err := rq.db.Where("id = ?", idBooking).Delete(&Booking{}); err != nil {
+		log.Println("ini booking: ", err.Error)
 		return err.Error
 	}
 	return nil
