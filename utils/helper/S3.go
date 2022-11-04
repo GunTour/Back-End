@@ -2,8 +2,8 @@ package helper
 
 import (
 	"context"
-	"log"
 	"math/rand"
+	"mime/multipart"
 	"os"
 	"time"
 
@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/labstack/echo/v4"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
@@ -32,13 +31,7 @@ func String(length int) string {
 	return autoGenerate(length, charset)
 }
 
-func UploadFile(c echo.Context) (string, error) {
-
-	file, fileheader, err := c.Request().FormFile("user_picture")
-	if err != nil {
-		log.Print(err)
-		return "", err
-	}
+func UploadFile(file multipart.File, fileheader *multipart.FileHeader) (string, error) {
 
 	randomStr := String(20)
 

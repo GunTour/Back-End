@@ -97,9 +97,10 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 				}
 			}
 
-			cnv := ToCore(input)
-			res, err := uh.srv.Update(cnv, c, userID)
+			file, fileheader, _ := c.Request().FormFile("user_picture")
 
+			cnv := ToCore(input)
+			res, err := uh.srv.Update(cnv, file, fileheader, userID)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 			}
