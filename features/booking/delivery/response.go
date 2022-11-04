@@ -49,6 +49,24 @@ type UpdateResponse struct {
 	StatusPendakian string    `json:"status_pendakian" form:"status_pendakian"`
 }
 
+type GetResponse struct {
+	ID            uint   `json:"id_booking" form:"id_booking"`
+	GrossAmount   int    `json:"gross_amount" form:"gross_amount"`
+	OrderId       string `json:"order_id" form:"order_id"`
+	Link          string `json:"link" form:"link"`
+	StatusBooking string `json:"status" form:"status"`
+}
+
+type GetRangerResponse struct {
+	ID        uint      `json:"id_booking" form:"id_booking"`
+	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
+	FullName  string    `json:"fullname" form:"fullname"`
+	Phone     string    `json:"phone" form:"phone"`
+	DateStart time.Time `json:"date_start" form:"date_start"`
+	DateEnd   time.Time `json:"date_end" form:"date_end"`
+	Ticket    int       `json:"ticket" form:"ticket"`
+}
+
 func ToResponse(core interface{}, code string) interface{} {
 	var res interface{}
 	switch code {
@@ -67,12 +85,22 @@ func ToResponse(core interface{}, code string) interface{} {
 
 func ToResponseArray(core interface{}, code string) interface{} {
 	var res interface{}
-	var arr []UpdateResponse
-	val := core.([]domain.Core)
-	for _, cnv := range val {
-		arr = append(arr, UpdateResponse{ID: cnv.ID, IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, Link: cnv.Link})
+	switch code {
+	case "getall":
+		var arr []GetResponse
+		val := core.([]domain.Core)
+		for _, cnv := range val {
+			arr = append(arr, GetResponse{ID: cnv.ID, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking})
+		}
+		res = arr
+
+	case "getranger":
+		var arr []GetRangerResponse
+		val := core.([]domain.Core)
+		for _, cnv := range val {
+			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Ticket: cnv.Ticket})
+		}
+		res = arr
 	}
-	res = arr
 	return res
 }

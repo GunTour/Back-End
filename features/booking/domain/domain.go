@@ -16,6 +16,7 @@ type Core struct {
 	IdRanger            uint
 	GrossAmount         int
 	Token               string
+	OrderId             string
 	Link                string
 	StatusBooking       string
 	StatusPendakian     string

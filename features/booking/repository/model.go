@@ -17,6 +17,7 @@ type Booking struct {
 	IdRanger        uint
 	GrossAmount     int
 	Token           string
+	OrderId         string
 	Link            string
 	StatusBooking   string
 	StatusPendakian string
@@ -40,6 +41,7 @@ func FromDomain(db domain.Core) Booking {
 		IdRanger:        db.IdRanger,
 		GrossAmount:     db.GrossAmount,
 		Token:           db.Token,
+		OrderId:         db.OrderId,
 		Link:            db.Link,
 		StatusBooking:   db.StatusBooking,
 		StatusPendakian: db.StatusPendakian,
@@ -66,6 +68,7 @@ func ToDomain(db Booking) domain.Core {
 		IdRanger:        db.IdRanger,
 		GrossAmount:     db.GrossAmount,
 		Token:           db.Token,
+		OrderId:         db.OrderId,
 		Link:            db.Link,
 		StatusBooking:   db.StatusBooking,
 		StatusPendakian: db.StatusPendakian,
@@ -85,6 +88,7 @@ func ToDomainArray(dp []Booking) []domain.Core {
 			IdRanger:        val.IdRanger,
 			GrossAmount:     val.GrossAmount,
 			Token:           val.Token,
+			OrderId:         val.OrderId,
 			Link:            val.Link,
 			StatusBooking:   val.StatusBooking,
 			StatusPendakian: val.StatusPendakian,

@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -34,7 +35,7 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get booking history", ToResponseArray(res, "sukses")))
+		return c.JSON(http.StatusOK, SuccessResponse("success get booking history", ToResponseArray(res, "getall")))
 	}
 }
 
@@ -59,7 +60,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get booking ranger", ToResponseArray(res, "sukses")))
+		return c.JSON(http.StatusOK, SuccessResponse("success get booking ranger", ToResponseArray(res, "getranger")))
 	}
 }
 
@@ -69,6 +70,9 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
+		temp := uuid.New()
+		input.OrderId = "Order-" + temp.String()
+		input.StatusBooking = "unpaid"
 		IdUser, _ := middlewares.ExtractToken(c)
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)

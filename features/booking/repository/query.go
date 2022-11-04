@@ -51,9 +51,11 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 
 func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
+
 	if err := rq.db.Create(&cnv).Error; err != nil {
 		return domain.Core{}, err
 	}
+
 	if newBooking.BookingProductCores != nil {
 		var productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
 		err := rq.db.Create(&productCnv).Error

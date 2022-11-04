@@ -6,14 +6,16 @@ import (
 )
 
 type RegisterFormat struct {
-	IdUser      uint             `json:"id_user" form:"id_user"`
-	DateStart   time.Time        `json:"date_start" form:"date_start"`
-	DateEnd     time.Time        `json:"date_end" form:"date_end"`
-	Entrance    string           `json:"entrance" form:"entrance"`
-	Ticket      int              `json:"ticket" form:"ticket"`
-	Product     []BookingProduct `json:"product" form:"product"`
-	IdRanger    uint             `json:"id_ranger" form:"id_ranger"`
-	GrossAmount int              `json:"gross_amount" form:"gross_amount"`
+	IdUser        uint             `json:"id_user" form:"id_user"`
+	DateStart     time.Time        `json:"date_start" form:"date_start"`
+	DateEnd       time.Time        `json:"date_end" form:"date_end"`
+	Entrance      string           `json:"entrance" form:"entrance"`
+	Ticket        int              `json:"ticket" form:"ticket"`
+	OrderId       string           `json:"order_id" form:"order_id"`
+	Product       []BookingProduct `json:"product" form:"product"`
+	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
+	StatusBooking string           `json:"status_booking" form:"status_booking"`
+	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
 }
 
 type BookingProduct struct {
@@ -47,7 +49,7 @@ func ToDomain(i interface{}) domain.Core {
 			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct})
 		}
 		return domain.Core{IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount}
+			OrderId: cnv.OrderId, BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: cnv.StatusBooking}
 	case GetId:
 		cnv := i.(GetId)
 		return domain.Core{ID: cnv.id}
