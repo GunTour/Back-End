@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/labstack/echo/v4"
+)
 
 type Core struct {
 	ID          int
@@ -28,7 +32,7 @@ type Repository interface {
 
 type Service interface {
 	Insert(data Core) (Core, error)
-	Update(data Core, id int) (Core, error)
+	Update(data Core, c echo.Context, id int) (Core, error)
 	Delete(id int) (Core, error)
 	Login(input Core) (Core, error)
 }
