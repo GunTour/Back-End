@@ -4,6 +4,7 @@ import (
 	"GunTour/features/users/domain"
 	mocks "GunTour/mocks/users"
 	"errors"
+	"mime/multipart"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -41,12 +42,14 @@ func TestUpdate(t *testing.T) {
 	repo := new(mocks.Repository)
 	data := domain.Core{ID: 1, FullName: "same", Email: "same@gmail.com"}
 	returnRespon := domain.Core{ID: 1, FullName: "same", Email: "same@gmail.com", Role: "pendaki"}
+	var file multipart.File
+	var FileHeader *multipart.FileHeader
 
 	t.Run("success update user", func(t *testing.T) {
 		repo.On("Edit", mock.Anything, 1).Return(returnRespon, nil).Once()
 
 		usecase := New(repo)
-		res, err := usecase.Update(data, 1)
+		res, err := usecase.Update(data, file, FileHeader, 1)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
 		repo.AssertExpectations(t)
@@ -56,7 +59,7 @@ func TestUpdate(t *testing.T) {
 		repo.On("Edit", mock.Anything, 1).Return(domain.Core{}, errors.New("some problem on database")).Once()
 		usecase := New(repo)
 
-		res, err := usecase.Update(domain.Core{}, 1)
+		res, err := usecase.Update(domain.Core{}, file, FileHeader, 1)
 		assert.Empty(t, res)
 		assert.NotNil(t, err)
 		repo.AssertExpectations(t)

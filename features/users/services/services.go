@@ -2,7 +2,9 @@ package services
 
 import (
 	"GunTour/features/users/domain"
+	"GunTour/utils/helper"
 	"errors"
+	"mime/multipart"
 	"strings"
 
 	"github.com/labstack/gommon/log"
@@ -39,7 +41,7 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 }
 
-func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
+func (us *userService) Update(data domain.Core, file multipart.File, fileheader *multipart.FileHeader, id int) (domain.Core, error) {
 
 	if data.Password != "" {
 		generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
@@ -50,6 +52,14 @@ func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
 		data.Password = string(generate)
 	}
 
+	if fileheader != nil {
+		res, err := helper.UploadFile(file, fileheader)
+		if err != nil {
+			return domain.Core{}, err
+		}
+		data.UserPicture = res
+	}
+
 	res, err := us.qry.Edit(data, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "column") {
@@ -57,6 +67,7 @@ func (us *userService) Update(data domain.Core, id int) (domain.Core, error) {
 		}
 		return domain.Core{}, errors.New("some problem on database")
 	}
+
 	return res, nil
 
 }

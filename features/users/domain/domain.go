@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type Core struct {
 	ID          int
@@ -28,7 +31,7 @@ type Repository interface {
 
 type Service interface {
 	Insert(data Core) (Core, error)
-	Update(data Core, id int) (Core, error)
+	Update(data Core, file multipart.File, fileheader *multipart.FileHeader, id int) (Core, error)
 	Delete(id int) (Core, error)
 	Login(input Core) (Core, error)
 }
