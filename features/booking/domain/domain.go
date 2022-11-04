@@ -20,6 +20,8 @@ type Core struct {
 	Link                string
 	StatusBooking       string
 	StatusPendakian     string
+	FullName            string
+	Phone               string
 	BookingProductCores []BookingProductCore
 }
 

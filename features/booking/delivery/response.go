@@ -98,7 +98,7 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		var arr []GetRangerResponse
 		val := core.([]domain.Core)
 		for _, cnv := range val {
-			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Ticket: cnv.Ticket})
+			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Ticket: cnv.Ticket})
 		}
 		res = arr
 	}

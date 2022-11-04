@@ -21,6 +21,8 @@ type Booking struct {
 	Link            string
 	StatusBooking   string
 	StatusPendakian string
+	FullName        string           `gorm:"-:migration" gorm:"<-"`
+	Phone           string           `gorm:"-:migration" gorm:"<-"`
 	BookingProducts []BookingProduct `gorm:"foreignKey:IdBooking"`
 }
 
@@ -92,6 +94,22 @@ func ToDomainArray(dp []Booking) []domain.Core {
 			Link:            val.Link,
 			StatusBooking:   val.StatusBooking,
 			StatusPendakian: val.StatusPendakian,
+		})
+	}
+	return res
+}
+
+func ToDomainArrayRanger(dp []Booking) []domain.Core {
+	var res []domain.Core
+	for _, val := range dp {
+		res = append(res, domain.Core{
+			ID:        val.ID,
+			IdUser:    val.IdUser,
+			FullName:  val.FullName,
+			Phone:     val.Phone,
+			DateStart: val.DateStart,
+			DateEnd:   val.DateEnd,
+			Ticket:    val.Ticket,
 		})
 	}
 	return res

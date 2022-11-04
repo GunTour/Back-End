@@ -40,12 +40,14 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 
 func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 	var resQry []Booking
-	if err := rq.db.Where("id_ranger=?", idRanger).Find(&resQry).Error; err != nil {
+	if err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end", "bookings.ticket").
+		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
+		Where("bookings.id_ranger = ?", int(idRanger)).Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, err
 	}
 
 	// selesai dari DB
-	res := ToDomainArray(resQry)
+	res := ToDomainArrayRanger(resQry)
 	return res, nil
 }
 
