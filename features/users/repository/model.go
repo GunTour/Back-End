@@ -17,8 +17,6 @@ type User struct {
 	Dob         string
 	Gender      string
 	UserPicture string
-	DateStart   string
-	DateEnd     string
 }
 
 func FromCore(uc domain.Core) User {
@@ -33,8 +31,6 @@ func FromCore(uc domain.Core) User {
 		Dob:         uc.Dob,
 		Gender:      uc.Gender,
 		UserPicture: uc.UserPicture,
-		DateStart:   uc.DateStart,
-		DateEnd:     uc.DateEnd,
 	}
 }
 
@@ -50,8 +46,6 @@ func ToCore(u User) domain.Core {
 		Dob:         u.Dob,
 		Gender:      u.Gender,
 		UserPicture: u.UserPicture,
-		DateStart:   u.DateStart,
-		DateEnd:     u.DateEnd,
 		CreatedAt:   u.CreatedAt,
 		UpdatedAt:   u.UpdatedAt,
 	}
@@ -71,8 +65,6 @@ func ToCoreArray(ua []User) []domain.Core {
 			Dob:         val.Dob,
 			Gender:      val.Gender,
 			UserPicture: val.UserPicture,
-			DateStart:   val.DateStart,
-			DateEnd:     val.DateEnd,
 			CreatedAt:   val.CreatedAt,
 			UpdatedAt:   val.UpdatedAt,
 		})
