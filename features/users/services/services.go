@@ -4,9 +4,9 @@ import (
 	"GunTour/features/users/domain"
 	"GunTour/utils/helper"
 	"errors"
+	"mime/multipart"
 	"strings"
 
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -41,7 +41,7 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 }
 
-func (us *userService) Update(data domain.Core, c echo.Context, id int) (domain.Core, error) {
+func (us *userService) Update(data domain.Core, file multipart.File, fileheader *multipart.FileHeader, id int) (domain.Core, error) {
 
 	if data.Password != "" {
 		generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
@@ -52,16 +52,12 @@ func (us *userService) Update(data domain.Core, c echo.Context, id int) (domain.
 		data.Password = string(generate)
 	}
 
-	file, errFile := c.FormFile("user_picture")
-	if file != nil {
-		result, err := helper.UploadFile(c)
+	if fileheader != nil {
+		res, err := helper.UploadFile(file, fileheader)
 		if err != nil {
 			return domain.Core{}, err
 		}
-		data.UserPicture = result
-	}
-	if errFile != nil {
-		return domain.Core{}, errFile
+		data.UserPicture = res
 	}
 
 	res, err := us.qry.Edit(data, id)

@@ -1,9 +1,8 @@
 package domain
 
 import (
+	"mime/multipart"
 	"time"
-
-	"github.com/labstack/echo/v4"
 )
 
 type Core struct {
@@ -17,8 +16,6 @@ type Core struct {
 	Dob         string
 	Gender      string
 	UserPicture string
-	DateStart   string
-	DateEnd     string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -32,7 +29,7 @@ type Repository interface {
 
 type Service interface {
 	Insert(data Core) (Core, error)
-	Update(data Core, c echo.Context, id int) (Core, error)
+	Update(data Core, file multipart.File, fileheader *multipart.FileHeader, id int) (Core, error)
 	Delete(id int) (Core, error)
 	Login(input Core) (Core, error)
 }
