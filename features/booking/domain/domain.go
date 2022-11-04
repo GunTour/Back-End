@@ -24,18 +24,18 @@ type BookingProductCore struct {
 }
 
 type Repository interface {
-	Get() ([]Core, error)
+	Get(idUser uint) ([]Core, error)
 	GetID(idBooking uint) (Core, error)
-	GetRanger(id_ranger uint) ([]Core, error)
+	GetRanger(idRanger uint) ([]Core, error)
 	Insert(newBooking Core) (Core, error)
 	Update(newBooking Core) (Core, error)
 	Delete(idBooking uint) error
 }
 
 type Services interface {
-	GetAll() ([]Core, error)
+	GetAll(idUser uint) ([]Core, error)
 	GetDetail(idBooking uint) (Core, error)
-	GetRangerBooking(id_ranger uint) ([]Core, error)
+	GetRangerBooking(idRanger uint) ([]Core, error)
 	InsertData(newBooking Core) (Core, error)
 	UpdateData(newBooking Core) (Core, error)
 	DeleteData(idBooking uint) error
