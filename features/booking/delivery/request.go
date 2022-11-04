@@ -6,15 +6,21 @@ import (
 )
 
 type RegisterFormat struct {
-	IdUser      uint      `json:"id_user" form:"id_user"`
-	DateStart   time.Time `json:"date_start" form:"date_start"`
-	DateEnd     time.Time `json:"date_end" form:"date_end"`
-	Entrance    string    `json:"entrance" form:"entrance"`
-	Ticket      int       `json:"ticket" form:"ticket"`
-	IdRanger    uint      `json:"id_ranger" form:"id_ranger"`
-	GrossAmount int       `json:"gross_amount" form:"gross_amount"`
+	IdUser      uint             `json:"id_user" form:"id_user"`
+	DateStart   time.Time        `json:"date_start" form:"date_start"`
+	DateEnd     time.Time        `json:"date_end" form:"date_end"`
+	Entrance    string           `json:"entrance" form:"entrance"`
+	Ticket      int              `json:"ticket" form:"ticket"`
+	Product     []BookingProduct `json:"product" form:"product"`
+	IdRanger    uint             `json:"id_ranger" form:"id_ranger"`
+	GrossAmount int              `json:"gross_amount" form:"gross_amount"`
 }
 
+type BookingProduct struct {
+	ID        uint
+	IdBooking uint
+	IdProduct uint `json:"id_product" form:"id_product"`
+}
 type UpdateFormat struct {
 	ID              uint      `json:"id" form:"id"`
 	IdUser          uint      `json:"id_user" form:"id_user"`
@@ -35,9 +41,13 @@ type GetId struct {
 func ToDomain(i interface{}) domain.Core {
 	switch i.(type) {
 	case RegisterFormat:
+		var arr []domain.BookingProductCore
 		cnv := i.(RegisterFormat)
-		return domain.Core{IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount}
+		for _, val := range cnv.Product {
+			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct})
+		}
+		return domain.Core{IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
+			BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount}
 	case GetId:
 		cnv := i.(GetId)
 		return domain.Core{ID: cnv.id}

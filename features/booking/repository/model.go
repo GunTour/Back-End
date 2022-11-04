@@ -46,6 +46,15 @@ func FromDomain(db domain.Core) Booking {
 	}
 }
 
+func FromDomainProduct(dp []domain.BookingProductCore, id uint) []BookingProduct {
+	var res []BookingProduct
+	for _, val := range dp {
+		res = append(res, BookingProduct{Model: gorm.Model{ID: val.ID}, IdBooking: id,
+			IdProduct: val.IdProduct})
+	}
+	return res
+}
+
 func ToDomain(db Booking) domain.Core {
 	return domain.Core{
 		ID:              db.ID,

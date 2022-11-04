@@ -54,7 +54,13 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	if err := rq.db.Create(&cnv).Error; err != nil {
 		return domain.Core{}, err
 	}
-
+	if newBooking.BookingProductCores != nil {
+		var productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
+		err := rq.db.Create(&productCnv).Error
+		if err != nil {
+			return domain.Core{}, err
+		}
+	}
 	// selesai dari DB
 	newBooking = ToDomain(cnv)
 	return newBooking, nil

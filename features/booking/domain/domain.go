@@ -7,18 +7,19 @@ import (
 )
 
 type Core struct {
-	ID              uint
-	IdUser          uint
-	DateStart       time.Time
-	DateEnd         time.Time
-	Entrance        string
-	Ticket          int
-	IdRanger        uint
-	GrossAmount     int
-	Token           string
-	Link            string
-	StatusBooking   string
-	StatusPendakian string
+	ID                  uint
+	IdUser              uint
+	DateStart           time.Time
+	DateEnd             time.Time
+	Entrance            string
+	Ticket              int
+	IdRanger            uint
+	GrossAmount         int
+	Token               string
+	Link                string
+	StatusBooking       string
+	StatusPendakian     string
+	BookingProductCores []BookingProductCore
 }
 
 type BookingProductCore struct {

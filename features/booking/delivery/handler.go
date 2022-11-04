@@ -30,6 +30,7 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := middlewares.ExtractToken(c)
 		res, err := bs.srv.GetAll(uint(id))
+
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
@@ -66,7 +67,7 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input RegisterFormat
 		if err := c.Bind(&input); err != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse(errors.New("an invalid client request")))
+			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 		IdUser, _ := middlewares.ExtractToken(c)
 		input.IdUser = uint(IdUser)
