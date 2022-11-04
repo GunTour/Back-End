@@ -4,8 +4,8 @@ import (
 	"GunTour/config"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo"
+	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
@@ -31,7 +31,7 @@ func ExtractToken(c echo.Context) (id int, role string) {
 	token := c.Get("user").(*jwt.Token)
 	if token.Valid {
 		claim := token.Claims.(jwt.MapClaims)
-		return int(claim["id"].(float64)), (claim["role"].(string))
+		return int(claim["id"].(float64)), string(claim["role"].(string))
 	}
 
 	return 0, ""
