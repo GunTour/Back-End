@@ -16,8 +16,6 @@ type Core struct {
 	Dob         string
 	Gender      string
 	UserPicture string
-	DateStart   string
-	DateEnd     string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
