@@ -38,6 +38,12 @@ type UpdateFormat struct {
 	StatusPendakian string           `json:"status_pendakian" form:"status_pendakian"`
 }
 
+type UpdateMidtrans struct {
+	ID            uint   `json:"id" form:"id"`
+	OrderID       string `json:"order_id" form:"order_id"`
+	StatusBooking string `json:"status" form:"status"`
+}
+
 type GetId struct {
 	id uint `param:"id"`
 }
@@ -63,6 +69,9 @@ func ToDomain(i interface{}) domain.Core {
 		}
 		return domain.Core{ID: cnv.ID, IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: cnv.StatusBooking}
+	case UpdateMidtrans:
+		cnv := i.(UpdateMidtrans)
+		return domain.Core{OrderId: cnv.OrderID, StatusBooking: cnv.StatusBooking}
 	}
 	return domain.Core{}
 }
