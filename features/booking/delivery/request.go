@@ -19,9 +19,10 @@ type RegisterFormat struct {
 }
 
 type BookingProduct struct {
-	ID        uint
-	IdBooking uint
-	IdProduct uint `json:"id_product" form:"id_product"`
+	ID         uint
+	IdBooking  uint
+	IdProduct  uint `json:"id_product" form:"id_product"`
+	ProductQty int  `json:"product_qty" form:"product_qty"`
 }
 type UpdateFormat struct {
 	ID              uint             `json:"id" form:"id"`
@@ -47,7 +48,7 @@ func ToDomain(i interface{}) domain.Core {
 		var arr []domain.BookingProductCore
 		cnv := i.(RegisterFormat)
 		for _, val := range cnv.Product {
-			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct})
+			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		return domain.Core{IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			OrderId: cnv.OrderId, BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: cnv.StatusBooking}
@@ -58,7 +59,7 @@ func ToDomain(i interface{}) domain.Core {
 		var arr []domain.BookingProductCore
 		cnv := i.(UpdateFormat)
 		for _, val := range cnv.Product {
-			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct})
+			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		return domain.Core{ID: cnv.ID, IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: cnv.StatusBooking}

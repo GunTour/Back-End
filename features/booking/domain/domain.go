@@ -26,9 +26,12 @@ type Core struct {
 }
 
 type BookingProductCore struct {
-	ID        uint
-	IdBooking uint
-	IdProduct uint
+	ID          uint
+	IdBooking   uint
+	IdProduct   uint
+	ProductQty  int
+	ProductName string
+	RentPrice   int
 }
 
 type Repository interface {

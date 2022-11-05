@@ -75,7 +75,7 @@ func ToResponse(core interface{}, code string) interface{} {
 		cnv := core.(domain.Core)
 		var arr []BookingProduct
 		for _, val := range cnv.BookingProductCores {
-			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct})
+			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		res = RegisterResponse{IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, Link: cnv.Link}
@@ -83,7 +83,7 @@ func ToResponse(core interface{}, code string) interface{} {
 		cnv := core.(domain.Core)
 		var arr []BookingProduct
 		for _, val := range cnv.BookingProductCores {
-			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct})
+			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		res = UpdateResponse{ID: cnv.ID, IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, Link: cnv.Link}

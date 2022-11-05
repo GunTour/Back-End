@@ -28,8 +28,11 @@ type Booking struct {
 
 type BookingProduct struct {
 	gorm.Model
-	IdBooking uint
-	IdProduct uint
+	IdBooking   uint
+	IdProduct   uint
+	ProductQty  int
+	ProductName string `gorm:"-:all"`
+	RentPrice   int    `gorm:"-:all"`
 }
 
 func FromDomain(db domain.Core) Booking {
@@ -54,7 +57,7 @@ func FromDomainProduct(dp []domain.BookingProductCore, id uint) []BookingProduct
 	var res []BookingProduct
 	for _, val := range dp {
 		res = append(res, BookingProduct{Model: gorm.Model{ID: val.ID}, IdBooking: id,
-			IdProduct: val.IdProduct})
+			IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 	}
 	return res
 }
@@ -81,9 +84,10 @@ func ToDomainCore(db Booking, dp []BookingProduct) domain.Core {
 	var res []domain.BookingProductCore
 	for _, val := range dp {
 		res = append(res, domain.BookingProductCore{
-			ID:        val.ID,
-			IdBooking: val.IdBooking,
-			IdProduct: val.IdProduct,
+			ID:         val.ID,
+			IdBooking:  val.IdBooking,
+			IdProduct:  val.IdProduct,
+			ProductQty: val.ProductQty,
 		})
 	}
 	return domain.Core{
