@@ -2,6 +2,9 @@ package main
 
 import (
 	"GunTour/config"
+	ad "GunTour/features/admin/delivery"
+	ar "GunTour/features/admin/repository"
+	as "GunTour/features/admin/services"
 	bd "GunTour/features/booking/delivery"
 	br "GunTour/features/booking/repository"
 	bs "GunTour/features/booking/services"
@@ -33,10 +36,13 @@ func main() {
 
 	uRepo := ur.New(db)
 	bRepo := br.New(db)
+	aRepo := ar.New(db)
 	uService := us.New(uRepo)
 	bService := bs.New(bRepo)
+	aService := as.New(aRepo)
 	ud.New(e, uService)
 	bd.New(e, bService)
+	ad.New(e, aService)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.ServerPort)))
 }
