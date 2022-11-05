@@ -2,7 +2,6 @@ package repository
 
 import (
 	"GunTour/features/booking/domain"
-	"log"
 
 	"gorm.io/gorm"
 )
@@ -30,12 +29,17 @@ func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 
 func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 	var resQry Booking
+	var resProductQry []BookingProduct
 	if err := rq.db.Where("id=?", idBooking).Find(&resQry).Error; err != nil {
 		return domain.Core{}, err
 	}
 
+	if err := rq.db.Where("id_booking=?", idBooking).Find(&resProductQry).Error; err != nil {
+		return domain.Core{}, err
+	}
+
 	// selesai dari DB
-	res := ToDomain(resQry)
+	res := ToDomainCore(resQry, resProductQry)
 	return res, nil
 }
 
@@ -54,31 +58,32 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 
 func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
-
+	var productCnv []BookingProduct
 	if err := rq.db.Create(&cnv).Error; err != nil {
 		return domain.Core{}, err
 	}
 
 	if newBooking.BookingProductCores != nil {
-		var productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
+		productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
 		err := rq.db.Create(&productCnv).Error
 		if err != nil {
 			return domain.Core{}, err
 		}
 	}
 	// selesai dari DB
-	newBooking = ToDomain(cnv)
+	newBooking = ToDomainCore(cnv, productCnv)
 	return newBooking, nil
 }
 
 func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
+	var productCnv []BookingProduct
 	if err := rq.db.Where("id = ?", cnv.ID).Updates(&cnv).Error; err != nil {
 		return domain.Core{}, err
 	}
 
 	if newBooking.BookingProductCores != nil {
-		var productCnv []BookingProduct = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
+		productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
 		rq.db.Where("id_booking=?", cnv.ID).Delete(&BookingProduct{})
 		err := rq.db.Create(&productCnv).Error
 		if err != nil {
@@ -86,18 +91,15 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 		}
 	}
 	// selesai dari DB
-	newBooking = ToDomain(cnv)
+	newBooking = ToDomainCore(cnv, productCnv)
 	return newBooking, nil
 }
 
 func (rq *repoQuery) Delete(idBooking uint) error {
-	log.Println(idBooking)
 	if err := rq.db.Where("id_booking = ?", idBooking).Delete(&BookingProduct{}); err != nil {
-		log.Println("ini pr: ", err.Error)
 		return err.Error
 	}
 	if err := rq.db.Where("id = ?", idBooking).Delete(&Booking{}); err != nil {
-		log.Println("ini booking: ", err.Error)
 		return err.Error
 	}
 	return nil

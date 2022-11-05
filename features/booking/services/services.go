@@ -49,7 +49,7 @@ func (bs *bookingService) GetRangerBooking(idRanger uint) ([]domain.Core, error)
 func (bs *bookingService) InsertData(newBooking domain.Core) (domain.Core, error) {
 	res, err := bs.qry.Insert(newBooking)
 	if err != nil {
-		return domain.Core{}, errors.New("some problem on database")
+		return domain.Core{}, err
 	}
 
 	return res, nil
