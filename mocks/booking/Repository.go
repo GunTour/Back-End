@@ -136,6 +136,20 @@ func (_m *Repository) Update(newBooking domain.Core) (domain.Core, error) {
 	return r0, r1
 }
 
+// UpdateMidtrans provides a mock function with given fields: newBooking
+func (_m *Repository) UpdateMidtrans(newBooking domain.Core) error {
+	ret := _m.Called(newBooking)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.Core) error); ok {
+		r0 = rf(newBooking)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewRepository interface {
 	mock.TestingT
 	Cleanup(func())

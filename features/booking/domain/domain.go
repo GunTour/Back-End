@@ -61,4 +61,5 @@ type Handler interface {
 	InsertData() echo.HandlerFunc
 	UpdateData() echo.HandlerFunc
 	DeleteData() echo.HandlerFunc
+	UpdateMidtrans() echo.HandlerFunc
 }
