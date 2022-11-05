@@ -12,13 +12,8 @@ func SuccessResponse(msg string, data interface{}) map[string]interface{} {
 	}
 }
 
-func SuccessResponseProduct(msg string, page int, totalPage int, data interface{}) map[string]interface{} {
-	return map[string]interface{}{
-		"message":    msg,
-		"page":       page,
-		"total_page": totalPage,
-		"data":       data,
-	}
+func SuccessResponseProduct(data interface{}) interface{} {
+	return data
 }
 
 func SuccessResponseNoData(msg string) map[string]interface{} {
@@ -75,6 +70,12 @@ type GetRangerApplyResponse struct {
 	Ticket    int       `json:"ticket" form:"ticket"`
 }
 
+type GetProductResponse struct {
+	Message   string            `json:"message" form:"message"`
+	Page      int               `json:"page" form:"page"`
+	TotalPage int               `json:"total_page" form:"total_page"`
+	Data      []ProductResponse `json:"data" form:"data"`
+}
 type ProductResponse struct {
 	ID             uint   `json:"id_product" form:"id_product"`
 	ProductName    string `json:"product_name" form:"product_name"`
@@ -127,4 +128,15 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		res = arr
 	}
 	return res
+}
+
+func ToResponseProduct(core interface{}, message string, pages int, totalPage int, code string) interface{} {
+	var arr []ProductResponse
+	val := core.([]domain.ProductCore)
+	for _, cnv := range val {
+		arr = append(arr, ProductResponse{ID: uint(cnv.ID), ProductName: cnv.ProductName, RentPrice: cnv.RentPrice,
+			Detail: cnv.Detail, Note: cnv.Note, ProductPicture: cnv.ProductPicture})
+	}
+
+	return GetProductResponse{Message: message, Page: pages, TotalPage: totalPage, Data: arr}
 }

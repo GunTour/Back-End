@@ -68,7 +68,7 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponseProduct("success get all product", pages, totalPage, ToResponseArray(res, "getproduct")))
+		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", pages, totalPage, "getproduct")))
 	}
 }
 
