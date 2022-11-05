@@ -3,8 +3,6 @@ package services
 import (
 	"GunTour/features/booking/domain"
 	"errors"
-
-	"github.com/labstack/gommon/log"
 )
 
 type bookingService struct {
@@ -20,7 +18,6 @@ func New(repo domain.Repository) domain.Services {
 func (bs *bookingService) GetAll(idUser uint) ([]domain.Core, error) {
 	res, err := bs.qry.Get(idUser)
 	if err != nil {
-		log.Error(err.Error())
 		return []domain.Core{}, errors.New("no data")
 	}
 
@@ -29,7 +26,6 @@ func (bs *bookingService) GetAll(idUser uint) ([]domain.Core, error) {
 func (bs *bookingService) GetDetail(idBooking uint) (domain.Core, error) {
 	res, err := bs.qry.GetID(idBooking)
 	if err != nil {
-		log.Error(err.Error())
 		return domain.Core{}, errors.New("no data")
 	}
 
@@ -39,7 +35,6 @@ func (bs *bookingService) GetDetail(idBooking uint) (domain.Core, error) {
 func (bs *bookingService) GetRangerBooking(idRanger uint) ([]domain.Core, error) {
 	res, err := bs.qry.GetRanger(idRanger)
 	if err != nil {
-		log.Error(err.Error())
 		return []domain.Core{}, errors.New("no data")
 	}
 
@@ -64,7 +59,6 @@ func (bs *bookingService) UpdateData(newBooking domain.Core) (domain.Core, error
 }
 
 func (bs *bookingService) DeleteData(idBooking uint) error {
-	log.Print(idBooking)
 	err := bs.qry.Delete(idBooking)
 	if err != nil {
 		return err
