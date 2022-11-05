@@ -26,6 +26,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.DELETE("/booking/:id_booking", handler.DeleteData(), middleware.JWT([]byte(os.Getenv("JWT_SECRET")))) // DELETE BOOKING
 	e.PUT("/booking/:id_booking", handler.UpdateData(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))    // UPDATE BOOKING
 	e.GET("/booking/ranger", handler.GetRangerBooking(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))   // GET RANGER BOOKING
+	e.POST("/midtrans", handler.UpdateMidtrans())                                                           // CALLBACK UPDATE MIDTRANS
 }
 
 func (bs *bookingHandler) GetAll() echo.HandlerFunc {
@@ -123,5 +124,18 @@ func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete data."))
+	}
+}
+
+func (bs *bookingHandler) UpdateMidtrans() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input UpdateMidtrans
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse(errors.New("an invalid client request")))
+		}
+
+		res := ToDomain(input)
+		bs.srv.UpdateData(res)
+		return c.JSON(http.StatusOK, SuccessResponseNoData("Success update data."))
 	}
 }

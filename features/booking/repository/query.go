@@ -104,3 +104,12 @@ func (rq *repoQuery) Delete(idBooking uint) error {
 	}
 	return nil
 }
+
+func (rq *repoQuery) UpdateMidtrans(newBooking domain.Core) error {
+	var cnv Booking = FromDomain(newBooking)
+	if err := rq.db.Where("order_id = ?", cnv.OrderId).Updates(&cnv).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

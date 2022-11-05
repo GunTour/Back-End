@@ -2,6 +2,7 @@ package services
 
 import (
 	"GunTour/features/booking/domain"
+	"GunTour/utils/helper"
 	"errors"
 )
 
@@ -42,6 +43,8 @@ func (bs *bookingService) GetRangerBooking(idRanger uint) ([]domain.Core, error)
 }
 
 func (bs *bookingService) InsertData(newBooking domain.Core) (domain.Core, error) {
+	midtrans := helper.OrderMidtrans(newBooking.OrderId, int64(newBooking.GrossAmount))
+	newBooking.Link = midtrans.RedirectURL
 	res, err := bs.qry.Insert(newBooking)
 	if err != nil {
 		return domain.Core{}, err
@@ -60,6 +63,16 @@ func (bs *bookingService) UpdateData(newBooking domain.Core) (domain.Core, error
 
 func (bs *bookingService) DeleteData(idBooking uint) error {
 	err := bs.qry.Delete(idBooking)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (bs *bookingService) UpdateMidtrans(newBooking domain.Core) error {
+	inputMidtrans := helper.CheckMidtrans(newBooking.OrderId)
+	newBooking.StatusBooking = inputMidtrans.TransactionStatus
+	err := bs.qry.UpdateMidtrans(newBooking)
 	if err != nil {
 		return err
 	}

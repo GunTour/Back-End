@@ -41,6 +41,7 @@ type Repository interface {
 	Insert(newBooking Core) (Core, error)
 	Update(newBooking Core) (Core, error)
 	Delete(idBooking uint) error
+	UpdateMidtrans(newBooking Core) error
 }
 
 type Services interface {
@@ -50,6 +51,7 @@ type Services interface {
 	InsertData(newBooking Core) (Core, error)
 	UpdateData(newBooking Core) (Core, error)
 	DeleteData(idBooking uint) error
+	UpdateMidtrans(newBooking Core) error
 }
 
 type Handler interface {
@@ -59,4 +61,5 @@ type Handler interface {
 	InsertData() echo.HandlerFunc
 	UpdateData() echo.HandlerFunc
 	DeleteData() echo.HandlerFunc
+	UpdateMidtrans() echo.HandlerFunc
 }

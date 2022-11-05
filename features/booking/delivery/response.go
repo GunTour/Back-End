@@ -33,6 +33,7 @@ type RegisterResponse struct {
 	Product     []BookingProduct `json:"product" form:"product"`
 	IdRanger    uint             `json:"id_ranger" form:"id_ranger"`
 	GrossAmount int              `json:"gross_amount" form:"gross_amount"`
+	OrderId     string           `json:"order_id" form:"order_id"`
 	Link        string           `json:"link" form:"link"`
 }
 
@@ -46,6 +47,7 @@ type UpdateResponse struct {
 	Product       []BookingProduct `json:"product" form:"product"`
 	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
 	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
+	OrderId       string           `json:"order_id" form:"order_id"`
 	Link          string           `json:"link" form:"link"`
 	StatusBooking string           `json:"status" form:"status"`
 }
@@ -78,7 +80,7 @@ func ToResponse(core interface{}, code string) interface{} {
 			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		res = RegisterResponse{IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, Link: cnv.Link}
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link}
 	case "update":
 		cnv := core.(domain.Core)
 		var arr []BookingProduct
@@ -86,7 +88,7 @@ func ToResponse(core interface{}, code string) interface{} {
 			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		res = UpdateResponse{ID: cnv.ID, IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, Link: cnv.Link}
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link}
 	}
 
 	return res
