@@ -41,10 +41,21 @@ type Booking struct {
 type Product struct {
 	gorm.Model
 	ProductName    string
-	RentPrice      string
+	RentPrice      int
 	Detail         string
 	Note           string
 	ProductPicture string
+}
+
+func FromDomainProduct(db domain.ProductCore) Product {
+	return Product{
+		Model:          gorm.Model{ID: db.ID},
+		ProductName:    db.ProductName,
+		RentPrice:      db.RentPrice,
+		Detail:         db.Detail,
+		Note:           db.Note,
+		ProductPicture: db.ProductPicture,
+	}
 }
 
 func FromDomainBooking(db domain.BookingCore) Booking {
@@ -62,6 +73,17 @@ func FromDomainBooking(db domain.BookingCore) Booking {
 		Link:            db.Link,
 		StatusBooking:   db.StatusBooking,
 		StatusPendakian: db.StatusPendakian,
+	}
+}
+
+func ToDomainProduct(db Product) domain.ProductCore {
+	return domain.ProductCore{
+		ID:             db.ID,
+		ProductName:    db.ProductName,
+		RentPrice:      db.RentPrice,
+		Detail:         db.Detail,
+		Note:           db.Note,
+		ProductPicture: db.ProductPicture,
 	}
 }
 
@@ -84,6 +106,21 @@ func ToDomainBooking(db []Booking) []domain.BookingCore {
 			StatusPendakian: val.StatusPendakian,
 			FullName:        val.FullName,
 			Phone:           val.Phone,
+		})
+	}
+	return arr
+}
+
+func ToDomainProductArr(db []Product) []domain.ProductCore {
+	var arr []domain.ProductCore
+	for _, val := range db {
+		arr = append(arr, domain.ProductCore{
+			ID:             val.ID,
+			ProductName:    val.ProductName,
+			RentPrice:      val.RentPrice,
+			Detail:         val.Detail,
+			Note:           val.Note,
+			ProductPicture: val.ProductPicture,
 		})
 	}
 	return arr
