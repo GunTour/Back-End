@@ -2,7 +2,9 @@ package services
 
 import (
 	"GunTour/features/admin/domain"
+	"GunTour/utils/helper"
 	"errors"
+	"mime/multipart"
 )
 
 type adminService struct {
@@ -33,4 +35,56 @@ func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
 	}
 
 	return res, nil
+}
+
+func (as *adminService) GetProduct(page int) ([]domain.ProductCore, error) {
+	res, err := as.qry.GetProduct(page)
+	if err != nil {
+		return []domain.ProductCore{}, errors.New("no data")
+	}
+
+	return res, nil
+}
+
+func (as *adminService) AddProduct(newProduct domain.ProductCore, file multipart.File, fileheader *multipart.FileHeader) (domain.ProductCore, error) {
+	if fileheader != nil {
+		res, err := helper.UploadFile(file, fileheader)
+		if err != nil {
+			return domain.ProductCore{}, err
+		}
+		newProduct.ProductPicture = res
+	}
+
+	res, err := as.qry.InsertProduct(newProduct)
+	if err != nil {
+		return domain.ProductCore{}, errors.New("no data")
+	}
+
+	return res, nil
+}
+
+func (as *adminService) EditProduct(newProduct domain.ProductCore, file multipart.File, fileheader *multipart.FileHeader) (domain.ProductCore, error) {
+	if fileheader != nil {
+		res, err := helper.UploadFile(file, fileheader)
+		if err != nil {
+			return domain.ProductCore{}, err
+		}
+		newProduct.ProductPicture = res
+	}
+
+	res, err := as.qry.UpdateProduct(newProduct)
+	if err != nil {
+		return domain.ProductCore{}, errors.New("no data")
+	}
+
+	return res, nil
+}
+
+func (as *adminService) RemoveProduct(id int) error {
+	err := as.qry.DeleteProduct(id)
+	if err != nil {
+		return errors.New("no data")
+	}
+
+	return nil
 }

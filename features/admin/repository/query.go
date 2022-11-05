@@ -48,17 +48,47 @@ func (rq *repoQuery) GetBooking() ([]domain.BookingCore, error) {
 	return res, nil
 }
 
-// func (rq *repoQuery) GetProduct(page int) ([]ProductCore, error){
+func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, error) {
+	var resQry []Product
 
-// }
+	if page == 0 {
+		if err := rq.db.Limit(20).Find(&resQry).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		i := page * 20
+		if err := rq.db.Offset(i).Limit(20).Find(&resQry).Scan(&resQry).Error; err != nil {
+			return nil, err
+		}
+	}
 
-// func (rq *repoQuery) InsertProduct(newProduct ProductCore) (ProductCore, error){
+	// selesai dari DB
+	res := ToDomainProductArr(resQry)
+	return res, nil
+}
 
-// }
+func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
+	var res Product = FromDomainProduct(newProduct)
+	if err := rq.db.Create(&res).Error; err != nil {
+		return domain.ProductCore{}, err
+	}
 
-// func (rq *repoQuery) UpdateProduct(newProduct ProductCore) (ProductCore, error){
+	newProduct = ToDomainProduct(res)
+	return newProduct, nil
+}
 
-// }
-// func (rq *repoQuery) DeleteProduct(id int) error{
+func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
+	var res Product = FromDomainProduct(newProduct)
+	if err := rq.db.Where("id=?", newProduct.ID).Updates(&res).Error; err != nil {
+		return domain.ProductCore{}, err
+	}
 
-// }
+	newProduct = ToDomainProduct(res)
+	return newProduct, nil
+}
+func (rq *repoQuery) DeleteProduct(id int) error {
+	if err := rq.db.Where("id=?", id).Delete(&Product{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
