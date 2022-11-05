@@ -1,25 +1,30 @@
 package domain
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type User struct {
-	ID       int
-	FullName string
-	Dob      string
-	Address  string
-	Phone    string
-	Gender   string
-	RangerID int
+	ID       uint   `json:"id_user" form:"id_user"`
+	FullName string `json:"fullname" form:"fullname"`
+	Dob      string `json:"dob" form:"dob"`
+	Address  string `json:"address" form:"address"`
+	Phone    string `json:"phone" form:"phone"`
+	Gender   string `json:"gender" form:"gender"`
 }
 
 type Core struct {
-	ID        int
-	User      User
-	Docs      string
-	Price     int
-	Detail    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          uint
+	UserID      uint
+	Docs        string
+	Price       uint
+	Detail      string
+	Status      string
+	StatusApply string
+	User        User
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type Repository interface {
@@ -28,6 +33,6 @@ type Repository interface {
 }
 
 type Service interface {
-	Apply(data Core) (Core, error)
+	Apply(data Core, file multipart.File, fileheader *multipart.FileHeader) (Core, error)
 	ShowAll() ([]Core, error)
 }

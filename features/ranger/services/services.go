@@ -2,7 +2,9 @@ package services
 
 import (
 	"GunTour/features/ranger/domain"
+	"GunTour/utils/helper"
 	"errors"
+	"mime/multipart"
 	"strings"
 
 	"github.com/labstack/gommon/log"
@@ -16,7 +18,18 @@ func New(repo domain.Repository) domain.Service {
 	return &rangerService{qry: repo}
 }
 
-func (rs *rangerService) Apply(data domain.Core) (domain.Core, error) {
+func (rs *rangerService) Apply(data domain.Core, file multipart.File, fileheader *multipart.FileHeader) (domain.Core, error) {
+
+	if fileheader != nil {
+		res, err := helper.UploadDocs(file, fileheader)
+		if err != nil {
+			return domain.Core{}, errors.New("error on upload docs")
+		}
+		data.Docs = res
+	}
+
+	data.Status = "off"
+	data.StatusApply = "waiting"
 
 	res, err := rs.qry.Add(data)
 	if err != nil {
