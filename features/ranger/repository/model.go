@@ -7,18 +7,18 @@ import (
 )
 
 type User struct {
-	ID       int
+	gorm.Model
 	FullName string
 	Dob      string
 	Address  string
 	Phone    string
 	Gender   string
+	RangerID int
 }
 
 type Ranger struct {
 	gorm.Model
-	UserID int
-	User   User
+	User   User `gorm:"Foreignkey:RangerID;association_foreignkey:ID;"`
 	Docs   string
 	Price  int
 	Detail string
@@ -27,8 +27,7 @@ type Ranger struct {
 func FromCore(rc domain.Core) Ranger {
 	return Ranger{
 		Model:  gorm.Model{ID: uint(rc.ID), CreatedAt: rc.CreatedAt, UpdatedAt: rc.UpdatedAt},
-		UserID: rc.UserID,
-		User:   User(rc.User),
+		User:   User{},
 		Docs:   rc.Docs,
 		Price:  rc.Price,
 		Detail: rc.Detail,
@@ -38,8 +37,7 @@ func FromCore(rc domain.Core) Ranger {
 func ToCore(r Ranger) domain.Core {
 	return domain.Core{
 		ID:        int(r.ID),
-		UserID:    r.UserID,
-		User:      domain.User(r.User),
+		User:      domain.User{},
 		Docs:      r.Docs,
 		Price:     r.Price,
 		Detail:    r.Detail,
@@ -53,8 +51,7 @@ func ToCoreArray(ar []Ranger) []domain.Core {
 	for _, val := range ar {
 		arr = append(arr, domain.Core{
 			ID:        int(val.ID),
-			UserID:    val.UserID,
-			User:      domain.User(val.User),
+			User:      domain.User{},
 			Docs:      val.Docs,
 			Price:     val.Price,
 			Detail:    val.Detail,

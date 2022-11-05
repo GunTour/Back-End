@@ -9,11 +9,11 @@ type User struct {
 	Address  string
 	Phone    string
 	Gender   string
+	RangerID int
 }
 
 type Core struct {
 	ID        int
-	UserID    int
 	User      User
 	Docs      string
 	Price     int
@@ -28,6 +28,6 @@ type Repository interface {
 }
 
 type Service interface {
-	Insert(data Core) (Core, error)
+	Apply(data Core) (Core, error)
 	ShowAll() ([]Core, error)
 }
