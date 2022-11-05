@@ -63,12 +63,12 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		}
 		page, _ := strconv.Atoi(c.QueryParam("id_product"))
 
-		res, err := ah.srv.GetProduct(page)
+		res, pages, totalPage, err := ah.srv.GetProduct(page)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get all product", ToResponseArray(res, "getproduct")))
+		return c.JSON(http.StatusOK, SuccessResponseProduct("success get all product", pages, totalPage, ToResponseArray(res, "getproduct")))
 	}
 }
 

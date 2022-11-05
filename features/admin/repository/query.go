@@ -48,23 +48,37 @@ func (rq *repoQuery) GetBooking() ([]domain.BookingCore, error) {
 	return res, nil
 }
 
-func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, error) {
+func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	var resQry []Product
+	var sum float64
+	var totalPage int64
 
-	if page == 0 {
-		if err := rq.db.Limit(20).Find(&resQry).Error; err != nil {
-			return nil, err
+	if page == 0 || page == 1 {
+		page = 1
+		if err := rq.db.Limit(10).Find(&resQry).Error; err != nil {
+			return nil, 0, 0, err
 		}
 	} else {
-		i := page * 20
-		if err := rq.db.Offset(i).Limit(20).Find(&resQry).Scan(&resQry).Error; err != nil {
-			return nil, err
+		i := (page - 1) * 10
+		if err := rq.db.Offset(i).Limit(10).Find(&resQry).Scan(&resQry).Error; err != nil {
+			return nil, 0, 0, err
 		}
+		page += 1
+	}
+
+	rq.db.Count(&totalPage)
+	sum = float64(totalPage) / 10
+	if sum > float64((int(sum))) {
+		totalPage = int64(sum) + 1
+	} else if sum == float64((int(sum))) {
+		totalPage = 1
+	} else if sum > 0 {
+		totalPage = 1
 	}
 
 	// selesai dari DB
 	res := ToDomainProductArr(resQry)
-	return res, nil
+	return res, page, int(totalPage), nil
 }
 
 func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {

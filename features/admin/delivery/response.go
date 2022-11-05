@@ -12,6 +12,15 @@ func SuccessResponse(msg string, data interface{}) map[string]interface{} {
 	}
 }
 
+func SuccessResponseProduct(msg string, page int, totalPage int, data interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"message":    msg,
+		"page":       page,
+		"total_page": totalPage,
+		"data":       data,
+	}
+}
+
 func SuccessResponseNoData(msg string) map[string]interface{} {
 	return map[string]interface{}{
 		"message": msg,

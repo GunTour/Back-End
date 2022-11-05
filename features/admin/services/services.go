@@ -37,13 +37,13 @@ func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
 	return res, nil
 }
 
-func (as *adminService) GetProduct(page int) ([]domain.ProductCore, error) {
-	res, err := as.qry.GetProduct(page)
+func (as *adminService) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
+	res, pages, totalPage, err := as.qry.GetProduct(page)
 	if err != nil {
-		return []domain.ProductCore{}, errors.New("no data")
+		return []domain.ProductCore{}, 0, 0, errors.New("no data")
 	}
 
-	return res, nil
+	return res, pages, totalPage, nil
 }
 
 func (as *adminService) AddProduct(newProduct domain.ProductCore, file multipart.File, fileheader *multipart.FileHeader) (domain.ProductCore, error) {

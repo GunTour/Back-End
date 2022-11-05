@@ -51,7 +51,7 @@ type Repository interface {
 	GetPendaki() ([]BookingCore, error)
 	// GetRanger(id uint) ([]UserCore, []UserCore, error)
 	GetBooking() ([]BookingCore, error)
-	GetProduct(page int) ([]ProductCore, error)
+	GetProduct(page int) ([]ProductCore, int, int, error)
 	InsertProduct(newProduct ProductCore) (ProductCore, error)
 	UpdateProduct(newProduct ProductCore) (ProductCore, error)
 	DeleteProduct(id int) error
@@ -61,7 +61,7 @@ type Services interface {
 	GetPendaki() ([]BookingCore, error)
 	// GetRanger(id uint) ([]UserCore, []UserCore, error)
 	GetBooking() ([]BookingCore, error)
-	GetProduct(page int) ([]ProductCore, error)
+	GetProduct(page int) ([]ProductCore, int, int, error)
 	AddProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	EditProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	RemoveProduct(id int) error
