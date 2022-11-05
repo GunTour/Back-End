@@ -78,14 +78,12 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 	}
 
 	if newBooking.BookingProductCores != nil {
-		var productCnv = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
-		for i := 0; i < len(productCnv); i++ {
-			err := rq.db.Where("id_booking=? AND id_product=?", productCnv[i].ID, productCnv[i].IdProduct).Updates(&productCnv[i]).Error
-			if err != nil {
-				rq.db.Create(&productCnv[i])
-			}
+		var productCnv []BookingProduct = FromDomainProduct(newBooking.BookingProductCores, cnv.ID)
+		rq.db.Where("id_booking=?", cnv.ID).Delete(&BookingProduct{})
+		err := rq.db.Create(&productCnv).Error
+		if err != nil {
+			return domain.Core{}, err
 		}
-
 	}
 	// selesai dari DB
 	newBooking = ToDomain(cnv)

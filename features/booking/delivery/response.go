@@ -36,17 +36,16 @@ type RegisterResponse struct {
 }
 
 type UpdateResponse struct {
-	ID              uint      `json:"id" form:"id"`
-	IdUser          uint      `json:"id_user" form:"id_user"`
-	DateStart       time.Time `json:"date_start" form:"date_start"`
-	DateEnd         time.Time `json:"date_end" form:"date_end"`
-	Entrance        string    `json:"entrance" form:"entrance"`
-	Ticket          int       `json:"ticket" form:"ticket"`
-	IdRanger        uint      `json:"id_ranger" form:"id_ranger"`
-	GrossAmount     int       `json:"gross_amount" form:"gross_amount"`
-	Link            string    `json:"link" form:"link"`
-	StatusBooking   string    `json:"status_booking" form:"status_booking"`
-	StatusPendakian string    `json:"status_pendakian" form:"status_pendakian"`
+	ID            uint      `json:"id" form:"id"`
+	IdUser        uint      `json:"id_user" form:"id_user"`
+	DateStart     time.Time `json:"date_start" form:"date_start"`
+	DateEnd       time.Time `json:"date_end" form:"date_end"`
+	Entrance      string    `json:"entrance" form:"entrance"`
+	Ticket        int       `json:"ticket" form:"ticket"`
+	IdRanger      uint      `json:"id_ranger" form:"id_ranger"`
+	GrossAmount   int       `json:"gross_amount" form:"gross_amount"`
+	Link          string    `json:"link" form:"link"`
+	StatusBooking string    `json:"status" form:"status"`
 }
 
 type GetResponse struct {

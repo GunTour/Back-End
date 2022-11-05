@@ -95,6 +95,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {
+			log.Print(input)
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
@@ -112,7 +113,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 
 func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, err := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
 			return errors.New("failed to get id booking")
 		}
