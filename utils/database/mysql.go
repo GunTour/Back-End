@@ -2,7 +2,10 @@ package database
 
 import (
 	"GunTour/config"
+
 	rr "GunTour/features/ranger/repository"
+	ar "GunTour/features/admin/repository"
+	br "GunTour/features/booking/repository"
 	ur "GunTour/features/users/repository"
 	"fmt"
 
@@ -32,4 +35,7 @@ func InitDB(c *config.AppConfig) *gorm.DB {
 func MigrateDB(db *gorm.DB) {
 	db.AutoMigrate(&ur.User{})
 	db.AutoMigrate(&rr.Ranger{})
+	db.AutoMigrate(&br.Booking{})
+	db.AutoMigrate(&br.BookingProduct{})
+	db.AutoMigrate(&ar.Product{})
 }

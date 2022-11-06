@@ -1,10 +1,17 @@
 package main
 
 import (
-	"GunTour/config"
+  "GunTour/config"
+  
 	rd "GunTour/features/ranger/delivery"
 	rr "GunTour/features/ranger/repository"
 	rs "GunTour/features/ranger/services"
+	ad "GunTour/features/admin/delivery"
+	ar "GunTour/features/admin/repository"
+	as "GunTour/features/admin/services"
+	bd "GunTour/features/booking/delivery"
+	br "GunTour/features/booking/repository"
+	bs "GunTour/features/booking/services"
 	ud "GunTour/features/users/delivery"
 	ur "GunTour/features/users/repository"
 	us "GunTour/features/users/services"
@@ -32,8 +39,14 @@ func main() {
 	}))
 
 	uRepo := ur.New(db)
+	bRepo := br.New(db)
+	aRepo := ar.New(db)
 	uService := us.New(uRepo)
+	bService := bs.New(bRepo)
+	aService := as.New(aRepo)
 	ud.New(e, uService)
+	bd.New(e, bService)
+	ad.New(e, aService)
 
 	rRepo := rr.New(db)
 	rService := rs.New(rRepo)
