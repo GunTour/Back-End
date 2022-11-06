@@ -21,7 +21,7 @@ func New(e *echo.Echo, srv domain.Service) {
 func (ph *productHandler) ShowAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		page, _ := strconv.Atoi(c.QueryParam("id_product"))
+		page, _ := strconv.Atoi(c.QueryParam("page"))
 
 		res, pages, totalPage, err := ph.srv.ShowAll(uint(page))
 
