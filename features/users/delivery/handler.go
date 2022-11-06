@@ -140,7 +140,7 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		cnv := ToCore(input)
 		res, err := uh.srv.Login(cnv)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server"))
 		}
 
 		return c.JSON(http.StatusAccepted, SuccessResponse("success login", ToResponse(res, "login")))
