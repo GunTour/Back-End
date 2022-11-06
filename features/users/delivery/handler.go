@@ -143,8 +143,6 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 
-		token := middlewares.GenerateToken(res.ID, res.Role)
-
-		return c.JSON(http.StatusAccepted, SuccessLogin("success login", ToResponse(res, "login"), token))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success login", ToResponse(res, "login")))
 	}
 }

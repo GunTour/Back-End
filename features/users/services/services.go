@@ -3,6 +3,7 @@ package services
 import (
 	"GunTour/features/users/domain"
 	"GunTour/utils/helper"
+	"GunTour/utils/middlewares"
 	"errors"
 	"mime/multipart"
 	"strings"
@@ -101,6 +102,8 @@ func (us *userService) Login(input domain.Core) (domain.Core, error) {
 	if err != nil {
 		return domain.Core{}, errors.New("password not match")
 	}
+
+	res.Token = middlewares.GenerateToken(res.ID, res.Role)
 
 	return res, nil
 }
