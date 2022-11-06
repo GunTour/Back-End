@@ -52,6 +52,22 @@ type UpdateResponse struct {
 	StatusBooking string           `json:"status" form:"status"`
 }
 
+type DetailResponse struct {
+	ID            uint             `json:"id_booking" form:"id_booking"`
+	Start         string           `json:"date_start" form:"date_start"`
+	End           string           `json:"date_end" form:"date_end"`
+	Entrance      string           `json:"entrance" form:"entrance"`
+	Ticket        int              `json:"ticket" form:"ticket"`
+	Product       []BookingProduct `json:"product" form:"product"`
+	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
+	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
+	OrderId       string           `json:"order_id" form:"order_id"`
+	Link          string           `json:"link" form:"link"`
+	StatusBooking string           `json:"status" form:"status"`
+	DateStart     time.Time        `json:"-" form:"-"`
+	DateEnd       time.Time        `json:"-" form:"-"`
+}
+
 type GetResponse struct {
 	ID            uint   `json:"id_booking" form:"id_booking"`
 	GrossAmount   int    `json:"gross_amount" form:"gross_amount"`
@@ -65,9 +81,11 @@ type GetRangerResponse struct {
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
 	Phone     string    `json:"phone" form:"phone"`
-	DateStart time.Time `json:"date_start" form:"date_start"`
-	DateEnd   time.Time `json:"date_end" form:"date_end"`
+	Start     string    `json:"date_start" form:"date_start"`
+	End       string    `json:"date_end" form:"date_end"`
 	Ticket    int       `json:"ticket" form:"ticket"`
+	DateStart time.Time `json:"-" form:"-"`
+	DateEnd   time.Time `json:"-" form:"-"`
 }
 
 func ToResponse(core interface{}, code string) interface{} {
@@ -89,6 +107,15 @@ func ToResponse(core interface{}, code string) interface{} {
 		}
 		res = UpdateResponse{ID: cnv.ID, IdUser: cnv.IdRanger, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link}
+	case "getdetails":
+		cnv := core.(domain.Core)
+		var arr []BookingProduct
+		for _, val := range cnv.BookingProductCores {
+			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty,
+				ProductName: val.ProductName, RentPrice: val.RentPrice})
+		}
+		res = DetailResponse{ID: cnv.ID, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket,
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking}
 	}
 
 	return res
@@ -109,7 +136,7 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		var arr []GetRangerResponse
 		val := core.([]domain.Core)
 		for _, cnv := range val {
-			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Ticket: cnv.Ticket})
+			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Ticket: cnv.Ticket})
 		}
 		res = arr
 	}

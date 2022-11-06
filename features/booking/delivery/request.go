@@ -7,8 +7,8 @@ import (
 
 type RegisterFormat struct {
 	IdUser        uint             `json:"id_user" form:"id_user"`
-	DateStart     time.Time        `json:"date_start" form:"date_start"`
-	DateEnd       time.Time        `json:"date_end" form:"date_end"`
+	Start         string           `json:"date_start" form:"date_start"`
+	End           string           `json:"date_end" form:"date_end"`
 	Entrance      string           `json:"entrance" form:"entrance"`
 	Ticket        int              `json:"ticket" form:"ticket"`
 	OrderId       string           `json:"order_id" form:"order_id"`
@@ -16,19 +16,24 @@ type RegisterFormat struct {
 	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
 	StatusBooking string           `json:"status_booking" form:"status_booking"`
 	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
+	DateStart     time.Time
+	DateEnd       time.Time
 }
 
 type BookingProduct struct {
-	ID         uint
-	IdBooking  uint
-	IdProduct  uint `json:"id_product" form:"id_product"`
-	ProductQty int  `json:"product_qty" form:"product_qty"`
+	ID          uint
+	IdBooking   uint
+	IdProduct   uint   `json:"id_product" form:"id_product"`
+	ProductQty  int    `json:"product_qty" form:"product_qty"`
+	ProductName string `json:"product_name" form:"product_name"`
+	RentPrice   int    `json:"rent_price" form:"rent_price"`
 }
+
 type UpdateFormat struct {
 	ID              uint             `json:"id" form:"id"`
 	IdUser          uint             `json:"id_user" form:"id_user"`
-	DateStart       time.Time        `json:"date_start" form:"date_start"`
-	DateEnd         time.Time        `json:"date_end" form:"date_end"`
+	Start           string           `json:"date_start" form:"date_start"`
+	End             string           `json:"date_end" form:"date_end"`
 	Entrance        string           `json:"entrance" form:"entrance"`
 	Ticket          int              `json:"ticket" form:"ticket"`
 	Product         []BookingProduct `json:"product" form:"product"`
@@ -36,6 +41,8 @@ type UpdateFormat struct {
 	GrossAmount     int              `json:"gross_amount" form:"gross_amount"`
 	StatusBooking   string           `json:"status" form:"status"`
 	StatusPendakian string           `json:"status_pendakian" form:"status_pendakian"`
+	DateStart       time.Time
+	DateEnd         time.Time
 }
 
 type UpdateMidtrans struct {

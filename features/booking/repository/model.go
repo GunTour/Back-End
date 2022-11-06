@@ -21,8 +21,8 @@ type Booking struct {
 	Link            string
 	StatusBooking   string
 	StatusPendakian string
-	FullName        string           `gorm:"-:all"`
-	Phone           string           `gorm:"-:all"`
+	FullName        string           `gorm:"-:migration;<-:false"`
+	Phone           string           `gorm:"-:migration;<-:false"`
 	BookingProducts []BookingProduct `gorm:"foreignKey:IdBooking"`
 }
 
@@ -31,8 +31,8 @@ type BookingProduct struct {
 	IdBooking   uint
 	IdProduct   uint
 	ProductQty  int
-	ProductName string `gorm:"-:all"`
-	RentPrice   int    `gorm:"-:all"`
+	ProductName string `gorm:"-:migration;<-:false"`
+	RentPrice   int    `gorm:"-:migration;<-:false"`
 }
 
 func FromDomain(db domain.Core) Booking {
@@ -84,10 +84,12 @@ func ToDomainCore(db Booking, dp []BookingProduct) domain.Core {
 	var res []domain.BookingProductCore
 	for _, val := range dp {
 		res = append(res, domain.BookingProductCore{
-			ID:         val.ID,
-			IdBooking:  val.IdBooking,
-			IdProduct:  val.IdProduct,
-			ProductQty: val.ProductQty,
+			ID:          val.ID,
+			IdBooking:   val.IdBooking,
+			IdProduct:   val.IdProduct,
+			ProductQty:  val.ProductQty,
+			ProductName: val.ProductName,
+			RentPrice:   val.RentPrice,
 		})
 	}
 	return domain.Core{
@@ -104,6 +106,7 @@ func ToDomainCore(db Booking, dp []BookingProduct) domain.Core {
 		Link:                db.Link,
 		StatusBooking:       db.StatusBooking,
 		StatusPendakian:     db.StatusPendakian,
+		FullName:            db.FullName,
 		BookingProductCores: res,
 	}
 }

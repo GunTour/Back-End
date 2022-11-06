@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -51,7 +52,7 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "update")))
+		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "getdetails")))
 	}
 }
 
@@ -72,9 +73,13 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
+
+		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
+		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
 		input.StatusBooking = "unpaid"
+
 		IdUser, _ := middlewares.ExtractToken(c)
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
@@ -83,7 +88,7 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "register")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
@@ -100,15 +105,19 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
+		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
+		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
+
 		idUser, _ := middlewares.ExtractToken(c)
 		input.IdUser = uint(idUser)
 		cnv := ToDomain(input)
+
 		res, err := bs.srv.UpdateData(cnv)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "update")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
