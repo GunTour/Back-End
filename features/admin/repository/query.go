@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/admin/domain"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -100,8 +101,9 @@ func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.Produc
 	return newProduct, nil
 }
 func (rq *repoQuery) DeleteProduct(id int) error {
-	if err := rq.db.Where("id=?", id).Delete(&Product{}).Error; err != nil {
-		return err
+	err := rq.db.Where("id=?", id).Delete(&Product{})
+	if err.RowsAffected == 0 {
+		return errors.New("no data")
 	}
 	return nil
 }
