@@ -55,19 +55,18 @@ func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error
 
 	if page == 0 || page == 1 {
 		page = 1
-		if err := rq.db.Limit(10).Find(&resQry).Error; err != nil {
+		if err := rq.db.Limit(8).Find(&resQry).Error; err != nil {
 			return nil, 0, 0, err
 		}
 	} else {
-		i := (page - 1) * 10
-		if err := rq.db.Offset(i).Limit(10).Find(&resQry).Scan(&resQry).Error; err != nil {
+		i := (page - 1) * 8
+		if err := rq.db.Offset(i).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
 			return nil, 0, 0, err
 		}
-		page += 1
 	}
 
-	rq.db.Count(&totalPage)
-	sum = float64(totalPage) / 10
+	rq.db.Model(&Product{}).Count(&totalPage)
+	sum = float64(totalPage) / 8
 	if sum > float64((int(sum))) {
 		totalPage = int64(sum) + 1
 	} else if sum == float64((int(sum))) {
