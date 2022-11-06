@@ -61,7 +61,7 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		if role != "admin" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
-		page, _ := strconv.Atoi(c.QueryParam("id_product"))
+		page, _ := strconv.Atoi(c.QueryParam("page"))
 
 		res, pages, totalPage, err := ah.srv.GetProduct(page)
 

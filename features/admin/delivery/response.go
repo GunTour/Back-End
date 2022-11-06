@@ -32,18 +32,22 @@ type GetPendakiResponse struct {
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
 	Phone     string    `json:"phone" form:"phone"`
-	DateStart time.Time `json:"date_start" form:"date_start"`
-	DateEnd   time.Time `json:"date_end" form:"date_end"`
+	Start     string    `json:"date_start" form:"date_start"`
+	End       string    `json:"date_end" form:"date_end"`
+	DateStart time.Time `json:"-" form:"-"`
+	DateEnd   time.Time `json:"-" form:"-"`
 }
 
 type GetBookingResponse struct {
 	ID        uint      `json:"id_booking" form:"id_booking"`
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
-	DateStart time.Time `json:"date_start" form:"date_start"`
-	DateEnd   time.Time `json:"date_end" form:"date_end"`
+	Start     string    `json:"date_start" form:"date_start"`
+	End       string    `json:"date_end" form:"date_end"`
 	Entrance  string    `json:"entrance" form:"entrance"`
 	Ticket    int       `json:"ticket" form:"ticket"`
+	DateStart time.Time `json:"-" form:"-"`
+	DateEnd   time.Time `json:"-" form:"-"`
 }
 
 type GetRangerResponse struct {
@@ -65,9 +69,11 @@ type GetRangerApplyResponse struct {
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
 	Phone     string    `json:"phone" form:"phone"`
-	DateStart time.Time `json:"date_start" form:"date_start"`
-	DateEnd   time.Time `json:"date_end" form:"date_end"`
+	Start     string    `json:"date_start" form:"date_start"`
+	End       string    `json:"date_end" form:"date_end"`
 	Ticket    int       `json:"ticket" form:"ticket"`
+	DateStart time.Time `json:"-" form:"-"`
+	DateEnd   time.Time `json:"-" form:"-"`
 }
 
 type GetProductResponse struct {
@@ -106,7 +112,8 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		var arr []GetPendakiResponse
 		val := core.([]domain.BookingCore)
 		for _, cnv := range val {
-			arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone, DateStart: cnv.DateEnd, DateEnd: cnv.DateEnd})
+			arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone,
+				Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02")})
 		}
 		res = arr
 
@@ -115,7 +122,7 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		val := core.([]domain.BookingCore)
 		for _, cnv := range val {
 			arr = append(arr, GetBookingResponse{ID: uint(cnv.ID), IdUser: cnv.IdUser, FullName: cnv.FullName,
-				DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket})
+				Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket})
 		}
 		res = arr
 	case "getproduct":
