@@ -5,6 +5,7 @@ go 1.19
 require gorm.io/gorm v1.24.0
 
 require (
+	github.com/biezhi/gorm-paginator/pagination v0.0.0-20190124091837-7a5c8ed20334 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -13,6 +14,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/jinzhu/gorm v1.9.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
