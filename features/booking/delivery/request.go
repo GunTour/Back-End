@@ -19,11 +19,14 @@ type RegisterFormat struct {
 }
 
 type BookingProduct struct {
-	ID         uint
-	IdBooking  uint
-	IdProduct  uint `json:"id_product" form:"id_product"`
-	ProductQty int  `json:"product_qty" form:"product_qty"`
+	ID          uint
+	IdBooking   uint
+	IdProduct   uint   `json:"id_product" form:"id_product"`
+	ProductQty  int    `json:"product_qty" form:"product_qty"`
+	ProductName string `json:"product_name" form:"product_name"`
+	RentPrice   int    `json:"rent_price" form:"rent_price"`
 }
+
 type UpdateFormat struct {
 	ID              uint             `json:"id" form:"id"`
 	IdUser          uint             `json:"id_user" form:"id_user"`

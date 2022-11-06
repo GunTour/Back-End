@@ -34,8 +34,8 @@ type Booking struct {
 	Link            string
 	StatusBooking   string
 	StatusPendakian string
-	FullName        string `gorm:"-:migration" gorm:"<-"`
-	Phone           string `gorm:"-:migration" gorm:"<-"`
+	FullName        string `gorm:"-:migration;<-:false"`
+	Phone           string `gorm:"-:migration;<-:false"`
 }
 
 type Product struct {
