@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/booking/domain"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -115,12 +116,12 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 }
 
 func (rq *repoQuery) Delete(idBooking uint) error {
-	if err := rq.db.Where("id_booking = ?", idBooking).Delete(&BookingProduct{}); err != nil {
-		return err.Error
+	rq.db.Where("id_booking = ?", idBooking).Delete(&BookingProduct{})
+	err := rq.db.Where("id = ?", idBooking).Delete(&Booking{})
+	if err.RowsAffected == 0 {
+		return errors.New("no data")
 	}
-	if err := rq.db.Where("id = ?", idBooking).Delete(&Booking{}); err != nil {
-		return err.Error
-	}
+
 	return nil
 }
 

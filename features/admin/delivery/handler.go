@@ -132,7 +132,7 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 		err := ah.srv.RemoveProduct(id)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusNoContent, FailResponse(err.Error()))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete product"))
 	}

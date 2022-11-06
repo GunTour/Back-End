@@ -17,7 +17,7 @@ type User struct {
 	Dob         string
 	Gender      string
 	UserPicture string
-	Token       string
+	Token       string `gorm:"-:migration;<-:false"`
 }
 
 func FromCore(uc domain.Core) User {
