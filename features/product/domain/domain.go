@@ -5,17 +5,12 @@ import "time"
 type Core struct {
 	ID             uint
 	ProductName    string
-	Price          uint
+	RentPrice      int
 	Detail         string
 	Note           string
 	ProductPicture string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-}
-
-type Paginate struct {
-	Page  uint
-	Limit uint
 }
 
 type Repository interface {

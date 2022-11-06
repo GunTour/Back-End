@@ -9,7 +9,7 @@ import (
 type Product struct {
 	gorm.Model
 	ProductName    string
-	Price          uint
+	RentPrice      int
 	Detail         string
 	Note           string
 	ProductPicture string
@@ -19,7 +19,7 @@ func FromCore(pc domain.Core) Product {
 	return Product{
 		Model:          gorm.Model{ID: pc.ID, CreatedAt: pc.CreatedAt, UpdatedAt: pc.UpdatedAt},
 		ProductName:    pc.ProductName,
-		Price:          pc.Price,
+		RentPrice:      pc.RentPrice,
 		Detail:         pc.Detail,
 		Note:           pc.Note,
 		ProductPicture: pc.ProductPicture,
@@ -30,7 +30,7 @@ func ToCore(p Product) domain.Core {
 	return domain.Core{
 		ID:             p.ID,
 		ProductName:    p.ProductName,
-		Price:          p.Price,
+		RentPrice:      p.RentPrice,
 		Detail:         p.Detail,
 		Note:           p.Note,
 		ProductPicture: p.ProductPicture,
@@ -45,7 +45,7 @@ func ToCoreArray(ap []Product) []domain.Core {
 		arr = append(arr, domain.Core{
 			ID:             val.ID,
 			ProductName:    val.ProductName,
-			Price:          val.Price,
+			RentPrice:      val.RentPrice,
 			Detail:         val.Detail,
 			Note:           val.Note,
 			ProductPicture: val.ProductPicture,
