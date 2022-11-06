@@ -51,7 +51,7 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "update")))
+		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "getdetails")))
 	}
 }
 
@@ -83,7 +83,7 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "register")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
@@ -108,7 +108,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 		}
 
-		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "update")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
