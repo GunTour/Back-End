@@ -1,7 +1,11 @@
 package main
 
 import (
-	"GunTour/config"
+  "GunTour/config"
+  
+	rd "GunTour/features/ranger/delivery"
+	rr "GunTour/features/ranger/repository"
+	rs "GunTour/features/ranger/services"
 	ad "GunTour/features/admin/delivery"
 	ar "GunTour/features/admin/repository"
 	as "GunTour/features/admin/services"
@@ -43,6 +47,10 @@ func main() {
 	ud.New(e, uService)
 	bd.New(e, bService)
 	ad.New(e, aService)
+
+	rRepo := rr.New(db)
+	rService := rs.New(rRepo)
+	rd.New(e, rService)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.ServerPort)))
 }
