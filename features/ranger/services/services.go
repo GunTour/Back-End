@@ -19,7 +19,7 @@ func New(repo domain.Repository) domain.Service {
 	return &rangerService{qry: repo}
 }
 
-func (rs *rangerService) Apply(data domain.Core, file multipart.File, fileheader *multipart.FileHeader) (domain.Core, error) {
+func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file multipart.File, fileheader *multipart.FileHeader) (domain.Core, error) {
 
 	if fileheader != nil {
 		res, err := helper.UploadDocs(file, fileheader)
@@ -32,7 +32,7 @@ func (rs *rangerService) Apply(data domain.Core, file multipart.File, fileheader
 	data.Status = "off"
 	data.StatusApply = "waiting"
 
-	res, err := rs.qry.Add(data)
+	res, err := rs.qry.Add(data, dataUser)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			return domain.Core{}, errors.New("rejected from database")

@@ -8,14 +8,16 @@ import (
 )
 
 type User struct {
-	ID          uint
+	gorm.Model
 	FullName    string
-	Dob         string
-	Address     string
+	Email       string `gorm:"unique"`
+	Password    string
+	Role        string
 	Phone       string
+	Address     string
+	Dob         string
 	Gender      string
 	UserPicture string
-	// Rangers  []Ranger `gorm:"foreignKey:UserID"`
 }
 
 type Ranger struct {

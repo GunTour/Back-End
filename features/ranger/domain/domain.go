@@ -3,15 +3,20 @@ package domain
 import (
 	"mime/multipart"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID          uint   `json:"id_user" form:"id_user"`
-	FullName    string `json:"fullname" form:"fullname"`
-	Dob         string `json:"dob" form:"dob"`
-	Address     string `json:"address" form:"address"`
-	Phone       string `json:"phone" form:"phone"`
-	Gender      string `json:"gender" form:"gender"`
+	gorm.Model
+	FullName    string
+	Email       string `gorm:"unique"`
+	Password    string
+	Role        string
+	Phone       string
+	Address     string
+	Dob         string
+	Gender      string
 	UserPicture string
 }
 
@@ -29,11 +34,11 @@ type Core struct {
 }
 
 type Repository interface {
-	Add(data Core) (Core, error)
+	Add(data Core, dataUser User) (Core, error)
 	GetAll(start time.Time, end time.Time) ([]Core, error)
 }
 
 type Service interface {
-	Apply(data Core, file multipart.File, fileheader *multipart.FileHeader) (Core, error)
+	Apply(data Core, dataUser User, file multipart.File, fileheader *multipart.FileHeader) (Core, error)
 	ShowAll(start time.Time, end time.Time) ([]Core, error)
 }
