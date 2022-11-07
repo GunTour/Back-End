@@ -46,7 +46,7 @@ func (uh *userHandler) Insert() echo.HandlerFunc {
 		if valid != "Valid" {
 			return c.JSON(http.StatusBadRequest, FailResponse(valid))
 		}
-
+		input.UserPicture = "https://guntour.s3.ap-southeast-1.amazonaws.com/posts/iTs1Ve2IJ71i6wSGzMBp-profile.jpg"
 		cnv := ToCore(input)
 		res, err := uh.srv.Insert(cnv)
 		if err != nil {

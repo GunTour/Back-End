@@ -131,7 +131,7 @@ func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 		err = bs.srv.DeleteData(uint(id))
 		log.Print(err)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusNoContent, FailResponse(err.Error()))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete data."))
 	}

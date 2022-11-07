@@ -6,12 +6,13 @@ import (
 )
 
 type User struct {
-	ID       uint   `json:"id_user" form:"id_user"`
-	FullName string `json:"fullname" form:"fullname"`
-	Dob      string `json:"dob" form:"dob"`
-	Address  string `json:"address" form:"address"`
-	Phone    string `json:"phone" form:"phone"`
-	Gender   string `json:"gender" form:"gender"`
+	ID          uint   `json:"id_user" form:"id_user"`
+	FullName    string `json:"fullname" form:"fullname"`
+	Dob         string `json:"dob" form:"dob"`
+	Address     string `json:"address" form:"address"`
+	Phone       string `json:"phone" form:"phone"`
+	Gender      string `json:"gender" form:"gender"`
+	UserPicture string
 }
 
 type Core struct {
@@ -29,10 +30,10 @@ type Core struct {
 
 type Repository interface {
 	Add(data Core) (Core, error)
-	GetAll() ([]Core, error)
+	GetAll(start time.Time, end time.Time) ([]Core, error)
 }
 
 type Service interface {
 	Apply(data Core, file multipart.File, fileheader *multipart.FileHeader) (Core, error)
-	ShowAll() ([]Core, error)
+	ShowAll(start time.Time, end time.Time) ([]Core, error)
 }
