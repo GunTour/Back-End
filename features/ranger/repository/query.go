@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/ranger/domain"
+	"errors"
 	"time"
 
 	"github.com/labstack/gommon/log"
@@ -16,9 +17,13 @@ func New(db *gorm.DB) domain.Repository {
 	return &repoQuery{db: db}
 }
 
-func (rq *repoQuery) Add(data domain.Core) (domain.Core, error) {
+func (rq *repoQuery) Add(data domain.Core, dataUser domain.User) (domain.Core, error) {
 
 	var cnv Ranger = FromCore(data)
+	if err := rq.db.Where("id=?", dataUser.ID).Updates(&dataUser).Error; err != nil {
+		log.Error("error on updates users", err.Error())
+		return domain.Core{}, err
+	}
 
 	rq.db.Where("user_id = ?", cnv.UserID).Delete(&Ranger{})
 
@@ -44,10 +49,10 @@ func (rq *repoQuery) GetAll(start time.Time, end time.Time) ([]domain.Core, erro
 	log.Print(start, end)
 	rq.db.Model(&Booking{}).Where("date_start BETWEEN ? AND ? OR date_end BETWEEN ? AND ?",
 		start, end, start, end).Distinct("id_ranger").Select("id_ranger").Find(&idRanger)
-	log.Print(idRanger)
-	if err := rq.db.Not(&idRanger).Preload("User").Find(&data).Error; err != nil {
-		log.Error("error on get all ranger", err.Error())
-		return nil, err
+
+	err := rq.db.Not(&idRanger).Preload("User").Find(&data)
+	if err.RowsAffected == 0 {
+		return nil, errors.New("not found")
 	}
 
 	res := ToCoreArray(data)

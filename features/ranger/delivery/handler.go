@@ -46,8 +46,8 @@ func (rh *rangerHandler) Apply() echo.HandlerFunc {
 				return c.JSON(http.StatusBadRequest, FailResponse("must submit rate per day"))
 			}
 
-			cnv := ToCore(input)
-			res, err := rh.srv.Apply(cnv, file, fileheader)
+			cnv, cnvUser := ToCore(input)
+			res, err := rh.srv.Apply(cnv, cnvUser, file, fileheader)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 			}
