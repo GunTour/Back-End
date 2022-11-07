@@ -5,10 +5,16 @@ import (
 	"GunTour/utils/middlewares"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+)
+
+var (
+	validate = validator.New()
 )
 
 type rangerHandler struct {
@@ -36,16 +42,17 @@ func (rh *rangerHandler) Apply() echo.HandlerFunc {
 				return c.JSON(http.StatusBadRequest, FailResponse("cannot bind input"))
 			}
 
+			_, err := c.FormFile("docs")
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, FailResponse("must insert document"))
+			}
 			file, fileheader, _ := c.Request().FormFile("docs")
 
-			// if input.Docs == "" {
-			// 	return c.JSON(http.StatusBadRequest, FailResponse("must submit document"))
-			// }
-
-			if input.Price == 0 {
-				return c.JSON(http.StatusBadRequest, FailResponse("must submit rate per day"))
+			er := validate.Struct(input)
+			if er != nil {
+				temp := strings.Split(er.Error(), "Error:")
+				return c.JSON(http.StatusBadRequest, FailResponse(temp[1]))
 			}
-
 			cnv, cnvUser := ToCore(input)
 			res, err := rh.srv.Apply(cnv, cnvUser, file, fileheader)
 			if err != nil {
@@ -68,10 +75,18 @@ func (rh *rangerHandler) ShowAll() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
 
 		} else if role == "pendaki" {
-			Start, _ := time.Parse("2006-01-02", c.QueryParam("date_start"))
-			End, _ := time.Parse("2006-01-02", c.QueryParam("date_end"))
+			Start, err := time.Parse("2006-01-02", c.QueryParam("date_start"))
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+			}
+			End, err := time.Parse("2006-01-02", c.QueryParam("date_end"))
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+			}
+
 			Start.AddDate(0, 0, -1)
 			End.AddDate(0, 0, 1)
+
 			res, err := rh.srv.ShowAll(Start, End)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, FailResponse("something went wrong"))

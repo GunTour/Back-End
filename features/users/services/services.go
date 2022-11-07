@@ -63,8 +63,8 @@ func (us *userService) Update(data domain.Core, file multipart.File, fileheader 
 
 	res, err := us.qry.Edit(data, id)
 	if err != nil {
-		if strings.Contains(err.Error(), "column") {
-			return domain.Core{}, errors.New("rejected from database")
+		if strings.Contains(err.Error(), "found") {
+			return domain.Core{}, errors.New("no data")
 		}
 		return domain.Core{}, errors.New("some problem on database")
 	}
@@ -93,8 +93,8 @@ func (us *userService) Login(input domain.Core) (domain.Core, error) {
 	if err != nil {
 		if strings.Contains(err.Error(), "table") {
 			return domain.Core{}, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
-			return domain.Core{}, errors.New("no data")
+		} else if strings.Contains(err.Error(), "an invalid") {
+			return domain.Core{}, errors.New("an invalid client request")
 		}
 	}
 

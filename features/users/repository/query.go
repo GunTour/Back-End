@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/users/domain"
+	"errors"
 
 	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
@@ -33,9 +34,9 @@ func (rq *repoQuery) Edit(data domain.Core, id int) (domain.Core, error) {
 
 	var cnv User = FromCore(data)
 
-	if err := rq.db.Table("users").Where("id = ?", id).Updates(&cnv).Error; err != nil {
-		log.Error("error on edit user", err.Error())
-		return domain.Core{}, err
+	err := rq.db.Where("id = ?", id).Updates(&cnv).Error
+	if err != nil {
+		return domain.Core{}, errors.New("no data")
 	}
 
 	if err := rq.db.First(&cnv, "id = ?", id).Error; err != nil {
@@ -66,9 +67,9 @@ func (rq *repoQuery) Login(input domain.Core) (domain.Core, error) {
 
 	var data User
 
-	if err := rq.db.First(&data, "email = ?", input.Email).Error; err != nil {
-		log.Error("error on login user", err.Error())
-		return domain.Core{}, err
+	err := rq.db.First(&data, "email = ?", input.Email)
+	if err.RowsAffected == 0 {
+		return domain.Core{}, errors.New("an invalid client request")
 	}
 
 	res := ToCore(data)
