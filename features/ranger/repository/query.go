@@ -41,9 +41,10 @@ func (rq *repoQuery) GetAll(start time.Time, end time.Time) ([]domain.Core, erro
 
 	var data []Ranger
 	var idRanger []uint
-
-	rq.db.Model(&Booking{}).Distinct("id_ranger").Select("id_ranger").Find(&idRanger)
-
+	log.Print(start, end)
+	rq.db.Model(&Booking{}).Where("date_start BETWEEN ? AND ? OR date_end BETWEEN ? AND ?",
+		start, end, start, end).Distinct("id_ranger").Select("id_ranger").Find(&idRanger)
+	log.Print(idRanger)
 	if err := rq.db.Not(&idRanger).Preload("User").Find(&data).Error; err != nil {
 		log.Error("error on get all ranger", err.Error())
 		return nil, err

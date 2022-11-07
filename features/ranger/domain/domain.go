@@ -6,12 +6,13 @@ import (
 )
 
 type User struct {
-	ID       uint   `json:"id_user" form:"id_user"`
-	FullName string `json:"fullname" form:"fullname"`
-	Dob      string `json:"dob" form:"dob"`
-	Address  string `json:"address" form:"address"`
-	Phone    string `json:"phone" form:"phone"`
-	Gender   string `json:"gender" form:"gender"`
+	ID          uint   `json:"id_user" form:"id_user"`
+	FullName    string `json:"fullname" form:"fullname"`
+	Dob         string `json:"dob" form:"dob"`
+	Address     string `json:"address" form:"address"`
+	Phone       string `json:"phone" form:"phone"`
+	Gender      string `json:"gender" form:"gender"`
+	UserPicture string
 }
 
 type Core struct {
