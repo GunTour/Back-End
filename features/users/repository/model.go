@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/users/domain"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +18,46 @@ type User struct {
 	Dob         string
 	Gender      string
 	UserPicture string
-	Token       string `gorm:"-:migration;<-:false"`
+	Token       string    `gorm:"-:migration;<-:false"`
+	Bookings    []Booking `gorm:"foreignKey:IdUser"`
+}
+
+type Booking struct {
+	gorm.Model
+	IdUser          uint
+	DateStart       time.Time
+	DateEnd         time.Time
+	Entrance        string
+	Ticket          int
+	IdRanger        uint
+	GrossAmount     int
+	Token           string
+	OrderId         string
+	Link            string
+	StatusBooking   string
+	StatusPendakian string
+	FullName        string           `gorm:"-:migration;<-:false"`
+	Phone           string           `gorm:"-:migration;<-:false"`
+	BookingProducts []BookingProduct `gorm:"foreignKey:IdBooking"`
+}
+
+type Product struct {
+	gorm.Model
+	ProductName    string
+	RentPrice      int
+	Detail         string
+	Note           string
+	ProductPicture string
+	Products       []BookingProduct `gorm:"foreignKey:IdProduct"`
+}
+
+type BookingProduct struct {
+	gorm.Model
+	IdBooking   uint
+	IdProduct   uint
+	ProductQty  int
+	ProductName string `gorm:"-:migration;<-:false"`
+	RentPrice   int    `gorm:"-:migration;<-:false"`
 }
 
 func FromCore(uc domain.Core) User {
