@@ -9,13 +9,13 @@ type RegisterFormat struct {
 	IdUser        uint             `json:"id_user" form:"id_user"`
 	Start         string           `json:"date_start" form:"date_start"`
 	End           string           `json:"date_end" form:"date_end"`
-	Entrance      string           `json:"entrance" form:"entrance"`
-	Ticket        int              `json:"ticket" form:"ticket"`
+	Entrance      string           `json:"entrance" form:"entrance" validate:"required"`
+	Ticket        int              `json:"ticket" form:"ticket" validate:"required"`
 	OrderId       string           `json:"order_id" form:"order_id"`
 	Product       []BookingProduct `json:"product" form:"product"`
 	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
 	StatusBooking string           `json:"status_booking" form:"status_booking"`
-	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
+	GrossAmount   int              `json:"gross_amount" form:"gross_amount" validate:"required"`
 	DateStart     time.Time
 	DateEnd       time.Time
 }

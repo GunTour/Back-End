@@ -34,7 +34,7 @@ func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
 		res, err := ah.srv.GetPendaki()
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get list pendaki", ToResponseArray(res, "getpendaki")))
 	}
@@ -49,7 +49,7 @@ func (ah *adminHandler) GetBooking() echo.HandlerFunc {
 		res, err := ah.srv.GetBooking()
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success show all booking data", ToResponseArray(res, "getbooking")))
 	}
@@ -66,7 +66,7 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		res, pages, totalPage, err := ah.srv.GetProduct(page)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", pages, totalPage, "getproduct")))
 	}
@@ -89,7 +89,7 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 		res, err := ah.srv.AddProduct(cnv, file, fileheader)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success add product", ToResponse(res, "addproduct")))
 	}
@@ -116,7 +116,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 		res, err := ah.srv.EditProduct(cnv, file, fileheader)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success update product", ToResponse(res, "update")))
 	}
