@@ -4,11 +4,10 @@ import (
 	"GunTour/features/ranger/domain"
 	"GunTour/utils/helper"
 	"errors"
+	"log"
 	"mime/multipart"
 	"strings"
 	"time"
-
-	"github.com/labstack/gommon/log"
 )
 
 type rangerService struct {
@@ -22,10 +21,7 @@ func New(repo domain.Repository) domain.Service {
 func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file multipart.File, fileheader *multipart.FileHeader) (domain.Core, error) {
 
 	if fileheader != nil {
-		res, err := helper.UploadDocs(file, fileheader)
-		if err != nil {
-			return domain.Core{}, errors.New("error on upload docs")
-		}
+		res, _ := helper.UploadDocs(file, fileheader)
 		data.Docs = res
 	}
 
@@ -34,9 +30,6 @@ func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file mult
 
 	res, err := rs.qry.Add(data, dataUser)
 	if err != nil {
-		if strings.Contains(err.Error(), "duplicate") {
-			return domain.Core{}, errors.New("rejected from database")
-		}
 		return domain.Core{}, errors.New("some problem on database")
 	}
 	return res, nil
@@ -47,16 +40,11 @@ func (rs *rangerService) ShowAll(start time.Time, end time.Time) ([]domain.Core,
 
 	res, err := rs.qry.GetAll(start, end)
 	if err != nil {
-		if strings.Contains(err.Error(), "table") {
-			return nil, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
+		log.Print(err.Error())
+		if strings.Contains(err.Error(), "found") {
 			return nil, errors.New("no data")
 		}
-	}
-
-	if len(res) == 0 {
-		log.Info("no data")
-		return nil, errors.New("no data")
+		return nil, errors.New("there is problem on server")
 	}
 
 	return res, nil
