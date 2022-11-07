@@ -19,8 +19,9 @@ func New(dbConn *gorm.DB) domain.Repository {
 
 func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 	var resQry []Booking
-	if err := rq.db.Where("id_user=?", idUser).Find(&resQry).Error; err != nil {
-		return nil, err
+	err := rq.db.Where("id_user=?", idUser).Find(&resQry)
+	if err.RowsAffected == 0 {
+		return []domain.Core{}, errors.New("no data")
 	}
 
 	// selesai dari DB
@@ -31,19 +32,18 @@ func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 	var resQry Booking
 	var resProductQry []BookingProduct
-	if err := rq.db.Select("bookings.id", "bookings.id_ranger", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end",
+	err := rq.db.Select("bookings.id", "bookings.id_ranger", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end",
 		"bookings.ticket", "bookings.gross_amount", "bookings.order_id", "bookings.link", "bookings.status_booking").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_ranger").
-		Where("bookings.id = ?", int(idBooking)).Find(&resQry).Scan(&resQry).Error; err != nil {
-		return domain.Core{}, err
+		Where("bookings.id = ?", int(idBooking)).Find(&resQry).Scan(&resQry)
+	if err.RowsAffected == 0 {
+		return domain.Core{}, errors.New("no data")
 	}
 
-	if err := rq.db.Select("booking_products.id", "booking_products.id_booking", "booking_products.id_product",
+	rq.db.Select("booking_products.id", "booking_products.id_booking", "booking_products.id_product",
 		"booking_products.product_qty", "products.product_name", "products.rent_price").
 		Order("booking_products.created_at desc").Joins("left join products on products.id = booking_products.id_product").
-		Where("id_booking=?", idBooking).Find(&resProductQry).Scan(&resProductQry).Error; err != nil {
-		return domain.Core{}, err
-	}
+		Where("id_booking=?", idBooking).Find(&resProductQry).Scan(&resProductQry)
 
 	// selesai dari DB
 	res := ToDomainCore(resQry, resProductQry)
@@ -52,10 +52,12 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 
 func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 	var resQry []Booking
-	if err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end", "bookings.ticket").
+	err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end", "bookings.ticket").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
-		Where("bookings.id_ranger = ?", int(idRanger)).Find(&resQry).Scan(&resQry).Error; err != nil {
-		return nil, err
+		Where("bookings.id_ranger = ?", int(idRanger)).Find(&resQry).Scan(&resQry)
+
+	if err.RowsAffected == 0 {
+		return []domain.Core{}, errors.New("no data")
 	}
 
 	// selesai dari DB
@@ -91,9 +93,11 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
 	var productCnv []BookingProduct
-	if err := rq.db.Where("id = ?", cnv.ID).Updates(&cnv).Error; err != nil {
-		return domain.Core{}, err
+	err := rq.db.Where("id = ?", cnv.ID).Updates(&cnv)
+	if err.RowsAffected == 0 {
+		return domain.Core{}, errors.New("no data")
 	}
+
 	rq.db.Where("id=?", cnv.ID).Find(&cnv)
 
 	if newBooking.BookingProductCores != nil {
