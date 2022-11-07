@@ -3,9 +3,10 @@ package delivery
 import "GunTour/features/users/domain"
 
 type RegisterFormat struct {
-	FullName string `json:"fullname" form:"fullname" validate:"required,alpha,min=4,max=15"`
-	Email    string `json:"email" form:"email" validate:"required,email"`
-	Password string `json:"password" form:"password"`
+	FullName    string `json:"fullname" form:"fullname" validate:"required,alpha,min=4,max=15"`
+	Email       string `json:"email" form:"email" validate:"required,email"`
+	Password    string `json:"password" form:"password"`
+	UserPicture string
 }
 
 type LoginFormat struct {
@@ -36,7 +37,7 @@ func ToCore(i interface{}) domain.Core {
 	switch i.(type) {
 	case RegisterFormat:
 		cnv := i.(RegisterFormat)
-		return domain.Core{FullName: cnv.FullName, Email: cnv.Email, Password: cnv.Password}
+		return domain.Core{FullName: cnv.FullName, Email: cnv.Email, Password: cnv.Password, UserPicture: cnv.UserPicture}
 	case LoginFormat:
 		cnv := i.(LoginFormat)
 		return domain.Core{Email: cnv.Email, Password: cnv.Password}
