@@ -36,6 +36,6 @@ func MigrateDB(db *gorm.DB) {
 	db.AutoMigrate(&ur.User{})
 	db.AutoMigrate(&rr.Ranger{})
 	db.AutoMigrate(&ur.Booking{})
-	db.AutoMigrate(&ur.BookingProduct{})
 	db.AutoMigrate(&ur.Product{})
+	db.AutoMigrate(&ur.BookingProduct{})
 }

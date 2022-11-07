@@ -6,6 +6,7 @@ import (
 	"errors"
 	"mime/multipart"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 )
@@ -42,9 +43,9 @@ func (rs *rangerService) Apply(data domain.Core, file multipart.File, fileheader
 
 }
 
-func (rs *rangerService) ShowAll() ([]domain.Core, error) {
+func (rs *rangerService) ShowAll(start time.Time, end time.Time) ([]domain.Core, error) {
 
-	res, err := rs.qry.GetAll()
+	res, err := rs.qry.GetAll(start, end)
 	if err != nil {
 		if strings.Contains(err.Error(), "table") {
 			return nil, errors.New("database error")

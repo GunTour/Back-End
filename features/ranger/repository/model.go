@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/ranger/domain"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -25,6 +26,22 @@ type Ranger struct {
 	StatusApply string
 	UserID      uint
 	User        User `gorm:"foreignKey:UserID"`
+}
+
+type Booking struct {
+	gorm.Model
+	IdUser          uint
+	DateStart       time.Time
+	DateEnd         time.Time
+	Entrance        string
+	Ticket          int
+	IdRanger        uint
+	GrossAmount     int
+	Token           string
+	OrderId         string
+	Link            string
+	StatusBooking   string
+	StatusPendakian string
 }
 
 func FromCore(rc domain.Core) Ranger {

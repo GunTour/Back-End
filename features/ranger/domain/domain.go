@@ -29,10 +29,10 @@ type Core struct {
 
 type Repository interface {
 	Add(data Core) (Core, error)
-	GetAll() ([]Core, error)
+	GetAll(start time.Time, end time.Time) ([]Core, error)
 }
 
 type Service interface {
 	Apply(data Core, file multipart.File, fileheader *multipart.FileHeader) (Core, error)
-	ShowAll() ([]Core, error)
+	ShowAll(start time.Time, end time.Time) ([]Core, error)
 }

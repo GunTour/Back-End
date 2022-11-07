@@ -5,6 +5,7 @@ import (
 	"GunTour/utils/middlewares"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -67,7 +68,9 @@ func (rh *rangerHandler) ShowAll() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
 
 		} else if role == "pendaki" {
-			res, err := rh.srv.ShowAll()
+			Start, _ := time.Parse("2021-02-04", c.QueryParam("date_start"))
+			End, _ := time.Parse("2021-02-04", c.QueryParam("date_start"))
+			res, err := rh.srv.ShowAll(Start, End)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, FailResponse("something went wrong"))
 			}

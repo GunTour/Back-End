@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/ranger/domain"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
@@ -36,17 +37,20 @@ func (rq *repoQuery) Add(data domain.Core) (domain.Core, error) {
 
 }
 
-func (rq *repoQuery) GetAll() ([]domain.Core, error) {
+func (rq *repoQuery) GetAll(start time.Time, end time.Time) ([]domain.Core, error) {
 
 	var data []Ranger
+	var idRanger []uint
 
-	if err := rq.db.Preload("User").Find(&data).Error; err != nil {
+	rq.db.Model(&Booking{}).Distinct("id_ranger").Select("id_ranger").Find(&idRanger)
+
+	if err := rq.db.Not(&idRanger).Preload("User").Find(&data).Error; err != nil {
 		log.Error("error on get all ranger", err.Error())
 		return nil, err
 	}
 
 	res := ToCoreArray(data)
-	log.Print(res)
+
 	return res, nil
 
 }
