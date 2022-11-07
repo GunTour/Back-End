@@ -6,6 +6,7 @@ import (
 	"GunTour/utils/middlewares"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -140,6 +141,9 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		cnv := ToCore(input)
 		res, err := uh.srv.Login(cnv)
 		if err != nil {
+			if strings.Contains(err.Error(), "an invalid client request") {
+				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server"))
 		}
 

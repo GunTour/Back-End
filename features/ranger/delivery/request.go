@@ -2,20 +2,26 @@ package delivery
 
 import (
 	"GunTour/features/ranger/domain"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type ApplyFormat struct {
-	Fullname string `json:"fullname" form:"fullname"`
-	Phone    string `json:"phone" form:"phone"`
-	Ttl      string `json:"ttl" form:"ttl"`
-	Gender   string `json:"gender" form:"gender"`
-	Address  string `json:"address" form:"address"`
+	Fullname string `json:"fullname" form:"fullname" validate:"required"`
+	Phone    string `json:"phone" form:"phone" validate:"required"`
+	Ttl      string `json:"ttl" form:"ttl" validate:"required"`
+	Gender   string `json:"gender" form:"gender" validate:"required"`
+	Address  string `json:"address" form:"address" validate:"required"`
 	Docs     string `json:"docs" form:"docs"`
-	Price    uint   `json:"price/day" form:"price/day"`
+	Price    uint   `json:"price/day" form:"price/day" validate:"required"`
 	Detail   string `json:"detail" form:"detail"`
 	UserID   uint   `json:"id_user" form:"id_user"`
+}
+
+type GetFormat struct {
+	StartDate time.Time `validate:"required"`
+	EndDate   time.Time `validate:"required"`
 }
 
 func ToCore(i interface{}) (domain.Core, domain.User) {
