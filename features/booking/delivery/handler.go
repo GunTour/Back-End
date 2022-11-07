@@ -10,9 +10,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+)
+
+var (
+	validate = validator.New()
 )
 
 type bookingHandler struct {
@@ -36,7 +41,7 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 		res, err := bs.srv.GetAll(uint(id))
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking history", ToResponseArray(res, "getall")))
 	}
@@ -50,7 +55,7 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 		}
 		res, err := bs.srv.GetDetail(uint(idBooking))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "getdetails")))
 	}
@@ -61,7 +66,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 		id, _ := middlewares.ExtractToken(c)
 		res, err := bs.srv.GetRangerBooking(uint(id))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking ranger", ToResponseArray(res, "getranger")))
 	}
@@ -72,6 +77,11 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		var input RegisterFormat
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
+		}
+
+		er := validate.Struct(input)
+		if er != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
 		}
 
 		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
@@ -114,7 +124,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 
 		res, err := bs.srv.UpdateData(cnv)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "getdetails")))
