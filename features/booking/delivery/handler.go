@@ -37,7 +37,12 @@ func New(e *echo.Echo, srv domain.Services) {
 
 func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := middlewares.ExtractToken(c)
+		id, role := middlewares.ExtractToken(c)
+		if id == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "pendaki" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
 		res, err := bs.srv.GetAll(uint(id))
 
 		if err != nil {
@@ -49,13 +54,20 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 
 func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		id, role := middlewares.ExtractToken(c)
+		if id == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "pendaki" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
+
 		idBooking, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("failed to get id booking"))
 		}
 		res, err := bs.srv.GetDetail(uint(idBooking))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
+			return c.JSON(http.StatusNotFound, FailResponse("data not found"))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking detail", ToResponse(res, "getdetails")))
 	}
@@ -63,7 +75,13 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 
 func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := middlewares.ExtractToken(c)
+		id, role := middlewares.ExtractToken(c)
+		if id == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "ranger" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
+
 		res, err := bs.srv.GetRangerBooking(uint(id))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
@@ -75,6 +93,14 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input RegisterFormat
+
+		IdUser, role := middlewares.ExtractToken(c)
+		if IdUser == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "pendaki" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
+
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
@@ -89,8 +115,6 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
 		input.StatusBooking = "unpaid"
-
-		IdUser, _ := middlewares.ExtractToken(c)
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
 		res, err := bs.srv.InsertData(cnv)
@@ -105,6 +129,13 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UpdateFormat
+		IdUser, role := middlewares.ExtractToken(c)
+		if IdUser == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "pendaki" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
+
 		id, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
 			return c.JSON(http.StatusBadGateway, FailResponse("failed to get id booking"))
@@ -115,11 +146,14 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
+		if input.Start == "" && input.End == "" && input.Entrance == "" && input.Ticket == 0 && input.Product == nil && input.GrossAmount == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+		}
+
 		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
 		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
 
-		idUser, _ := middlewares.ExtractToken(c)
-		input.IdUser = uint(idUser)
+		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
 
 		res, err := bs.srv.UpdateData(cnv)
@@ -134,14 +168,21 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, err := strconv.Atoi(c.Param("id_booking"))
+		IdUser, role := middlewares.ExtractToken(c)
+		if IdUser == 0 {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
+		} else if role != "pendaki" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+		}
+
 		if err != nil {
 			return errors.New("failed to get id booking")
 		}
-		log.Print(id)
+
 		err = bs.srv.DeleteData(uint(id))
-		log.Print(err)
+
 		if err != nil {
-			return c.JSON(http.StatusNoContent, FailResponse(err.Error()))
+			return c.JSON(http.StatusNotFound, FailResponse("data not found"))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete data."))
 	}
