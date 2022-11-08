@@ -16,6 +16,13 @@ func SuccessResponseProduct(data interface{}) interface{} {
 	return data
 }
 
+func SuccessResponseRanger(msg string, data interface{}, mssg string, datas interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"data_apply":  SuccessResponse(mssg, datas),
+		"data_ranger": SuccessResponse(msg, data),
+	}
+}
+
 func SuccessResponseNoData(msg string) map[string]interface{} {
 	return map[string]interface{}{
 		"message": msg,
@@ -91,6 +98,38 @@ type ProductResponse struct {
 	ProductPicture string `json:"product_picture" form:"product_picture"`
 }
 
+type RangerResponse struct {
+	ID       uint            `json:"id_ranger" form:"id_ranger"`
+	User     domain.UserCore `json:"-" form:"-"`
+	FullName string          `json:"fullname" form:"fullname"`
+	Phone    string          `json:"phone" form:"phone"`
+	Status   string          `json:"status" form:"status"`
+}
+
+type RangerApplyResponse struct {
+	ID       uint            `json:"id_ranger" form:"id_ranger"`
+	User     domain.UserCore `json:"-" form:"-"`
+	FullName string          `json:"fullname" form:"fullname"`
+	Address  string          `json:"address" form:"address"`
+	Phone    string          `json:"phone" form:"phone"`
+	Gender   string          `json:"gender" form:"gender"`
+	Docs     string          `json:"docs" form:"docs"`
+}
+
+type RangerAccepted struct {
+	ID     uint   `json:"id_ranger" form:"id_ranger"`
+	Status string `json:"status_apply" form:"status_apply"`
+}
+
+type GetRangerArrayResponse struct {
+	Message      string                `json:"message" form:"message"`
+	DataRanger   string                `json:"data_ranger" form:"data_ranger"`
+	Data         []RangerResponse      `json:"data" form:"data"`
+	MessageArray string                `json:"message" form:"message"`
+	DataArray    string                `json:"data_apply" form:"data_apply"`
+	DataApply    []RangerApplyResponse `json:"data" form:"data"`
+}
+
 func ToResponse(core interface{}, code string) interface{} {
 	var res interface{}
 	switch code {
@@ -100,6 +139,9 @@ func ToResponse(core interface{}, code string) interface{} {
 	case "update":
 		cnv := core.(domain.ProductCore)
 		res = ProductResponse{ID: cnv.ID, ProductName: cnv.ProductName, RentPrice: cnv.RentPrice, Detail: cnv.Detail, Note: cnv.Note, ProductPicture: cnv.ProductPicture}
+	case "ranger":
+		cnv := core.(domain.RangerCore)
+		res = RangerAccepted{ID: cnv.ID, Status: cnv.StatusApply}
 	}
 
 	return res
@@ -132,9 +174,38 @@ func ToResponseArray(core interface{}, code string) interface{} {
 			arr = append(arr, ProductResponse{ID: uint(cnv.ID), ProductName: cnv.ProductName, RentPrice: cnv.RentPrice,
 				Detail: cnv.Detail, Note: cnv.Note, ProductPicture: cnv.ProductPicture})
 		}
+	case "ranger":
+		var arr []RangerResponse
+		cnv := core.([]domain.RangerCore)
+		for _, val := range cnv {
+			arr = append(arr, RangerResponse{ID: val.ID, FullName: val.User.FullName, Phone: val.User.Phone, Status: val.Status})
+		}
+		res = arr
+	case "rangerapply":
+		var arr []RangerApplyResponse
+		conv := core.([]domain.RangerCore)
+		for _, val := range conv {
+			arr = append(arr, RangerApplyResponse{ID: val.ID, FullName: val.User.FullName, Address: val.User.Address, Phone: val.User.Phone, Gender: val.User.Gender, Docs: val.Docs})
+		}
 		res = arr
 	}
 	return res
+}
+
+func ToResponseRanger(core interface{}, msg string, cores interface{}, mssg string) interface{} {
+	var array []RangerResponse
+	cnv := core.([]domain.RangerCore)
+	for _, val := range cnv {
+		array = append(array, RangerResponse{ID: val.ID, FullName: val.User.FullName, Phone: val.User.Phone, Status: val.Status})
+	}
+
+	var arr []RangerApplyResponse
+	conv := core.([]domain.RangerCore)
+	for _, val := range conv {
+		arr = append(arr, RangerApplyResponse{ID: val.ID, FullName: val.User.FullName, Address: val.User.Address, Phone: val.User.Phone, Gender: val.User.Gender, Docs: val.Docs})
+	}
+
+	return GetRangerArrayResponse{Message: msg, Data: array, MessageArray: mssg, DataApply: arr}
 }
 
 func ToResponseProduct(core interface{}, message string, pages int, totalPage int, code string) interface{} {

@@ -47,6 +47,17 @@ type ProductCore struct {
 	ProductPicture string
 }
 
+type RangerCore struct {
+	ID          uint
+	UserID      uint
+	Docs        string
+	Price       uint
+	Detail      string
+	Status      string
+	StatusApply string
+	User        UserCore
+}
+
 type Repository interface {
 	GetPendaki() ([]BookingCore, error)
 	// GetRanger(id uint) ([]UserCore, []UserCore, error)
@@ -55,6 +66,8 @@ type Repository interface {
 	InsertProduct(newProduct ProductCore) (ProductCore, error)
 	UpdateProduct(newProduct ProductCore) (ProductCore, error)
 	DeleteProduct(id int) error
+	GetAllRanger() ([]RangerCore, []RangerCore, error)
+	EditRanger(data RangerCore, id uint) (RangerCore, error)
 }
 
 type Services interface {
@@ -65,6 +78,8 @@ type Services interface {
 	AddProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	EditProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	RemoveProduct(id int) error
+	ShowAllRanger() ([]RangerCore, []RangerCore, error)
+	UpdateRanger(data RangerCore, id uint) (RangerCore, error)
 }
 
 type Handler interface {
