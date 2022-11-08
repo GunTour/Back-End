@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -110,8 +111,16 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
 		}
 
-		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
-		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
+		input.DateStart, er = time.Parse("2006-01-02", input.Start)
+		if er != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+		}
+
+		input.DateEnd, er = time.Parse("2006-01-02", input.End)
+		if er != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+		}
+
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
 		input.StatusBooking = "unpaid"
@@ -158,6 +167,9 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 
 		res, err := bs.srv.UpdateData(cnv)
 		if err != nil {
+			if strings.Contains(err.Error(), "data") {
+				return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 

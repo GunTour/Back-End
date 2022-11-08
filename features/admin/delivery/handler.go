@@ -151,6 +151,9 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 		}
 
 		file, fileheader, _ := c.Request().FormFile("product_picture")
+		if input.ProductName == "" && input.Detail == "" && input.RentPrice == 0 && file == nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+		}
 
 		cnv := ToDomain(input)
 		res, err := ah.srv.EditProduct(cnv, file, fileheader)
@@ -175,7 +178,7 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 		err := ah.srv.RemoveProduct(id)
 
 		if err != nil {
-			return c.JSON(http.StatusNoContent, FailResponse(err.Error()))
+			return c.JSON(http.StatusNotFound, FailResponse("data not found."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete product"))
 	}
@@ -214,13 +217,19 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
 		}
 
-		if input.StatusApply != "accepted" {
-			return c.JSON(http.StatusBadRequest, ("wrong input, type accepted to accept"))
+		validApply := input.StatusApply == "accepted" || input.StatusApply == "rejected"
+		validStatus := input.Status == "off" || input.Status == "duty" || input.Status == "available"
+
+		if !validApply && !validStatus {
+			return c.JSON(http.StatusBadRequest, ("an invalid client request."))
 		}
 
 		cnv := ToDomainRanger(input)
 		res, err := ah.srv.UpdateRanger(cnv, uint(rangerId))
 		if err != nil {
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
