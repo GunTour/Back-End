@@ -174,7 +174,7 @@ func ToDomainRangerArray(ar []Ranger) []domain.RangerCore {
 			Detail:      val.Detail,
 			Status:      val.Status,
 			StatusApply: val.StatusApply,
-			User:        domain.UserCore{},
+			User:        domain.UserCore{FullName: val.User.FullName, Address: val.User.Address, Phone: val.User.Phone, Gender: val.User.Gender},
 		})
 	}
 	return arr
