@@ -46,6 +46,7 @@ type GetId struct {
 type RangerFormat struct {
 	ID          uint   `json:"id_ranger" form:"id_ranger"`
 	UserID      uint   `json:"id_user" form:"id_user"`
+	Status      string `json:"status" form:"status"`
 	StatusApply string `json:"status_apply" form:"status_apply"`
 	Role        string
 }
@@ -79,7 +80,7 @@ func ToDomainRanger(i interface{}) domain.RangerCore {
 	switch i.(type) {
 	case RangerFormat:
 		cnv := i.(RangerFormat)
-		return domain.RangerCore{ID: cnv.ID, UserID: cnv.UserID, StatusApply: cnv.StatusApply, User: domain.UserCore{Role: "ranger"}}
+		return domain.RangerCore{ID: cnv.ID, UserID: cnv.UserID, Status: cnv.Status, StatusApply: cnv.StatusApply, User: domain.UserCore{Role: "ranger"}}
 	}
 	return domain.RangerCore{}
 }

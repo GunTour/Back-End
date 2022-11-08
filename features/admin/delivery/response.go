@@ -127,8 +127,9 @@ type RangerApplyResponse struct {
 }
 
 type RangerAccepted struct {
-	ID     uint   `json:"id_ranger" form:"id_ranger"`
-	Status string `json:"status_apply" form:"status_apply"`
+	ID          uint   `json:"id_ranger" form:"id_ranger"`
+	Status      string `json:"status" form:"status"`
+	StatusApply string `json:"status_apply" form:"status_apply"`
 }
 
 type GetRangerArrayResponse struct {
@@ -151,7 +152,7 @@ func ToResponse(core interface{}, code string) interface{} {
 		res = ProductResponse{ID: cnv.ID, ProductName: cnv.ProductName, RentPrice: cnv.RentPrice, Detail: cnv.Detail, Note: cnv.Note, ProductPicture: cnv.ProductPicture}
 	case "ranger":
 		cnv := core.(domain.RangerCore)
-		res = RangerAccepted{ID: cnv.ID, Status: cnv.StatusApply}
+		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply}
 	}
 
 	return res

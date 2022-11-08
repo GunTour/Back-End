@@ -103,10 +103,7 @@ func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCor
 func (as *adminService) UpdateRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
 	res, err := as.qry.EditRanger(data, id)
 	if err != nil {
-		if strings.Contains(err.Error(), "column") {
-			return domain.RangerCore{}, errors.New("rejected from database")
-		}
-		return domain.RangerCore{}, errors.New("some problem on database")
+		return domain.RangerCore{}, err
 	}
 
 	return res, nil

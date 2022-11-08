@@ -100,9 +100,8 @@ func (us *userService) Login(input domain.Core) (domain.Core, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(input.Password))
 	if err != nil {
-		return domain.Core{}, errors.New("password not match")
+		return domain.Core{}, errors.New("an invalid client request")
 	}
-
 	res.Token = middlewares.GenerateToken(res.ID, res.Role)
 
 	return res, nil
