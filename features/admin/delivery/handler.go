@@ -25,7 +25,6 @@ func New(e *echo.Echo, srv domain.Services) {
 	handler := adminHandler{srv: srv}
 	e.GET("/admin/pendaki", handler.GetPendaki(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PENDAKI
 	e.POST("/admin/pendaki", handler.AddClimber(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // GET LIST PENDAKI
-	e.GET("/admin/booking", handler.GetBooking(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST BOOKING
 	e.GET("/admin/product", handler.GetProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PRODUCT
 	e.POST("/admin/product", handler.AddProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD NEW PRODUCT
 	e.PUT("/admin/product/:id_product", handler.EditProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))      // UPDATE DATA PRODUCT
@@ -74,21 +73,6 @@ func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
-	}
-}
-
-func (ah *adminHandler) GetBooking() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		_, role := middlewares.ExtractToken(c)
-		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
-		}
-		res, err := ah.srv.GetBooking()
-
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
-		}
-		return c.JSON(http.StatusOK, SuccessResponse("success show all booking data", ToResponseArray(res, "getbooking")))
 	}
 }
 

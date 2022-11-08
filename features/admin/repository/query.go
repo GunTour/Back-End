@@ -47,20 +47,6 @@ func (rq *repoQuery) InsertClimber(data domain.ClimberCore) (domain.ClimberCore,
 	return data, nil
 }
 
-func (rq *repoQuery) GetBooking() ([]domain.BookingCore, error) {
-	var resQry []Booking
-	if err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "bookings.date_start", "bookings.date_end",
-		"bookings.entrance", "bookings.ticket").
-		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
-		Find(&resQry).Scan(&resQry).Error; err != nil {
-		return nil, err
-	}
-
-	// selesai dari DB
-	res := ToDomainBooking(resQry)
-	return res, nil
-}
-
 func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	var resQry []Product
 	var sum float64
