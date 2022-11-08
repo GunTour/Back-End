@@ -77,6 +77,10 @@ func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error
 		totalPage = 1
 	}
 
+	if page > int(totalPage) {
+		return nil, 0, 0, errors.New("page not found")
+	}
+
 	// selesai dari DB
 	res := ToDomainProductArr(resQry)
 	return res, page, int(totalPage), nil

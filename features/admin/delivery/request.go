@@ -5,10 +5,10 @@ import (
 )
 
 type RegisterFormat struct {
-	ProductName    string `json:"product_name" form:"product_name"`
-	RentPrice      int    `json:"rent_price" form:"rent_price"`
-	Detail         string `json:"detail" form:"detail"`
-	Note           string `json:"note" form:"note"`
+	ProductName    string `json:"product_name" form:"product_name" validate:"required"`
+	RentPrice      int    `json:"rent_price" form:"rent_price" validate:"required"`
+	Detail         string `json:"detail" form:"detail" validate:"required"`
+	Note           string `json:"note" form:"note" validate:"required"`
 	ProductPicture string `json:"product_picture" form:"product_picture"`
 }
 

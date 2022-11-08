@@ -6,9 +6,15 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+)
+
+var (
+	validate = validator.New()
 )
 
 type adminHandler struct {
@@ -63,12 +69,18 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		if role != "admin" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
-		page, _ := strconv.Atoi(c.QueryParam("page"))
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("page must integer"))
+		}
 
 		res, pages, totalPage, err := ah.srv.GetProduct(page)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
+			if strings.Contains(err.Error(), "page") {
+				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			}
+			return c.JSON(http.StatusNotFound, FailResponse("no data."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", pages, totalPage, "getproduct")))
 	}
@@ -85,7 +97,17 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
+		er := validate.Struct(input)
+		if er != nil {
+			temp := strings.Split(er.Error(), "Error:")
+			return c.JSON(http.StatusBadRequest, FailResponse(temp[1]))
+		}
+
 		file, fileheader, _ := c.Request().FormFile("product_picture")
+		_, err := c.FormFile("product_picture")
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("must insert product picture"))
+		}
 
 		cnv := ToDomain(input)
 		res, err := ah.srv.AddProduct(cnv, file, fileheader)
@@ -106,7 +128,10 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
 
-		id, _ := strconv.Atoi(c.Param("id_product"))
+		id, err := strconv.Atoi(c.Param("id_product"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("invalid id"))
+		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
@@ -118,7 +143,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 		res, err := ah.srv.EditProduct(cnv, file, fileheader)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
+			return c.JSON(http.StatusNotFound, FailResponse("data not found."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success update product", ToResponse(res, "update")))
 	}
@@ -130,7 +155,10 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 		if role != "admin" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
-		id, _ := strconv.Atoi(c.Param("id_product"))
+		id, er := strconv.Atoi(c.Param("id_product"))
+		if er != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("invalid id"))
+		}
 		err := ah.srv.RemoveProduct(id)
 
 		if err != nil {

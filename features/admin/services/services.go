@@ -41,6 +41,9 @@ func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
 func (as *adminService) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	res, pages, totalPage, err := as.qry.GetProduct(page)
 	if err != nil {
+		if strings.Contains(err.Error(), "found") {
+			return []domain.ProductCore{}, 0, 0, errors.New("page not found")
+		}
 		return []domain.ProductCore{}, 0, 0, errors.New("no data")
 	}
 
