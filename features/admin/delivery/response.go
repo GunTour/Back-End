@@ -35,6 +35,16 @@ func FailResponse(msg interface{}) map[string]interface{} {
 	}
 }
 
+type PendakiResponse struct {
+	Message string               `json:"message" form:"message"`
+	Climber ClimberResponse      `json:"climber" form:"climber"`
+	Data    []GetPendakiResponse `json:"data" form:"data"`
+}
+type ClimberResponse struct {
+	IsClimber     int `json:"is_climber" form:"is_climber"`
+	MaleClimber   int `json:"male_climber" form:"male_climber"`
+	FemaleClimber int `json:"female_climber" form:"female_climber"`
+}
 type GetPendakiResponse struct {
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
@@ -158,7 +168,9 @@ func ToResponseArray(core interface{}, code string) interface{} {
 				Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02")})
 		}
 		res = arr
-
+	case "climber":
+		val := core.(domain.ClimberCore)
+		res = ClimberResponse{IsClimber: val.IsClimber, MaleClimber: val.MaleClimber, FemaleClimber: val.FemaleClimber}
 	case "getbooking":
 		var arr []GetBookingResponse
 		val := core.([]domain.BookingCore)
@@ -217,4 +229,16 @@ func ToResponseProduct(core interface{}, message string, pages int, totalPage in
 	}
 
 	return GetProductResponse{Message: message, Page: pages, TotalPage: totalPage, Data: arr}
+}
+
+func ToResponsePendaki(core interface{}, climbercore interface{}, message string, code string) interface{} {
+	temp := climbercore.(domain.ClimberCore)
+	arrClimb := ClimberResponse{IsClimber: temp.IsClimber, MaleClimber: temp.MaleClimber, FemaleClimber: temp.FemaleClimber}
+	var arr []GetPendakiResponse
+	val := core.([]domain.BookingCore)
+	for _, cnv := range val {
+		arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone,
+			Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02")})
+	}
+	return PendakiResponse{Message: message, Climber: arrClimb, Data: arr}
 }

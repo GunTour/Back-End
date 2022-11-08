@@ -18,17 +18,25 @@ func New(repo domain.Repository) domain.Services {
 	}
 }
 
-func (as *adminService) GetPendaki() ([]domain.BookingCore, error) {
-	res, err := as.qry.GetPendaki()
+func (as *adminService) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
+	res, resClimb, err := as.qry.GetPendaki()
 	if err != nil {
-		return []domain.BookingCore{}, errors.New("no data")
+		return []domain.BookingCore{}, domain.ClimberCore{}, errors.New("no data")
 	}
 
-	return res, nil
+	return res, resClimb, nil
 
 }
 
-// GetRanger(id uint) ([]UserCore, []UserCore, error)
+func (as *adminService) AddClimber(data domain.ClimberCore) (domain.ClimberCore, error) {
+	res, err := as.qry.InsertClimber(data)
+	if err != nil {
+		return domain.ClimberCore{}, err
+	}
+
+	return res, nil
+}
+
 func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
 	res, err := as.qry.GetBooking()
 	if err != nil {

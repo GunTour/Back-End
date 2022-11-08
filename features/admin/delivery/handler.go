@@ -24,6 +24,7 @@ type adminHandler struct {
 func New(e *echo.Echo, srv domain.Services) {
 	handler := adminHandler{srv: srv}
 	e.GET("/admin/pendaki", handler.GetPendaki(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PENDAKI
+	e.POST("/admin/pendaki", handler.AddClimber(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // GET LIST PENDAKI
 	e.GET("/admin/booking", handler.GetBooking(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST BOOKING
 	e.GET("/admin/product", handler.GetProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PRODUCT
 	e.POST("/admin/product", handler.AddProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD NEW PRODUCT
@@ -39,12 +40,40 @@ func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
 		if role != "admin" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
-		res, err := ah.srv.GetPendaki()
+		res, resClimber, err := ah.srv.GetPendaki()
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success get list pendaki", ToResponseArray(res, "getpendaki")))
+		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponsePendaki(res, resClimber, "success get list pendaki", "getpendaki")))
+	}
+}
+
+func (ah *adminHandler) AddClimber() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		_, role := middlewares.ExtractToken(c)
+		if role != "admin" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+		}
+
+		var input ClimberFormat
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
+		}
+
+		er := validate.Struct(input)
+		if er != nil {
+			temp := strings.Split(er.Error(), "Error:")
+			return c.JSON(http.StatusBadRequest, FailResponse(temp[1]))
+		}
+
+		cnv := ToDomainClimber(input)
+		res, err := ah.srv.AddClimber(cnv)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
+		}
+
+		return c.JSON(http.StatusOK, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
 	}
 }
 

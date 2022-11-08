@@ -12,6 +12,12 @@ type RegisterFormat struct {
 	ProductPicture string `json:"product_picture" form:"product_picture"`
 }
 
+type ClimberFormat struct {
+	IsClimber     int `json:"is_climber" form:"is_climber" validate:"required"`
+	MaleClimber   int `json:"male_climber" form:"male_climber" validate:"required"`
+	FemaleClimber int `json:"female_climber" form:"female_climber" validate:"required"`
+}
+
 type BookingProduct struct {
 	ID         uint
 	IdBooking  uint
@@ -42,6 +48,11 @@ type RangerFormat struct {
 	UserID      uint   `json:"id_user" form:"id_user"`
 	StatusApply string `json:"status_apply" form:"status_apply"`
 	Role        string
+}
+
+func ToDomainClimber(i interface{}) domain.ClimberCore {
+	cnv := i.(ClimberFormat)
+	return domain.ClimberCore{IsClimber: cnv.IsClimber, FemaleClimber: cnv.FemaleClimber, MaleClimber: cnv.MaleClimber}
 }
 
 func ToDomain(i interface{}) domain.ProductCore {

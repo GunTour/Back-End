@@ -18,23 +18,34 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
-func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, error) {
+func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
 	var resQry []Booking
+	var resQryClimber Climber
+
+	rq.db.Order("created_at desc").First(&resQryClimber)
+
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
 		Find(&resQry).Scan(&resQry).Error; err != nil {
-		return nil, err
+		return nil, domain.ClimberCore{}, err
 	}
 
 	// selesai dari DB
 	res := ToDomainBooking(resQry)
+	resClimber := ToDomainClimber(resQryClimber)
 
-	return res, nil
+	return res, resClimber, nil
 }
 
-// func (rq *repoQuery) GetRanger(id uint) ([]UserCore, []UserCore, error){
+func (rq *repoQuery) InsertClimber(data domain.ClimberCore) (domain.ClimberCore, error) {
+	var resQry Climber = FromDomainClimber(data)
+	if err := rq.db.Create(&resQry).Error; err != nil {
+		return domain.ClimberCore{}, err
+	}
 
-// }
+	data = ToDomainClimber(resQry)
+	return data, nil
+}
 
 func (rq *repoQuery) GetBooking() ([]domain.BookingCore, error) {
 	var resQry []Booking
