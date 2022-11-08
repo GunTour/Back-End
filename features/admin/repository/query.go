@@ -98,8 +98,9 @@ func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.Produc
 
 func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
 	var res Product = FromDomainProduct(newProduct)
-	if err := rq.db.Where("id=?", newProduct.ID).Updates(&res).Error; err != nil {
-		return domain.ProductCore{}, err
+	err := rq.db.Where("id=?", newProduct.ID).Updates(&res)
+	if err.RowsAffected == 0 {
+		return domain.ProductCore{}, errors.New("no data")
 	}
 
 	newProduct = ToDomainProduct(res)
