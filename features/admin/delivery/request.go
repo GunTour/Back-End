@@ -37,6 +37,13 @@ type GetId struct {
 	id uint `param:"id"`
 }
 
+type RangerFormat struct {
+	ID          uint   `json:"id_ranger" form:"id_ranger"`
+	UserID      uint   `json:"id_user" form:"id_user"`
+	StatusApply string `json:"status_apply" form:"status_apply"`
+	Role        string
+}
+
 func ToDomain(i interface{}) domain.ProductCore {
 	switch i.(type) {
 	case RegisterFormat:
@@ -55,4 +62,13 @@ func ToDomain(i interface{}) domain.ProductCore {
 			ProductPicture: cnv.ProductPicture}
 	}
 	return domain.ProductCore{}
+}
+
+func ToDomainRanger(i interface{}) domain.RangerCore {
+	switch i.(type) {
+	case RangerFormat:
+		cnv := i.(RangerFormat)
+		return domain.RangerCore{ID: cnv.ID, UserID: cnv.UserID, StatusApply: cnv.StatusApply, User: domain.UserCore{Role: "ranger"}}
+	}
+	return domain.RangerCore{}
 }

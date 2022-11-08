@@ -47,6 +47,17 @@ type Product struct {
 	ProductPicture string
 }
 
+type Ranger struct {
+	gorm.Model
+	UserID      uint
+	Docs        string
+	Price       uint
+	Detail      string
+	Status      string
+	StatusApply string
+	User        User
+}
+
 func FromDomainProduct(db domain.ProductCore) Product {
 	return Product{
 		Model:          gorm.Model{ID: db.ID},
@@ -121,6 +132,49 @@ func ToDomainProductArr(db []Product) []domain.ProductCore {
 			Detail:         val.Detail,
 			Note:           val.Note,
 			ProductPicture: val.ProductPicture,
+		})
+	}
+	return arr
+}
+
+func FromDomainRanger(dr domain.RangerCore) Ranger {
+	return Ranger{
+		Model:       gorm.Model{ID: dr.ID},
+		UserID:      dr.UserID,
+		Docs:        dr.Docs,
+		Price:       dr.Price,
+		Detail:      dr.Detail,
+		Status:      dr.Status,
+		StatusApply: dr.StatusApply,
+		User:        User{},
+	}
+}
+
+func ToDomainRanger(r Ranger) domain.RangerCore {
+	return domain.RangerCore{
+		ID:          r.ID,
+		UserID:      r.UserID,
+		Docs:        r.Docs,
+		Price:       r.Price,
+		Detail:      r.Detail,
+		Status:      r.Status,
+		StatusApply: r.StatusApply,
+		User:        domain.UserCore{},
+	}
+}
+
+func ToDomainRangerArray(ar []Ranger) []domain.RangerCore {
+	var arr []domain.RangerCore
+	for _, val := range ar {
+		arr = append(arr, domain.RangerCore{
+			ID:          val.ID,
+			UserID:      val.UserID,
+			Docs:        val.Docs,
+			Price:       val.Price,
+			Detail:      val.Detail,
+			Status:      val.Status,
+			StatusApply: val.StatusApply,
+			User:        domain.UserCore{},
 		})
 	}
 	return arr

@@ -4,6 +4,7 @@ import (
 	"GunTour/features/admin/domain"
 	"errors"
 
+	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
 )
 
@@ -106,4 +107,45 @@ func (rq *repoQuery) DeleteProduct(id int) error {
 		return errors.New("no data")
 	}
 	return nil
+}
+
+func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, error) {
+	var data []Ranger
+	var datas []Ranger
+
+	if err := rq.db.Preload("User").Where("status_apply = ?", "accepted").Find(&data).Error; err != nil {
+		log.Error("error on get all ranger", err.Error())
+		return nil, nil, err
+	}
+
+	if err := rq.db.Preload("User").Where("status_apply = ?", "waiting").Find(&datas).Error; err != nil {
+		log.Error("error on get all applied ranger", err.Error())
+		return nil, nil, err
+	}
+
+	resAccepted := ToDomainRangerArray(data)
+	res := ToDomainRangerArray(datas)
+	return resAccepted, res, nil
+}
+
+func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
+	var cnv Ranger = FromDomainRanger(data)
+
+	if err := rq.db.Table("rangers").Where("id = ?", id).Updates(&cnv).Error; err != nil {
+		log.Error("error on edit status apply ranger", err.Error())
+		return domain.RangerCore{}, err
+	}
+
+	if err := rq.db.Preload("User").Table("rangers").Where("id = ?", id).First(&cnv).Error; err != nil {
+		log.Error("error on getting after edit", err.Error())
+		return domain.RangerCore{}, err
+	}
+
+	if err := rq.db.Table("users").Where("id = ?", cnv.UserID).Update("role", "ranger").Error; err != nil {
+		log.Error("error on edit role user", err.Error())
+		return domain.RangerCore{}, err
+	}
+
+	res := ToDomainRanger(cnv)
+	return res, nil
 }

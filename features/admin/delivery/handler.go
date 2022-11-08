@@ -23,6 +23,8 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.POST("/admin/product", handler.AddProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD NEW PRODUCT
 	e.PUT("/admin/product/:id_product", handler.EditProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))      // UPDATE DATA PRODUCT
 	e.DELETE("/admin/product/:id_product", handler.RemoveProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET")))) // DELETE PRODUCT
+	e.GET("/admin/ranger", handler.ShowAllRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
+	e.PUT("/admin/ranger/:id_ranger", handler.UpdateRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
 }
 
 func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
@@ -135,5 +137,52 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 			return c.JSON(http.StatusNoContent, FailResponse(err.Error()))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete product"))
+	}
+}
+
+func (ah *adminHandler) ShowAllRanger() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		_, role := middlewares.ExtractToken(c)
+		if role != "admin" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+		}
+
+		resAccepted, res, err := ah.srv.ShowAllRanger()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
+		}
+
+		return c.JSON(http.StatusOK, SuccessResponseRanger("success get ranger", ToResponseArray(resAccepted, "ranger"), "success get applied ranger", ToResponseArray(res, "rangerapply")))
+	}
+}
+
+func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		_, role := middlewares.ExtractToken(c)
+		if role != "admin" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+		}
+
+		rangerId, _ := strconv.Atoi(c.Param("id_ranger"))
+
+		var input RangerFormat
+
+		input.ID = uint(rangerId)
+
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
+		}
+
+		if input.StatusApply != "accepted" {
+			return c.JSON(http.StatusBadRequest, ("wrong input, type accepted to accept"))
+		}
+
+		cnv := ToDomainRanger(input)
+		res, err := ah.srv.UpdateRanger(cnv, uint(rangerId))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
+		}
+
+		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponse(res, "ranger")))
 	}
 }

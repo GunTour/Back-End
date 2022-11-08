@@ -5,6 +5,7 @@ import (
 	"GunTour/utils/helper"
 	"errors"
 	"mime/multipart"
+	"strings"
 )
 
 type adminService struct {
@@ -87,4 +88,29 @@ func (as *adminService) RemoveProduct(id int) error {
 	}
 
 	return nil
+}
+
+func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCore, error) {
+	resAccepted, res, err := as.qry.GetAllRanger()
+	if err != nil {
+		if strings.Contains(err.Error(), "table") {
+			return nil, nil, errors.New("database error")
+		} else if strings.Contains(err.Error(), "found") {
+			return nil, nil, errors.New("no data")
+		}
+	}
+
+	return resAccepted, res, nil
+}
+
+func (as *adminService) UpdateRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
+	res, err := as.qry.EditRanger(data, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "column") {
+			return domain.RangerCore{}, errors.New("rejected from database")
+		}
+		return domain.RangerCore{}, errors.New("some problem on database")
+	}
+
+	return res, nil
 }
