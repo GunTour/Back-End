@@ -58,10 +58,16 @@ type RangerCore struct {
 	User        UserCore
 }
 
+type ClimberCore struct {
+	ID            uint
+	IsClimber     int
+	MaleClimber   int
+	FemaleClimber int
+}
+
 type Repository interface {
-	GetPendaki() ([]BookingCore, error)
-	// GetRanger(id uint) ([]UserCore, []UserCore, error)
-	GetBooking() ([]BookingCore, error)
+	GetPendaki() ([]BookingCore, ClimberCore, error)
+	InsertClimber(data ClimberCore) (ClimberCore, error)
 	GetProduct(page int) ([]ProductCore, int, int, error)
 	InsertProduct(newProduct ProductCore) (ProductCore, error)
 	UpdateProduct(newProduct ProductCore) (ProductCore, error)
@@ -71,9 +77,8 @@ type Repository interface {
 }
 
 type Services interface {
-	GetPendaki() ([]BookingCore, error)
-	// GetRanger(id uint) ([]UserCore, []UserCore, error)
-	GetBooking() ([]BookingCore, error)
+	GetPendaki() ([]BookingCore, ClimberCore, error)
+	AddClimber(data ClimberCore) (ClimberCore, error)
 	GetProduct(page int) ([]ProductCore, int, int, error)
 	AddProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	EditProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
@@ -84,8 +89,8 @@ type Services interface {
 
 type Handler interface {
 	GetPendaki() echo.HandlerFunc
+	AddClimber() echo.HandlerFunc
 	// GetRanger() echo.HandlerFunc
-	GetBooking() echo.HandlerFunc
 	GetProduct() echo.HandlerFunc
 	AddProduct() echo.HandlerFunc
 	EditProduct() echo.HandlerFunc

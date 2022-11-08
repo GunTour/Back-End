@@ -18,36 +18,33 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
-func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, error) {
+func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
 	var resQry []Booking
+	var resQryClimber Climber
+
+	rq.db.Order("created_at desc").First(&resQryClimber)
+
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
 		Find(&resQry).Scan(&resQry).Error; err != nil {
-		return nil, err
+		return nil, domain.ClimberCore{}, err
 	}
 
 	// selesai dari DB
 	res := ToDomainBooking(resQry)
+	resClimber := ToDomainClimber(resQryClimber)
 
-	return res, nil
+	return res, resClimber, nil
 }
 
-// func (rq *repoQuery) GetRanger(id uint) ([]UserCore, []UserCore, error){
-
-// }
-
-func (rq *repoQuery) GetBooking() ([]domain.BookingCore, error) {
-	var resQry []Booking
-	if err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "bookings.date_start", "bookings.date_end",
-		"bookings.entrance", "bookings.ticket").
-		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
-		Find(&resQry).Scan(&resQry).Error; err != nil {
-		return nil, err
+func (rq *repoQuery) InsertClimber(data domain.ClimberCore) (domain.ClimberCore, error) {
+	var resQry Climber = FromDomainClimber(data)
+	if err := rq.db.Create(&resQry).Error; err != nil {
+		return domain.ClimberCore{}, err
 	}
 
-	// selesai dari DB
-	res := ToDomainBooking(resQry)
-	return res, nil
+	data = ToDomainClimber(resQry)
+	return data, nil
 }
 
 func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
@@ -77,6 +74,10 @@ func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error
 		totalPage = 1
 	}
 
+	if page > int(totalPage) {
+		return nil, 0, 0, errors.New("page not found")
+	}
+
 	// selesai dari DB
 	res := ToDomainProductArr(resQry)
 	return res, page, int(totalPage), nil
@@ -94,8 +95,9 @@ func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.Produc
 
 func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
 	var res Product = FromDomainProduct(newProduct)
-	if err := rq.db.Where("id=?", newProduct.ID).Updates(&res).Error; err != nil {
-		return domain.ProductCore{}, err
+	err := rq.db.Where("id=?", newProduct.ID).Updates(&res)
+	if err.RowsAffected == 0 {
+		return domain.ProductCore{}, errors.New("no data")
 	}
 
 	newProduct = ToDomainProduct(res)
@@ -125,6 +127,8 @@ func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, e
 
 	resAccepted := ToDomainRangerArray(data)
 	res := ToDomainRangerArray(datas)
+	log.Print(resAccepted)
+	log.Print(res)
 	return resAccepted, res, nil
 }
 

@@ -58,6 +58,22 @@ type Ranger struct {
 	User        User
 }
 
+type Climber struct {
+	gorm.Model
+	IsClimber     int
+	MaleClimber   int
+	FemaleClimber int
+}
+
+func FromDomainClimber(db domain.ClimberCore) Climber {
+	return Climber{
+		Model:         gorm.Model{ID: db.ID},
+		IsClimber:     db.IsClimber,
+		MaleClimber:   db.MaleClimber,
+		FemaleClimber: db.FemaleClimber,
+	}
+}
+
 func FromDomainProduct(db domain.ProductCore) Product {
 	return Product{
 		Model:          gorm.Model{ID: db.ID},
@@ -84,6 +100,15 @@ func FromDomainBooking(db domain.BookingCore) Booking {
 		Link:            db.Link,
 		StatusBooking:   db.StatusBooking,
 		StatusPendakian: db.StatusPendakian,
+	}
+}
+
+func ToDomainClimber(db Climber) domain.ClimberCore {
+	return domain.ClimberCore{
+		ID:            db.ID,
+		IsClimber:     db.IsClimber,
+		MaleClimber:   db.MaleClimber,
+		FemaleClimber: db.FemaleClimber,
 	}
 }
 
@@ -174,7 +199,7 @@ func ToDomainRangerArray(ar []Ranger) []domain.RangerCore {
 			Detail:      val.Detail,
 			Status:      val.Status,
 			StatusApply: val.StatusApply,
-			User:        domain.UserCore{},
+			User:        domain.UserCore{FullName: val.User.FullName, Address: val.User.Address, Phone: val.User.Phone, Gender: val.User.Gender},
 		})
 	}
 	return arr

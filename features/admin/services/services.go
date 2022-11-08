@@ -18,21 +18,20 @@ func New(repo domain.Repository) domain.Services {
 	}
 }
 
-func (as *adminService) GetPendaki() ([]domain.BookingCore, error) {
-	res, err := as.qry.GetPendaki()
+func (as *adminService) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
+	res, resClimb, err := as.qry.GetPendaki()
 	if err != nil {
-		return []domain.BookingCore{}, errors.New("no data")
+		return []domain.BookingCore{}, domain.ClimberCore{}, errors.New("no data")
 	}
 
-	return res, nil
+	return res, resClimb, nil
 
 }
 
-// GetRanger(id uint) ([]UserCore, []UserCore, error)
-func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
-	res, err := as.qry.GetBooking()
+func (as *adminService) AddClimber(data domain.ClimberCore) (domain.ClimberCore, error) {
+	res, err := as.qry.InsertClimber(data)
 	if err != nil {
-		return []domain.BookingCore{}, errors.New("no data")
+		return domain.ClimberCore{}, err
 	}
 
 	return res, nil
@@ -41,6 +40,9 @@ func (as *adminService) GetBooking() ([]domain.BookingCore, error) {
 func (as *adminService) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	res, pages, totalPage, err := as.qry.GetProduct(page)
 	if err != nil {
+		if strings.Contains(err.Error(), "found") {
+			return []domain.ProductCore{}, 0, 0, errors.New("page not found")
+		}
 		return []domain.ProductCore{}, 0, 0, errors.New("no data")
 	}
 
@@ -49,16 +51,13 @@ func (as *adminService) GetProduct(page int) ([]domain.ProductCore, int, int, er
 
 func (as *adminService) AddProduct(newProduct domain.ProductCore, file multipart.File, fileheader *multipart.FileHeader) (domain.ProductCore, error) {
 	if fileheader != nil {
-		res, err := helper.UploadFile(file, fileheader)
-		if err != nil {
-			return domain.ProductCore{}, err
-		}
+		res, _ := helper.UploadFile(file, fileheader)
 		newProduct.ProductPicture = res
 	}
 
 	res, err := as.qry.InsertProduct(newProduct)
 	if err != nil {
-		return domain.ProductCore{}, errors.New("no data")
+		return domain.ProductCore{}, errors.New("some problem on database")
 	}
 
 	return res, nil
@@ -66,10 +65,7 @@ func (as *adminService) AddProduct(newProduct domain.ProductCore, file multipart
 
 func (as *adminService) EditProduct(newProduct domain.ProductCore, file multipart.File, fileheader *multipart.FileHeader) (domain.ProductCore, error) {
 	if fileheader != nil {
-		res, err := helper.UploadFile(file, fileheader)
-		if err != nil {
-			return domain.ProductCore{}, err
-		}
+		res, _ := helper.UploadFile(file, fileheader)
 		newProduct.ProductPicture = res
 	}
 
@@ -98,6 +94,7 @@ func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCor
 		} else if strings.Contains(err.Error(), "found") {
 			return nil, nil, errors.New("no data")
 		}
+		return nil, nil, errors.New("no data")
 	}
 
 	return resAccepted, res, nil
