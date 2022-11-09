@@ -38,17 +38,14 @@ func getClient(config *oauth2.Config, code string) *http.Client {
 }
 
 func GetUrls() {
-	b, err := os.ReadFile("credentials.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
+	config := &oauth2.Config{
+		ClientID:     os.Getenv("CLIENT_ID"),
+		ClientSecret: os.Getenv("CLIENT_SECRET"),
+		Scopes: []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile",
+			"https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/gmail.send"},
+		Endpoint:    google.Endpoint,
+		RedirectURL: os.Getenv("REDIRECT_GMAIL"),
 	}
-
-	// If modifying these scopes, delete your previously saved token.json.
-	config, err := google.ConfigFromJSON(b, gmail.GmailSendScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-	// client := getClient(config)
 
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	authURL = strings.ReplaceAll(authURL, "\u0026", "&")
@@ -87,15 +84,14 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		var Code string
 		var client *http.Client
 		var messageStr []byte
-		b, err := os.ReadFile("credentials.json")
-		if err != nil {
-			log.Fatalf("Unable to read client secret file: %v", err)
-		}
 
-		// If modifying these scopes, delete your previously saved token.json.
-		config, err := google.ConfigFromJSON(b, gmail.GmailSendScope)
-		if err != nil {
-			log.Fatalf("Unable to parse client secret file to config: %v", err)
+		config := &oauth2.Config{
+			ClientID:     os.Getenv("CLIENT_ID"),
+			ClientSecret: os.Getenv("CLIENT_SECRET"),
+			Scopes: []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile",
+				"https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/gmail.send"},
+			Endpoint:    google.Endpoint,
+			RedirectURL: os.Getenv("REDIRECT_GMAIL"),
 		}
 
 		Code = c.QueryParam("code")
@@ -125,7 +121,7 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
 		}
 		var message gmail.Message
-		msg := gh.srv.GetPesan()
+		msg, ranger := gh.srv.GetPesan()
 		// Compose the message
 		if msg.Status == "rejected" {
 			messageStr = []byte(
@@ -147,10 +143,9 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		// Send the message
 		_, err = gmailService.Users.Messages.Send("me", &message).Do()
 		if err != nil {
-			log.Printf("Error: %v", err)
+			return c.JSON(http.StatusAccepted, SuccessResponse("gagal", "permintaan sedang diproses"))
 		} else {
-			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "message sent!"))
+			return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponse(ranger, "ranger")))
 		}
-		return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "err"))
 	}
 }

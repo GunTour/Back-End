@@ -18,8 +18,19 @@ type Code struct {
 
 type Pesan struct {
 	gorm.Model
-	Email  string
-	Status string
+	IdRanger uint
+	Email    string
+	Status   string
+}
+
+type Ranger struct {
+	gorm.Model
+	UserID      uint
+	Docs        string
+	Price       uint
+	Detail      string
+	Status      string
+	StatusApply string
 }
 
 func FromDomain(dc domain.Code) Code {
@@ -46,8 +57,17 @@ func ToDomain(dc Code) domain.Code {
 
 func ToDomainPesan(dc Pesan) domain.PesanCore {
 	return domain.PesanCore{
-		ID:     dc.ID,
-		Email:  dc.Email,
-		Status: dc.Status,
+		ID:       dc.ID,
+		IdRanger: dc.IdRanger,
+		Email:    dc.Email,
+		Status:   dc.Status,
+	}
+}
+
+func ToDomainRanger(dc Ranger) domain.RangerCore {
+	return domain.RangerCore{
+		ID:          dc.ID,
+		Status:      dc.Status,
+		StatusApply: dc.StatusApply,
 	}
 }

@@ -40,11 +40,16 @@ func (rq *repoQuery) GetCode() (domain.Code, error) {
 	return res, nil
 }
 
-func (rq *repoQuery) GetPesan() domain.PesanCore {
+func (rq *repoQuery) GetPesan() (domain.PesanCore, domain.RangerCore) {
 	var resQry Pesan
+	var resQryRanger Ranger
 	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
-		return domain.PesanCore{}
+		return domain.PesanCore{}, domain.RangerCore{}
+	}
+	if err := rq.db.Where("id=?", resQry.ID).First(&resQryRanger).Error; err != nil {
+		return domain.PesanCore{}, domain.RangerCore{}
 	}
 	res := ToDomainPesan(resQry)
-	return res
+	resRanger := ToDomainRanger(resQryRanger)
+	return res, resRanger
 }

@@ -147,10 +147,9 @@ func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerC
 	}
 
 	if data.StatusApply != "" {
-		var pesan Pesan
+
 		rq.db.Model(&User{}).Where("id = ?", cnv.UserID).Select("email").Find(&mail)
-		pesan.Email = mail
-		pesan.Status = data.StatusApply
+		var pesan Pesan = FromDomainPesan(mail, cnv)
 		rq.db.Create(&pesan)
 	}
 

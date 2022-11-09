@@ -12,20 +12,32 @@ type Code struct {
 }
 
 type PesanCore struct {
-	ID     uint
-	Email  string
-	Status string
+	ID       uint
+	IdRanger uint
+	Email    string
+	Status   string
 }
+
+type RangerCore struct {
+	ID          uint
+	UserID      uint
+	Docs        string
+	Price       uint
+	Detail      string
+	Status      string
+	StatusApply string
+}
+
 type Repository interface {
 	InsertCode(code string) error
 	UpdateCode(code Code) error
 	GetCode() (Code, error)
-	GetPesan() PesanCore
+	GetPesan() (PesanCore, RangerCore)
 }
 
 type Services interface {
 	AddCode(Code string) error
 	UpdateCode(code Code) error
 	GetCode() (Code, error)
-	GetPesan() PesanCore
+	GetPesan() (PesanCore, RangerCore)
 }
