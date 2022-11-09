@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/product/domain"
+	"errors"
 
 	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func New(db *gorm.DB) domain.Repository {
 	return &repoQuery{db: db}
 }
 
-func (rq *repoQuery) GetAll(page uint) ([]domain.Core, uint, uint, error) {
+func (rq *repoQuery) GetAll(page uint) ([]domain.Core, int, int, error) {
 	var resQry []Product
 	var sum float64
 	var totalPage int64
@@ -42,9 +43,13 @@ func (rq *repoQuery) GetAll(page uint) ([]domain.Core, uint, uint, error) {
 		totalPage = 1
 	}
 
+	if page > uint(totalPage) {
+		return nil, 0, 0, errors.New("page not found")
+	}
+
 	// selesai dari DB
 	res := ToCoreArray(resQry)
-	return res, page, uint(totalPage), nil
+	return res, int(page), int(totalPage), nil
 }
 
 func (rq *repoQuery) GetByID(id uint) (domain.Core, error) {

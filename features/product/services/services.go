@@ -14,7 +14,7 @@ func New(repo domain.Repository) domain.Service {
 	return &productService{qry: repo}
 }
 
-func (ps *productService) ShowAll(page uint) ([]domain.Core, uint, uint, error) {
+func (ps *productService) ShowAll(page uint) ([]domain.Core, int, int, error) {
 
 	res, pages, totalPage, err := ps.qry.GetAll(page)
 	if err != nil {

@@ -14,11 +14,11 @@ type Core struct {
 }
 
 type Repository interface {
-	GetAll(page uint) ([]Core, uint, uint, error)
+	GetAll(page uint) ([]Core, int, int, error)
 	GetByID(id uint) (Core, error)
 }
 
 type Service interface {
-	ShowAll(page uint) ([]Core, uint, uint, error)
+	ShowAll(page uint) ([]Core, int, int, error)
 	ShowByID(id uint) (Core, error)
 }
