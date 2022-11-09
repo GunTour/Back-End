@@ -39,3 +39,12 @@ func (rq *repoQuery) GetCode() (domain.Code, error) {
 	res := ToDomain(resQry)
 	return res, nil
 }
+
+func (rq *repoQuery) GetPesan() domain.PesanCore {
+	var resQry Pesan
+	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
+		return domain.PesanCore{}
+	}
+	res := ToDomainPesan(resQry)
+	return res
+}

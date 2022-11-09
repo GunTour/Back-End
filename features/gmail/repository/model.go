@@ -16,6 +16,12 @@ type Code struct {
 	Expiry       time.Time
 }
 
+type Pesan struct {
+	gorm.Model
+	Email  string
+	Status string
+}
+
 func FromDomain(dc domain.Code) Code {
 	return Code{
 		Model:        gorm.Model{ID: dc.ID},
@@ -35,5 +41,13 @@ func ToDomain(dc Code) domain.Code {
 		TokenType:    dc.TokenType,
 		RefreshToken: dc.RefreshToken,
 		Expiry:       dc.Expiry,
+	}
+}
+
+func ToDomainPesan(dc Pesan) domain.PesanCore {
+	return domain.PesanCore{
+		ID:     dc.ID,
+		Email:  dc.Email,
+		Status: dc.Status,
 	}
 }

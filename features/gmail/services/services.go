@@ -38,3 +38,8 @@ func (bs *gmailService) GetCode() (domain.Code, error) {
 
 	return res, nil
 }
+
+func (bs *gmailService) GetPesan() domain.PesanCore {
+	res := bs.qry.GetPesan()
+	return res
+}

@@ -38,6 +38,12 @@ type Booking struct {
 	Phone           string `gorm:"-:migration;<-:false"`
 }
 
+type Pesan struct {
+	gorm.Model
+	Email  string
+	Status string
+}
+
 type Product struct {
 	gorm.Model
 	ProductName    string

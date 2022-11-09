@@ -11,14 +11,21 @@ type Code struct {
 	Expiry       time.Time
 }
 
+type PesanCore struct {
+	ID     uint
+	Email  string
+	Status string
+}
 type Repository interface {
 	InsertCode(code string) error
 	UpdateCode(code Code) error
 	GetCode() (Code, error)
+	GetPesan() PesanCore
 }
 
 type Services interface {
 	AddCode(Code string) error
 	UpdateCode(code Code) error
 	GetCode() (Code, error)
+	GetPesan() PesanCore
 }

@@ -25,6 +25,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	handler := gmailHandler{srv: srv}
 	// e.GET("/gmail/url", GetUrl()) // GET LIST PENDAKI
 	e.GET("/gmail", handler.GoSend())
+	e.PUT("/gmail/send", handler.GoSend())
 }
 
 func getClient(config *oauth2.Config, code string) *http.Client {
@@ -83,10 +84,10 @@ func getTokenFromWeb(config *oauth2.Config, code string) *oauth2.Token {
 
 func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		b, err := os.ReadFile("credentials.json")
 		var Code string
 		var client *http.Client
-		// var er error
+		var messageStr []byte
+		b, err := os.ReadFile("credentials.json")
 		if err != nil {
 			log.Fatalf("Unable to read client secret file: %v", err)
 		}
@@ -124,13 +125,21 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
 		}
 		var message gmail.Message
-		// mail := "khalidrianda22@gmail.com"
+		msg := gh.srv.GetPesan()
 		// Compose the message
-		messageStr := []byte(
-			"From: khalidrianda12@gmail.com\r\n" +
-				"To: khalidrianda22@gmail.com\r\n" +
-				"Subject: Your form apply for ranger accepted\r\n\r\n" +
-				"Selamat anda diterima menjadi ranger untuk aplikasi kami\n Mohon bantuan dan kerja samanya\n Terima kasih!")
+		if msg.Status == "rejected" {
+			messageStr = []byte(
+				"From: Guntour@gmail.com\r\n" +
+					fmt.Sprintf("To: %v\r\n", msg.Email) +
+					"Subject: Your form apply for ranger rejected\r\n\r\n" +
+					"Mohon maaf, kami tidak dapat menerima permintaan anda\n Anda tidak memenuhi syarat yang dibutuhkan\n Terima kasih!")
+		} else {
+			messageStr = []byte(
+				"From: Guntour@gmail.com\r\n" +
+					fmt.Sprintf("To: %v\r\n", msg.Email) +
+					"Subject: Your form apply for ranger accepted\r\n\r\n" +
+					"Selamat anda diterima menjadi ranger untuk aplikasi kami\n Mohon bantuan dan kerja samanya\n Terima kasih!")
+		}
 
 		// Place messageStr into message.Raw in base64 encoded format
 		message.Raw = base64.URLEncoding.EncodeToString(messageStr)
