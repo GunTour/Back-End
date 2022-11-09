@@ -43,11 +43,17 @@ func (ph *productHandler) ShowAll() echo.HandlerFunc {
 func (ph *productHandler) ShowByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		productID, _ := strconv.Atoi(c.Param("id_product"))
+		productID, err := strconv.Atoi(c.Param("id_product"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("id product must integer"))
+		}
 
 		res, err := ph.srv.ShowByID(uint(productID))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			if strings.Contains(err.Error(), "page") {
+				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			}
+			return c.JSON(http.StatusNotFound, FailResponse("no data."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get product detail", ToResponse(res, "detail")))
 
