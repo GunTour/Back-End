@@ -12,7 +12,7 @@ type ApplyResponse struct {
 	Phone       string      `json:"phone" form:"phone"`
 	Gender      string      `json:"gender" form:"gender"`
 	Docs        string      `json:"docs" form:"docs"`
-	Price       uint        `json:"price/day" form:"price/day"`
+	Price       uint        `json:"price" form:"price"`
 	Detail      string      `json:"detail" form:"detail"`
 	StatusApply string      `json:"status_apply" form:"status_apply"`
 }
@@ -21,7 +21,7 @@ type RangerResponse struct {
 	ID          uint        `json:"id_ranger" form:"id_ranger"`
 	User        domain.User `json:"-" form:"-"`
 	Fullname    string      `json:"fullname" form:"fullname"`
-	Price       uint        `json:"price/day" form:"price/day"`
+	Price       uint        `json:"price" form:"price"`
 	Detail      string      `json:"detail" form:"detail"`
 	UserPicture string      `json:"user_picture" form:"user_picture"`
 }

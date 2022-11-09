@@ -123,7 +123,6 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
-		input.StatusBooking = "unpaid"
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
 		res, err := bs.srv.InsertData(cnv)

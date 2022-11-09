@@ -64,7 +64,7 @@ func ToDomain(i interface{}) domain.Core {
 			arr = append(arr, domain.BookingProductCore{IdProduct: val.IdProduct, ProductQty: val.ProductQty})
 		}
 		return domain.Core{IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			OrderId: cnv.OrderId, BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: cnv.StatusBooking}
+			OrderId: cnv.OrderId, BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: "unpaid"}
 	case GetId:
 		cnv := i.(GetId)
 		return domain.Core{ID: cnv.id}
