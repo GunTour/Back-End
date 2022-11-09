@@ -43,6 +43,13 @@ type RangerAccepted struct {
 	StatusApply string `json:"status_apply" form:"status_apply"`
 }
 
+type RangerAcceptedNoMail struct {
+	ID          uint   `json:"id_ranger" form:"id_ranger"`
+	Status      string `json:"status" form:"status"`
+	StatusApply string `json:"status_apply" form:"status_apply"`
+	Url         string `json:"email_sender" form:"email_sender"`
+}
+
 func FromDomain(core domain.Code) *oauth2.Token {
 
 	return &oauth2.Token{AccessToken: core.AccessToken, TokenType: core.TokenType, RefreshToken: core.RefreshToken, Expiry: core.Expiry}
@@ -54,6 +61,17 @@ func ToResponse(core interface{}, code string) interface{} {
 	case "ranger":
 		cnv := core.(domain.RangerCore)
 		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply}
+	}
+
+	return res
+}
+
+func ToResponseGagal(core interface{}, authURL string, code string) interface{} {
+	var res interface{}
+	switch code {
+	case "ranger":
+		cnv := core.(domain.RangerCore)
+		res = RangerAcceptedNoMail{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply, Url: authURL}
 	}
 
 	return res

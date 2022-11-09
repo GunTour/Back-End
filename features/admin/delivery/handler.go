@@ -226,10 +226,10 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 
 		cnv := ToDomainRanger(input)
 		res, err := ah.srv.UpdateRanger(cnv, uint(rangerId))
-		if input.StatusApply != "" {
-			// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
-			// helper.Openbrowser("localhost:8000/gmail")
-		}
+		// if input.StatusApply != "" {
+		// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
+		// helper.Openbrowser("localhost:8000/gmail")
+		// }
 		if err != nil {
 			if strings.Contains(err.Error(), "found") {
 				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))

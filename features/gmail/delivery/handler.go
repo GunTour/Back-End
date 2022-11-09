@@ -37,7 +37,7 @@ func getClient(config *oauth2.Config, code string) *http.Client {
 	return config.Client(oauth2.NoContext, tok)
 }
 
-func GetUrls() {
+func GetUrls() string {
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
@@ -49,7 +49,8 @@ func GetUrls() {
 
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	authURL = strings.ReplaceAll(authURL, "\u0026", "&")
-	openbrowser(authURL)
+	// log.Print(authURL)
+	return authURL
 }
 
 func openbrowser(url string) {
@@ -95,11 +96,12 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		}
 
 		Code = c.QueryParam("code")
+		msg, ranger := gh.srv.GetPesan()
 		if Code == "" {
 			resCode, err := gh.srv.GetCode()
 			if err != nil {
-				GetUrls()
-				return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
+				authURL := GetUrls()
+				return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponseGagal(ranger, authURL, "ranger")))
 			}
 			Code = resCode.Code
 			tok := FromDomain(resCode)
@@ -107,8 +109,8 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		} else {
 			tok, err := config.Exchange(oauth2.NoContext, Code)
 			if err != nil {
-				GetUrls()
-				return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
+				authURL := GetUrls()
+				return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponseGagal(ranger, authURL, "ranger")))
 			}
 			client = config.Client(oauth2.NoContext, tok)
 			res := ToDomain(tok, Code)
@@ -121,7 +123,7 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
 		}
 		var message gmail.Message
-		msg, ranger := gh.srv.GetPesan()
+
 		// Compose the message
 		if msg.Status == "rejected" {
 			messageStr = []byte(
