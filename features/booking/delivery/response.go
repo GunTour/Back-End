@@ -3,6 +3,8 @@ package delivery
 import (
 	"GunTour/features/booking/domain"
 	"time"
+
+	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 func SuccessResponse(msg string, data interface{}) map[string]interface{} {
@@ -141,4 +143,8 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		res = arr
 	}
 	return res
+}
+
+func ToDomainCheckMidtrans(i *coreapi.TransactionStatusResponse) domain.Core {
+	return domain.Core{OrderId: i.OrderID, StatusBooking: i.TransactionStatus}
 }

@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"GunTour/features/booking/domain"
+	"GunTour/utils/helper"
 	"GunTour/utils/middlewares"
 	"errors"
 	"log"
@@ -206,8 +207,8 @@ func (bs *bookingHandler) UpdateMidtrans() echo.HandlerFunc {
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse(errors.New("an invalid client request")))
 		}
-
-		res := ToDomain(input)
+		inputMidtrans := helper.CheckMidtrans(input.OrderID)
+		res := ToDomainCheckMidtrans(inputMidtrans)
 		bs.srv.UpdateData(res)
 		return c.JSON(http.StatusOK, SuccessResponseNoData("Success update data."))
 	}
