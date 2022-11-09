@@ -9,6 +9,9 @@ import (
 	bd "GunTour/features/booking/delivery"
 	br "GunTour/features/booking/repository"
 	bs "GunTour/features/booking/services"
+	cd "GunTour/features/climber/delivery"
+	cr "GunTour/features/climber/repository"
+	cs "GunTour/features/climber/services"
 	gd "GunTour/features/gmail/delivery"
 	gr "GunTour/features/gmail/repository"
 	gs "GunTour/features/gmail/services"
@@ -47,23 +50,25 @@ func main() {
 	uRepo := ur.New(db)
 	bRepo := br.New(db)
 	aRepo := ar.New(db)
+	gRepo := gr.New(db)
+	pRepo := pr.New(db)
+	cRepo := cr.New(db)
 	uService := us.New(uRepo)
 	bService := bs.New(bRepo)
 	aService := as.New(aRepo)
+	pService := ps.New(pRepo)
+	gService := gs.New(gRepo)
+	cService := cs.New(cRepo)
 	ud.New(e, uService)
 	bd.New(e, bService)
 	ad.New(e, aService)
+	pd.New(e, pService)
+	gd.New(e, gService)
+	cd.New(e, cService)
 
 	rRepo := rr.New(db)
 	rService := rs.New(rRepo)
 	rd.New(e, rService)
-
-	pRepo := pr.New(db)
-	pService := ps.New(pRepo)
-	pd.New(e, pService)
-	gRepo := gr.New(db)
-	gService := gs.New(gRepo)
-	gd.New(e, gService)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.ServerPort)))
 }
