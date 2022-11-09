@@ -4,6 +4,7 @@ import (
 	"GunTour/features/product/domain"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,14 +22,20 @@ func New(e *echo.Echo, srv domain.Service) {
 func (ph *productHandler) ShowAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		page, _ := strconv.Atoi(c.QueryParam("page"))
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("page must integer"))
+		}
 
 		res, pages, totalPage, err := ph.srv.ShowAll(uint(page))
-
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			if strings.Contains(err.Error(), "page") {
+				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			}
+			return c.JSON(http.StatusNotFound, FailResponse("no data."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", int(pages), int(totalPage), "getproduct")))
+
+		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", uint(pages), uint(totalPage), "getproduct")))
 
 	}
 }

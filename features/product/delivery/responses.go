@@ -20,8 +20,8 @@ type ProdResponse struct {
 
 type GetProductResponse struct {
 	Message   string            `json:"message" form:"message"`
-	Page      int               `json:"page" form:"page"`
-	TotalPage int               `json:"total_page" form:"total_page"`
+	Page      uint              `json:"page" form:"page"`
+	TotalPage uint              `json:"total_page" form:"total_page"`
 	Data      []ProductResponse `json:"data" form:"data"`
 }
 
@@ -42,7 +42,7 @@ func ToResponse(core interface{}, code string) interface{} {
 	return res
 }
 
-func ToResponseProduct(core interface{}, message string, pages int, totalPage int, code string) interface{} {
+func ToResponseProduct(core interface{}, message string, pages uint, totalPage uint, code string) interface{} {
 	var arr []ProductResponse
 	val := core.([]domain.Core)
 	for _, cnv := range val {
