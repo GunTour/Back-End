@@ -70,6 +70,8 @@ func (bs *bookingService) DeleteData(idBooking uint) error {
 }
 
 func (bs *bookingService) UpdateMidtrans(newBooking domain.Core) error {
+	inputMidtrans := helper.CheckMidtrans(newBooking.OrderId)
+	newBooking.StatusBooking = inputMidtrans.TransactionStatus
 	err := bs.qry.UpdateMidtrans(newBooking)
 	if err != nil {
 		return err
