@@ -6,7 +6,7 @@ import (
 	ar "GunTour/features/admin/repository"
 	rr "GunTour/features/ranger/repository"
 
-	// br "GunTour/features/booking/repository"
+	gr "GunTour/features/gmail/repository"
 	ur "GunTour/features/users/repository"
 	"fmt"
 
@@ -40,4 +40,6 @@ func MigrateDB(db *gorm.DB) {
 	db.AutoMigrate(&ur.Product{})
 	db.AutoMigrate(&ur.BookingProduct{})
 	db.AutoMigrate(&ar.Climber{})
+	db.AutoMigrate(&ar.Pesan{})
+	db.AutoMigrate(&gr.Code{})
 }

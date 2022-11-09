@@ -134,6 +134,7 @@ func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, e
 
 func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
 	var cnv Ranger = FromDomainRanger(data)
+	var mail string
 
 	if err := rq.db.Table("rangers").Where("id = ?", id).Updates(&cnv).Error; err != nil {
 		log.Error("error on edit status apply ranger", err.Error())
@@ -143,6 +144,13 @@ func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerC
 	if err := rq.db.Preload("User").Table("rangers").Where("id = ?", id).First(&cnv).Error; err != nil {
 		log.Error("error on getting after edit", err.Error())
 		return domain.RangerCore{}, err
+	}
+
+	if data.StatusApply != "" {
+
+		rq.db.Model(&User{}).Where("id = ?", cnv.UserID).Select("email").Find(&mail)
+		var pesan Pesan = FromDomainPesan(mail, cnv)
+		rq.db.Create(&pesan)
 	}
 
 	if err := rq.db.Table("users").Where("id = ?", cnv.UserID).Update("role", "ranger").Error; err != nil {

@@ -38,6 +38,13 @@ type Booking struct {
 	Phone           string `gorm:"-:migration;<-:false"`
 }
 
+type Pesan struct {
+	gorm.Model
+	IdRanger uint
+	Email    string
+	Status   string
+}
+
 type Product struct {
 	gorm.Model
 	ProductName    string
@@ -160,6 +167,15 @@ func ToDomainProductArr(db []Product) []domain.ProductCore {
 		})
 	}
 	return arr
+}
+
+func FromDomainPesan(mail string, dr Ranger) Pesan {
+	return Pesan{
+		Model:    gorm.Model{ID: dr.ID},
+		IdRanger: dr.ID,
+		Email:    mail,
+		Status:   dr.Status,
+	}
 }
 
 func FromDomainRanger(dr domain.RangerCore) Ranger {
