@@ -15,6 +15,12 @@ type Pesan struct {
 	Status string `json:"status" form:"status"`
 }
 
+type UserInfoFormat struct {
+	Email        string `json:"email"`
+	Fullname     string `json:"name"`
+	Photoprofile string `json:"picture"`
+}
+
 func ToDomain(core *oauth2.Token, code string) domain.Code {
 	return domain.Code{Code: code, AccessToken: core.AccessToken, TokenType: core.TokenType, RefreshToken: core.RefreshToken, Expiry: core.Expiry}
 }

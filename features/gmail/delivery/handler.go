@@ -41,10 +41,9 @@ func GetUrls() string {
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes: []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile",
-			"https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/gmail.send"},
-		Endpoint:    google.Endpoint,
-		RedirectURL: os.Getenv("REDIRECT_GMAIL"),
+		Scopes:       []string{"https://www.googleapis.com/auth/gmail.send"},
+		Endpoint:     google.Endpoint,
+		RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 	}
 
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
@@ -89,10 +88,9 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		config := &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
-			Scopes: []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile",
-				"https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/gmail.send"},
-			Endpoint:    google.Endpoint,
-			RedirectURL: os.Getenv("REDIRECT_GMAIL"),
+			Scopes:       []string{"https://www.googleapis.com/auth/gmail.send"},
+			Endpoint:     google.Endpoint,
+			RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 		}
 
 		Code = c.QueryParam("code")
