@@ -140,16 +140,15 @@ func (rq *repoQuery) EditRanger(data domain.RangerCore, datas domain.UserCore, i
 		return domain.RangerCore{}, domain.UserCore{}, err
 	}
 
-	if data.StatusApply != "" {
-
-		rq.db.Model(&User{}).Where("id = ?", cnv.UserID).Select("email").Find(&mail)
-		var pesan Pesan = FromDomainPesan(mail, cnv)
-		rq.db.Create(&pesan)
-	}
-
 	if err := rq.db.Preload("User").Table("rangers").Where("id = ?", id).First(&cnv).Error; err != nil {
 		log.Error("error on getting after edit", err.Error())
 		return domain.RangerCore{}, domain.UserCore{}, err
+	}
+
+	if data.StatusApply != "" {
+		rq.db.Model(&User{}).Where("id = ?", cnv.UserID).Select("email").Find(&mail)
+		var pesan Pesan = FromDomainPesan(mail, cnv)
+		rq.db.Create(&pesan)
 	}
 
 	if err := rq.db.Table("users").Where("id = ?", cnv.UserID).Updates(&conv).Error; err != nil {
