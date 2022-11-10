@@ -27,25 +27,46 @@ func (_m *Repository) DeleteProduct(id int) error {
 	return r0
 }
 
-// EditRanger provides a mock function with given fields: data, id
-func (_m *Repository) EditRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
-	ret := _m.Called(data, id)
+// DeleteRanger provides a mock function with given fields: id
+func (_m *Repository) DeleteRanger(id int) error {
+	ret := _m.Called(id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int) error); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// EditRanger provides a mock function with given fields: data, datas, id
+func (_m *Repository) EditRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, error) {
+	ret := _m.Called(data, datas, id)
 
 	var r0 domain.RangerCore
-	if rf, ok := ret.Get(0).(func(domain.RangerCore, uint) domain.RangerCore); ok {
-		r0 = rf(data, id)
+	if rf, ok := ret.Get(0).(func(domain.RangerCore, domain.UserCore, uint) domain.RangerCore); ok {
+		r0 = rf(data, datas, id)
 	} else {
 		r0 = ret.Get(0).(domain.RangerCore)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(domain.RangerCore, uint) error); ok {
-		r1 = rf(data, id)
+	var r1 domain.UserCore
+	if rf, ok := ret.Get(1).(func(domain.RangerCore, domain.UserCore, uint) domain.UserCore); ok {
+		r1 = rf(data, datas, id)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(domain.UserCore)
 	}
 
-	return r0, r1
+	var r2 error
+	if rf, ok := ret.Get(2).(func(domain.RangerCore, domain.UserCore, uint) error); ok {
+		r2 = rf(data, datas, id)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // GetAllRanger provides a mock function with given fields:

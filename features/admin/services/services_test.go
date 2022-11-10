@@ -198,21 +198,23 @@ func TestGetProduct(t *testing.T) {
 func TestUpdateRanger(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	returnRespon := domain.RangerCore{ID: uint(1), UserID: uint(1), StatusApply: "accepted"}
-	returnRespon2 := domain.RangerCore{ID: uint(1), UserID: uint(1), StatusApply: "accepted"}
+	returnRespon2 := domain.UserCore{Phone: returnRespon.User.Phone}
 	t.Run("Sukses Update Ranger Status", func(t *testing.T) {
 		repo.On("EditRanger", mock.Anything, mock.Anything).Return(returnRespon2, nil).Once()
 		srv := New(repo)
-		res, err := srv.UpdateRanger(returnRespon, 1)
+		res, resU, err := srv.UpdateRanger(returnRespon, returnRespon2, 1)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
+		assert.NotEmpty(t, resU)
 		repo.AssertExpectations(t)
 	})
 	t.Run("Failed Update Ranger Status", func(t *testing.T) {
 		repo.On("EditRanger", mock.Anything, mock.Anything).Return(domain.RangerCore{}, errors.New("no data")).Once()
 		srv := New(repo)
-		res, err := srv.UpdateRanger(domain.RangerCore{}, 1)
+		res, resU, err := srv.UpdateRanger(domain.RangerCore{}, domain.UserCore{}, 1)
 		assert.NotNil(t, err)
 		assert.Empty(t, res)
+		assert.Empty(t, resU)
 		repo.AssertExpectations(t)
 	})
 }

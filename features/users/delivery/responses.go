@@ -28,6 +28,13 @@ type LoginResponse struct {
 	Token       string `json:"token" form:"token"`
 }
 
+type ClimberResponse struct {
+	ID            uint
+	IsClimber     int
+	MaleClimber   int
+	FemaleClimber int
+}
+
 func ToResponse(core interface{}, code string) interface{} {
 	var res interface{}
 
@@ -41,6 +48,9 @@ func ToResponse(core interface{}, code string) interface{} {
 	case "login":
 		cnv := core.(domain.Core)
 		res = LoginResponse{ID: cnv.ID, FullName: cnv.FullName, Email: cnv.Email, Role: cnv.Role, UserPicture: cnv.UserPicture, Token: cnv.Token}
+	case "climber":
+		cnv := core.(domain.ClimberCore)
+		res = ClimberResponse{ID: cnv.ID, IsClimber: cnv.IsClimber, MaleClimber: cnv.MaleClimber, FemaleClimber: cnv.FemaleClimber}
 	}
 
 	return res

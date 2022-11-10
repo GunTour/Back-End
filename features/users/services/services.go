@@ -106,3 +106,12 @@ func (us *userService) Login(input domain.Core) (domain.Core, error) {
 
 	return res, nil
 }
+
+func (us *userService) ShowClimber() (domain.ClimberCore, error) {
+	res, err := us.qry.GetClimber()
+	if err != nil {
+		return domain.ClimberCore{}, err
+	}
+
+	return res, nil
+}
