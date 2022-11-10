@@ -29,8 +29,9 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.POST("/admin/product", handler.AddProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD NEW PRODUCT
 	e.PUT("/admin/product/:id_product", handler.EditProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))      // UPDATE DATA PRODUCT
 	e.DELETE("/admin/product/:id_product", handler.RemoveProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET")))) // DELETE PRODUCT
-	e.GET("/admin/ranger", handler.ShowAllRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
-	e.PUT("/admin/ranger/:id_ranger", handler.UpdateRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
+	e.GET("/admin/ranger", handler.ShowAllRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                 // GET LIST RANGER
+	e.PUT("/admin/ranger/:id_ranger", handler.UpdateRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))       // EDIT RANGER
+	e.DELETE("/admin/ranger/:id_ranger", handler.RemoveRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))    // DELETE RANGER
 }
 
 func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
@@ -224,8 +225,15 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
 		}
 
+		var inputPhone UserPhone
+
+		if err := c.Bind(&inputPhone); err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
+		}
+
 		cnv := ToDomainRanger(input)
-		res, err := ah.srv.UpdateRanger(cnv, uint(rangerId))
+		conv := ToDomainUser(inputPhone)
+		res, resU, err := ah.srv.UpdateRanger(cnv, conv, uint(rangerId))
 		if input.StatusApply != "" {
 			// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
 			// helper.Openbrowser("localhost:8000/gmail")
@@ -237,6 +245,25 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
-		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponse(res, "ranger")))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponseUser(res, "ranger", resU, "user")))
+	}
+}
+
+func (ah *adminHandler) RemoveRanger() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		_, role := middlewares.ExtractToken(c)
+		if role != "admin" {
+			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+		}
+		id, er := strconv.Atoi(c.Param("id_ranger"))
+		if er != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("invalid id"))
+		}
+		err := ah.srv.RemoveRanger(id)
+
+		if err != nil {
+			return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+		}
+		return c.JSON(http.StatusOK, SuccessResponseNoData("success delete ranger"))
 	}
 }

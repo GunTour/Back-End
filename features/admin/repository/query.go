@@ -132,18 +132,14 @@ func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, e
 	return resAccepted, res, nil
 }
 
-func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
+func (rq *repoQuery) EditRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, error) {
 	var cnv Ranger = FromDomainRanger(data)
+	var conv User = FromDomainUser(datas)
 	var mail string
 
 	if err := rq.db.Table("rangers").Where("id = ?", id).Updates(&cnv).Error; err != nil {
 		log.Error("error on edit status apply ranger", err.Error())
-		return domain.RangerCore{}, err
-	}
-
-	if err := rq.db.Preload("User").Table("rangers").Where("id = ?", id).First(&cnv).Error; err != nil {
-		log.Error("error on getting after edit", err.Error())
-		return domain.RangerCore{}, err
+		return domain.RangerCore{}, domain.UserCore{}, err
 	}
 
 	if data.StatusApply != "" {
@@ -153,11 +149,30 @@ func (rq *repoQuery) EditRanger(data domain.RangerCore, id uint) (domain.RangerC
 		rq.db.Create(&pesan)
 	}
 
+	if err := rq.db.Preload("User").Table("rangers").Where("id = ?", id).First(&cnv).Error; err != nil {
+		log.Error("error on getting after edit", err.Error())
+		return domain.RangerCore{}, domain.UserCore{}, err
+	}
+
+	if err := rq.db.Table("users").Where("id = ?", cnv.UserID).Updates(&conv).Error; err != nil {
+		log.Error("error on edit phone user", err.Error())
+		return domain.RangerCore{}, domain.UserCore{}, err
+	}
+
 	if err := rq.db.Table("users").Where("id = ?", cnv.UserID).Update("role", "ranger").Error; err != nil {
 		log.Error("error on edit role user", err.Error())
-		return domain.RangerCore{}, err
+		return domain.RangerCore{}, domain.UserCore{}, err
 	}
 
 	res := ToDomainRanger(cnv)
-	return res, nil
+	resU := ToDomainUser(conv)
+	return res, resU, nil
+}
+
+func (rq *repoQuery) DeleteRanger(id int) error {
+	err := rq.db.Where("id=?", id).Delete(&Ranger{})
+	if err.RowsAffected == 0 {
+		return errors.New("no data")
+	}
+	return nil
 }

@@ -187,7 +187,7 @@ func FromDomainRanger(dr domain.RangerCore) Ranger {
 		Detail:      dr.Detail,
 		Status:      dr.Status,
 		StatusApply: dr.StatusApply,
-		User:        User{},
+		User:        User{Phone: dr.User.Phone},
 	}
 }
 
@@ -200,7 +200,7 @@ func ToDomainRanger(r Ranger) domain.RangerCore {
 		Detail:      r.Detail,
 		Status:      r.Status,
 		StatusApply: r.StatusApply,
-		User:        domain.UserCore{},
+		User:        domain.UserCore{Phone: r.User.Phone},
 	}
 }
 
@@ -219,4 +219,18 @@ func ToDomainRangerArray(ar []Ranger) []domain.RangerCore {
 		})
 	}
 	return arr
+}
+
+func FromDomainUser(du domain.UserCore) User {
+	return User{
+		Model: gorm.Model{ID: uint(du.ID)},
+		Phone: du.Phone,
+	}
+}
+
+func ToDomainUser(u User) domain.UserCore {
+	return domain.UserCore{
+		ID:    int(u.ID),
+		Phone: u.Phone,
+	}
 }
