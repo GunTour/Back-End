@@ -68,7 +68,7 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 
 		idBooking, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse("failed to get id booking"))
+			return c.JSON(http.StatusBadRequest, FailResponse("id booking must integer"))
 		}
 		res, err := bs.srv.GetDetail(uint(idBooking))
 		if err != nil {
@@ -83,7 +83,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 		id, role := middlewares.ExtractToken(c)
 		if id == 0 {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
-		} else if role != "ranger" {
+		} else if role == "ranger" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 
@@ -184,7 +184,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 
 		id, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
-			return c.JSON(http.StatusBadGateway, FailResponse("failed to get id booking"))
+			return c.JSON(http.StatusBadGateway, FailResponse("id booking must integer"))
 		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {
@@ -222,7 +222,7 @@ func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 		}
 
 		if err != nil {
-			return errors.New("failed to get id booking")
+			return c.JSON(http.StatusBadRequest, FailResponse("id booking must integer"))
 		}
 
 		err = bs.srv.DeleteData(uint(id))
