@@ -21,6 +21,12 @@ type Core struct {
 	UpdatedAt   time.Time
 }
 
+type UserInfo struct {
+	Email        string
+	Fullname     string
+	Photoprofile string
+}
+
 type Repository interface {
 	Add(data Core) (Core, error)
 	Edit(data Core, id int) (Core, error)

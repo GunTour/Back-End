@@ -4,17 +4,20 @@ import (
 	"GunTour/features/booking/domain"
 	"GunTour/utils/middlewares"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/oauth2"
+	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
 )
 
 var (
@@ -22,7 +25,8 @@ var (
 )
 
 type bookingHandler struct {
-	srv domain.Services
+	srv   domain.Services
+	oauth *oauth2.Config
 }
 
 func New(e *echo.Echo, srv domain.Services) {
@@ -111,16 +115,6 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
 		}
 
-		input.DateStart, er = time.Parse("2006-01-02", input.Start)
-		if er != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
-		}
-
-		input.DateEnd, er = time.Parse("2006-01-02", input.End)
-		if er != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
-		}
-
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
 		input.StatusBooking = "unpaid"
@@ -129,6 +123,50 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		res, err := bs.srv.InsertData(cnv)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+		}
+
+		if input.Token != "" {
+			pendaki, ranger := bs.srv.GetEmail(IdUser, int(input.IdRanger))
+			if pendaki.Email == "" {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+					"code":    500,
+					"message": "Internal Server Error",
+				})
+			}
+
+			Start := fmt.Sprintf("%s", input.DateStart)
+			End := fmt.Sprintf("%s", input.DateEnd)
+
+			events := &calendar.Event{
+				Summary:     "Day of Your Climbing",
+				Description: "Climbing Day",
+				Start: &calendar.EventDateTime{
+					DateTime: Start,
+					TimeZone: "Asia/Jakarta",
+				},
+				End: &calendar.EventDateTime{
+					DateTime: End,
+					TimeZone: "Asia/Jakarta",
+				},
+				Attendees: []*calendar.EventAttendee{
+					{Email: pendaki.Email},
+					{Email: ranger.Email},
+				},
+			}
+
+			tokenOauth := &oauth2.Token{AccessToken: input.Token}
+
+			client := bs.oauth.Client(c.Request().Context(), tokenOauth)
+
+			srv, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
+			if err != nil {
+				log.Printf("Unable to retrieve Calendar client: %v", err)
+			}
+
+			_, err = srv.Events.Insert("primary", events).SendUpdates("all").Do()
+			if err != nil {
+				log.Printf("Unable to create event. %v\n", err)
+			}
 		}
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
@@ -155,12 +193,9 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
-		if input.Start == "" && input.End == "" && input.Entrance == "" && input.Ticket == 0 && input.Product == nil && input.GrossAmount == 0 {
+		if input.DateStart == "" && input.DateEnd == "" && input.Entrance == "" && input.Ticket == 0 && input.Product == nil && input.GrossAmount == 0 {
 			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
 		}
-
-		input.DateStart, _ = time.Parse("2006-01-02", input.Start)
-		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
 
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
