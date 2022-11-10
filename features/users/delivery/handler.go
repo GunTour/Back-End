@@ -23,13 +23,13 @@ type userHandler struct {
 
 func New(e *echo.Echo, srv domain.Service) {
 	handler := userHandler{srv: srv}
-	e.GET("/user", handler.ShowClimber())
-	e.POST("/user", handler.Insert())
-	e.PUT("/user", handler.Update(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
-	e.DELETE("/user", handler.Delete(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
-	e.POST("/login", handler.Login())
+	e.POST("/user", handler.Insert())                                                    // REGISTER USER
+	e.PUT("/user", handler.Update(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))    // EDIT DATA USER
+	e.DELETE("/user", handler.Delete(), middleware.JWT([]byte(os.Getenv("JWT_SECRET")))) // DELETE USER
+	e.POST("/login", handler.Login())                                                    // LOGIN
 }
 
+// REGISTER USER
 func (uh *userHandler) Insert() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
@@ -48,17 +48,23 @@ func (uh *userHandler) Insert() echo.HandlerFunc {
 		if valid != "Valid" {
 			return c.JSON(http.StatusBadRequest, FailResponse(valid))
 		}
-		input.UserPicture = "https://guntour.s3.ap-southeast-1.amazonaws.com/posts/iTs1Ve2IJ71i6wSGzMBp-profile.jpg"
+
 		cnv := ToCore(input)
 		res, err := uh.srv.Insert(cnv)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			if strings.Contains(err.Error(), "duplicate") {
+				return c.JSON(http.StatusBadRequest, FailResponse("duplicate email on database"))
+			} else if strings.Contains(err.Error(), "password") {
+				return c.JSON(http.StatusBadRequest, FailResponse("cannot encrypt password"))
+			}
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusCreated, SuccessResponse("success register user", ToResponse(res, "register")))
 
 	}
 }
 
+// UPDATE DATA USER
 func (uh *userHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, role := middlewares.ExtractToken(c)
@@ -104,6 +110,9 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 			cnv := ToCore(input)
 			res, err := uh.srv.Update(cnv, file, fileheader, userID)
 			if err != nil {
+				if strings.Contains(err.Error(), "found") {
+					return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+				}
 				return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 			}
 			return c.JSON(http.StatusAccepted, SuccessResponse("success update user", ToResponse(res, "update")))
@@ -113,6 +122,7 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 	}
 }
 
+// DELETE USER
 func (uh *userHandler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, role := middlewares.ExtractToken(c)
@@ -122,6 +132,9 @@ func (uh *userHandler) Delete() echo.HandlerFunc {
 		} else if role == "pendaki" {
 			res, err := uh.srv.Delete(userID)
 			if err != nil {
+				if strings.Contains(err.Error(), "found") {
+					return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+				}
 				return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
 			}
 			return c.JSON(http.StatusOK, SuccessResponse("success delete data", ToResponse(res, "")))
@@ -131,6 +144,7 @@ func (uh *userHandler) Delete() echo.HandlerFunc {
 	}
 }
 
+// LOGIN
 func (uh *userHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input LoginFormat
@@ -149,17 +163,5 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusAccepted, SuccessResponse("success login", ToResponse(res, "login")))
-	}
-}
-
-func (us *userHandler) ShowClimber() echo.HandlerFunc {
-	return func(c echo.Context) error {
-
-		res, err := us.srv.ShowClimber()
-		if err != nil {
-			return c.JSON(http.StatusNotFound, FailResponse("no data."))
-		}
-
-		return c.JSON(http.StatusOK, SuccessResponse("success get climber", ToResponse(res, "climber")))
 	}
 }

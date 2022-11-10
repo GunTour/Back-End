@@ -89,6 +89,9 @@ func (rh *rangerHandler) ShowAll() echo.HandlerFunc {
 
 			res, err := rh.srv.ShowAll(Start, End)
 			if err != nil {
+				if strings.Contains(err.Error(), "found") {
+					return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+				}
 				return c.JSON(http.StatusInternalServerError, FailResponse("something went wrong"))
 			}
 			return c.JSON(http.StatusOK, SuccessResponse("success get ranger", ToResponse(res, "ranger")))

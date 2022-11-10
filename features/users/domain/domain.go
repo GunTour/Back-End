@@ -35,7 +35,6 @@ type ClimberCore struct {
 }
 
 type Repository interface {
-	GetClimber() (ClimberCore, error)
 	Add(data Core) (Core, error)
 	Edit(data Core, id int) (Core, error)
 	Remove(id int) (Core, error)
@@ -43,7 +42,6 @@ type Repository interface {
 }
 
 type Service interface {
-	ShowClimber() (ClimberCore, error)
 	Insert(data Core) (Core, error)
 	Update(data Core, file multipart.File, fileheader *multipart.FileHeader, id int) (Core, error)
 	Delete(id int) (Core, error)

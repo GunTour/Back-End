@@ -200,21 +200,48 @@ func TestUpdateRanger(t *testing.T) {
 	returnRespon := domain.RangerCore{ID: uint(1), UserID: uint(1), StatusApply: "accepted"}
 	returnRespon2 := domain.UserCore{Phone: returnRespon.User.Phone}
 	t.Run("Sukses Update Ranger Status", func(t *testing.T) {
-		repo.On("EditRanger", mock.Anything, mock.Anything).Return(returnRespon2, nil).Once()
+		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(returnRespon, returnRespon2, nil).Once()
 		srv := New(repo)
 		res, resU, err := srv.UpdateRanger(returnRespon, returnRespon2, 1)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
-		assert.NotEmpty(t, resU)
+		assert.Equal(t, resU, domain.UserCore{})
 		repo.AssertExpectations(t)
 	})
 	t.Run("Failed Update Ranger Status", func(t *testing.T) {
-		repo.On("EditRanger", mock.Anything, mock.Anything).Return(domain.RangerCore{}, errors.New("no data")).Once()
+		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(domain.RangerCore{}, domain.UserCore{}, errors.New("no data")).Once()
 		srv := New(repo)
 		res, resU, err := srv.UpdateRanger(domain.RangerCore{}, domain.UserCore{}, 1)
 		assert.NotNil(t, err)
 		assert.Empty(t, res)
 		assert.Empty(t, resU)
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestDeleteRanger(t *testing.T) {
+	repo := new(mocks.Repository)
+
+	t.Run("success delete ranger", func(t *testing.T) {
+
+		repo.On("DeleteRanger", mock.Anything).Return(nil).Once()
+
+		useCase := New(repo)
+
+		err := useCase.RemoveRanger(1)
+		assert.Nil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("error delete ranger", func(t *testing.T) {
+
+		repo.On("DeleteRanger", mock.Anything).Return(errors.New("error")).Once()
+
+		useCase := New(repo)
+
+		err := useCase.RemoveRanger(0)
+		assert.Error(t, errors.New("error"))
+		assert.Equal(t, err, err)
 		repo.AssertExpectations(t)
 	})
 }

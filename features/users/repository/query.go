@@ -64,7 +64,6 @@ func (rq *repoQuery) Remove(id int) (domain.Core, error) {
 }
 
 func (rq *repoQuery) Login(input domain.Core) (domain.Core, error) {
-
 	var data User
 
 	err := rq.db.First(&data, "email = ?", input.Email)
@@ -75,14 +74,4 @@ func (rq *repoQuery) Login(input domain.Core) (domain.Core, error) {
 	res := ToCore(data)
 	return res, nil
 
-}
-
-func (rq *repoQuery) GetClimber() (domain.ClimberCore, error) {
-	var resQry Climber
-	if err := rq.db.Find(&resQry).Error; err != nil {
-		return domain.ClimberCore{}, err
-	}
-
-	res := ToDomainClimber(resQry)
-	return res, nil
 }

@@ -1,5 +1,8 @@
 mode: set
-GunTour/features/climber/services/services.go:12.50,16.2 1 1
-GunTour/features/climber/services/services.go:18.62,20.16 2 1
-GunTour/features/climber/services/services.go:24.2,24.17 1 1
-GunTour/features/climber/services/services.go:20.16,22.3 1 1
+GunTour/features/product/services/services.go:12.49,14.2 1 1
+GunTour/features/product/services/services.go:16.79,19.16 2 1
+GunTour/features/product/services/services.go:23.2,23.35 1 1
+GunTour/features/product/services/services.go:19.16,21.3 1 1
+GunTour/features/product/services/services.go:27.66,30.16 2 1
+GunTour/features/product/services/services.go:33.2,33.17 1 1
+GunTour/features/product/services/services.go:30.16,32.3 1 1

@@ -6,9 +6,7 @@ import (
 	"GunTour/utils/middlewares"
 	"errors"
 	"mime/multipart"
-	"strings"
 
-	"github.com/labstack/gommon/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,7 +22,6 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 	generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Error("error on bcrypt password insert user", err.Error())
 		return domain.Core{}, errors.New("cannot encrypt password")
 	}
 	data.Password = string(generate)
@@ -33,10 +30,7 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 	res, err := us.qry.Add(data)
 	if err != nil {
-		if strings.Contains(err.Error(), "duplicate") {
-			return domain.Core{}, errors.New("rejected from database")
-		}
-		return domain.Core{}, errors.New("some problem on database")
+		return domain.Core{}, err
 	}
 	return res, nil
 
@@ -47,26 +41,19 @@ func (us *userService) Update(data domain.Core, file multipart.File, fileheader 
 	if data.Password != "" {
 		generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 		if err != nil {
-			log.Error("error on bcrypt password update user", err.Error())
 			return domain.Core{}, errors.New("cannot encrypt password")
 		}
 		data.Password = string(generate)
 	}
 
 	if fileheader != nil {
-		res, err := helper.UploadFile(file, fileheader)
-		if err != nil {
-			return domain.Core{}, err
-		}
+		res, _ := helper.UploadFile(file, fileheader)
 		data.UserPicture = res
 	}
 
 	res, err := us.qry.Edit(data, id)
 	if err != nil {
-		if strings.Contains(err.Error(), "found") {
-			return domain.Core{}, errors.New("no data")
-		}
-		return domain.Core{}, errors.New("some problem on database")
+		return domain.Core{}, err
 	}
 
 	return res, nil
@@ -77,11 +64,7 @@ func (us *userService) Delete(id int) (domain.Core, error) {
 
 	res, err := us.qry.Remove(id)
 	if err != nil {
-		if strings.Contains(err.Error(), "table") {
-			return domain.Core{}, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
-			return domain.Core{}, errors.New("no data")
-		}
+		return domain.Core{}, err
 	}
 	return res, nil
 
@@ -91,27 +74,14 @@ func (us *userService) Login(input domain.Core) (domain.Core, error) {
 
 	res, err := us.qry.Login(input)
 	if err != nil {
-		if strings.Contains(err.Error(), "table") {
-			return domain.Core{}, errors.New("database error")
-		} else if strings.Contains(err.Error(), "an invalid") {
-			return domain.Core{}, errors.New("an invalid client request")
-		}
+		return domain.Core{}, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(input.Password))
 	if err != nil {
-		return domain.Core{}, errors.New("an invalid client request")
+		return domain.Core{}, errors.New("password not match")
 	}
 	res.Token = middlewares.GenerateToken(res.ID, res.Role)
-
-	return res, nil
-}
-
-func (us *userService) ShowClimber() (domain.ClimberCore, error) {
-	res, err := us.qry.GetClimber()
-	if err != nil {
-		return domain.ClimberCore{}, err
-	}
 
 	return res, nil
 }

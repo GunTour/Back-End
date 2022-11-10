@@ -50,10 +50,10 @@ func (ph *productHandler) ShowByID() echo.HandlerFunc {
 
 		res, err := ph.srv.ShowByID(uint(productID))
 		if err != nil {
-			if strings.Contains(err.Error(), "page") {
-				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(http.StatusNotFound, FailResponse("data not found."))
 			}
-			return c.JSON(http.StatusNotFound, FailResponse("no data."))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get product detail", ToResponse(res, "detail")))
 

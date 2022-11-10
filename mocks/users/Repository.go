@@ -55,27 +55,6 @@ func (_m *Repository) Edit(data domain.Core, id int) (domain.Core, error) {
 	return r0, r1
 }
 
-// GetClimber provides a mock function with given fields:
-func (_m *Repository) GetClimber() (domain.ClimberCore, error) {
-	ret := _m.Called()
-
-	var r0 domain.ClimberCore
-	if rf, ok := ret.Get(0).(func() domain.ClimberCore); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(domain.ClimberCore)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // Login provides a mock function with given fields: input
 func (_m *Repository) Login(input domain.Core) (domain.Core, error) {
 	ret := _m.Called(input)
