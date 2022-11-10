@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:latest
 
 ##buat folder APP
 RUN mkdir /guntour
@@ -7,7 +7,7 @@ RUN mkdir /guntour
 WORKDIR /guntour
 
 ##copy seluruh file ke completedep
-ADD . .
+ADD . /guntour
 
 ##buat executeable
 RUN go build -o main .
