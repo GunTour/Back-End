@@ -110,6 +110,7 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 			tok, err := config.Exchange(oauth2.NoContext, Code)
 			if err != nil {
 				authURL := GetUrls()
+				// c.Redirect(http.Redirect(w, r, ))
 				return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponseGagal(ranger, authURL, "ranger")))
 			}
 			client = config.Client(oauth2.NoContext, tok)

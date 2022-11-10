@@ -166,15 +166,13 @@ func ToResponse(core interface{}, code string) interface{} {
 	return res
 }
 
-func ToResponseUser(core interface{}, code string, cores interface{}, codes string) interface{} {
+func ToResponseUser(core interface{}, coreUser interface{}, code string) interface{} {
 	var res interface{}
 	switch code {
 	case "ranger":
 		cnv := core.(domain.RangerCore)
-		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, Phone: cnv.User.Phone, StatusApply: cnv.StatusApply}
-	case "user":
-		cnv := core.(domain.UserCore)
-		res = GetUserPhone{Phone: cnv.Phone}
+		cnvUser := coreUser.(domain.UserCore)
+		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, Phone: cnvUser.Phone, StatusApply: cnv.StatusApply}
 	}
 	return res
 }

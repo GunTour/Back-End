@@ -223,14 +223,14 @@ func ToDomainRangerArray(ar []Ranger) []domain.RangerCore {
 
 func FromDomainUser(du domain.UserCore) User {
 	return User{
-		Model: gorm.Model{ID: uint(du.ID)},
+		Model: gorm.Model{ID: (du.ID)},
 		Phone: du.Phone,
 	}
 }
 
 func ToDomainUser(u User) domain.UserCore {
 	return domain.UserCore{
-		ID:    int(u.ID),
+		ID:    (u.ID),
 		Phone: u.Phone,
 	}
 }

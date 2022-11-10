@@ -46,13 +46,10 @@ type GetId struct {
 type RangerFormat struct {
 	ID          uint   `json:"id_ranger" form:"id_ranger"`
 	UserID      uint   `json:"id_user" form:"id_user"`
+	Phone       string `json:"phone" form:"phone"`
 	Status      string `json:"status" form:"status"`
 	StatusApply string `json:"status_apply" form:"status_apply"`
 	Role        string
-}
-
-type UserPhone struct {
-	Phone string `json:"phone" form:"phone"`
 }
 
 func ToDomainClimber(i interface{}) domain.ClimberCore {
@@ -91,8 +88,8 @@ func ToDomainRanger(i interface{}) domain.RangerCore {
 
 func ToDomainUser(i interface{}) domain.UserCore {
 	switch i.(type) {
-	case UserPhone:
-		cnv := i.(UserPhone)
+	case RangerFormat:
+		cnv := i.(RangerFormat)
 		return domain.UserCore{Phone: cnv.Phone}
 	}
 	return domain.UserCore{}
