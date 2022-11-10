@@ -248,10 +248,10 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
-		// if input.StatusApply != "" {
-		// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
-		// helper.Openbrowser("localhost:8000/gmail")
-		// }
+		if input.StatusApply != "" {
+			c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
+			// helper.Openbrowser("localhost:8000/gmail")
+		}
 
 		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponseUser(res, resU, "ranger")))
 	}
