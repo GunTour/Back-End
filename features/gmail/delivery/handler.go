@@ -111,8 +111,10 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 				// c.Redirect(http.Redirect(w, r, ))
 				return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponseGagal(ranger, authURL, "ranger")))
 			}
-			client = config.Client(oauth2.NoContext, tok)
-			res := ToDomain(tok, Code)
+			toks := config.TokenSource(oauth2.NoContext, tok)
+			s, err := toks.Token()
+			client = config.Client(oauth2.NoContext, s)
+			res := ToDomain(s, Code)
 			gh.srv.UpdateCode(res)
 		}
 
