@@ -3,7 +3,7 @@ package delivery
 import "GunTour/features/users/domain"
 
 type RegisterFormat struct {
-	FullName    string `json:"fullname" form:"fullname" validate:"required,min=4,max=15"`
+	FullName    string `json:"fullname" form:"fullname" validate:"required,min=4,max=30"`
 	Email       string `json:"email" form:"email" validate:"required,email"`
 	Password    string `json:"password" form:"password"`
 	UserPicture string
@@ -15,7 +15,7 @@ type LoginFormat struct {
 }
 
 type UpdateFormat struct {
-	FullName    string `json:"fullname" form:"fullname" validate:"min=4,max=15"`
+	FullName    string `json:"fullname" form:"fullname" validate:"min=4,max=30"`
 	Email       string `json:"email" form:"email" validate:"email"`
 	Password    string `json:"password" form:"password"`
 	Phone       string `json:"phone" form:"phone" validate:"min=11,max=15"`
@@ -26,7 +26,7 @@ type UpdateFormat struct {
 }
 
 type FullName struct {
-	FullName string `json:"fullname" form:"fullname" validate:"min=4,max=15"`
+	FullName string `json:"fullname" form:"fullname" validate:"min=4,max=30"`
 }
 
 type Email struct {
