@@ -224,23 +224,15 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 		validApply := input.StatusApply == "accepted" || input.StatusApply == "rejected"
 		validStatus := input.Status == "off" || input.Status == "duty" || input.Status == "available"
 
-		if !validApply && !validStatus {
-			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
-		}
-
-		var inputPhone UserPhone
-
-		if err := c.Bind(&inputPhone); err != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
+		if input.Phone == "" {
+			if !validApply && !validStatus {
+				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+			}
 		}
 
 		cnv := ToDomainRanger(input)
-		conv := ToDomainUser(inputPhone)
+		conv := ToDomainUser(input)
 		res, resU, err := ah.srv.UpdateRanger(cnv, conv, uint(rangerId))
-		if input.StatusApply != "" {
-			// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
-			// helper.Openbrowser("localhost:8000/gmail")
-		}
 
 		if err != nil {
 			if strings.Contains(err.Error(), "found") {
@@ -248,8 +240,12 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
+		// if input.StatusApply != "" {
+		// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
+		// helper.Openbrowser("localhost:8000/gmail")
+		// }
 
-		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponseUser(res, "ranger", resU, "user")))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponseUser(res, resU, "ranger")))
 	}
 }
 

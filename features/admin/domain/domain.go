@@ -8,7 +8,7 @@ import (
 )
 
 type UserCore struct {
-	ID          int
+	ID          uint
 	FullName    string
 	Email       string
 	Password    string

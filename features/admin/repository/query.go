@@ -127,8 +127,6 @@ func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, e
 
 	resAccepted := ToDomainRangerArray(data)
 	res := ToDomainRangerArray(datas)
-	log.Print(resAccepted)
-	log.Print(res)
 	return resAccepted, res, nil
 }
 
