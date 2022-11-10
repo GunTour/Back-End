@@ -23,9 +23,10 @@ type userHandler struct {
 
 func New(e *echo.Echo, srv domain.Service) {
 	handler := userHandler{srv: srv}
-	e.POST("/users", handler.Insert())
-	e.PUT("/users", handler.Update(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
-	e.DELETE("/users", handler.Delete(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
+	e.GET("/user", handler.ShowClimber())
+	e.POST("/user", handler.Insert())
+	e.PUT("/user", handler.Update(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
+	e.DELETE("/user", handler.Delete(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
 	e.POST("/login", handler.Login())
 }
 
@@ -148,5 +149,17 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusAccepted, SuccessResponse("success login", ToResponse(res, "login")))
+	}
+}
+
+func (us *userHandler) ShowClimber() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		res, err := us.srv.ShowClimber()
+		if err != nil {
+			return c.JSON(http.StatusNotFound, FailResponse("no data."))
+		}
+
+		return c.JSON(http.StatusOK, SuccessResponse("success get climber", ToResponse(res, "climber")))
 	}
 }

@@ -76,3 +76,13 @@ func (rq *repoQuery) Login(input domain.Core) (domain.Core, error) {
 	return res, nil
 
 }
+
+func (rq *repoQuery) GetClimber() (domain.ClimberCore, error) {
+	var resQry Climber
+	if err := rq.db.Find(&resQry).Error; err != nil {
+		return domain.ClimberCore{}, err
+	}
+
+	res := ToDomainClimber(resQry)
+	return res, nil
+}

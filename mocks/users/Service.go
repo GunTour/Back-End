@@ -78,6 +78,27 @@ func (_m *Service) Login(input domain.Core) (domain.Core, error) {
 	return r0, r1
 }
 
+// ShowClimber provides a mock function with given fields:
+func (_m *Service) ShowClimber() (domain.ClimberCore, error) {
+	ret := _m.Called()
+
+	var r0 domain.ClimberCore
+	if rf, ok := ret.Get(0).(func() domain.ClimberCore); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(domain.ClimberCore)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: data, file, fileheader, id
 func (_m *Service) Update(data domain.Core, file multipart.File, fileheader *multipart.FileHeader, id int) (domain.Core, error) {
 	ret := _m.Called(data, file, fileheader, id)

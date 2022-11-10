@@ -66,6 +66,13 @@ type UserInfo struct {
 	Photoprofile string
 }
 
+type Climber struct {
+	gorm.Model
+	IsClimber     int
+	MaleClimber   int
+	FemaleClimber int
+}
+
 func FromCore(uc domain.Core) User {
 	return User{
 		Model:       gorm.Model{ID: uint(uc.ID), CreatedAt: uc.CreatedAt, UpdatedAt: uc.UpdatedAt},
@@ -127,5 +134,23 @@ func (u *UserInfo) ToModelUserInfo() domain.UserInfo {
 		Email:        u.Email,
 		Fullname:     u.Fullname,
 		Photoprofile: u.Photoprofile,
+	}
+}
+
+func FromDomainClimber(db domain.ClimberCore) Climber {
+	return Climber{
+		Model:         gorm.Model{ID: db.ID},
+		IsClimber:     db.IsClimber,
+		MaleClimber:   db.MaleClimber,
+		FemaleClimber: db.FemaleClimber,
+	}
+}
+
+func ToDomainClimber(db Climber) domain.ClimberCore {
+	return domain.ClimberCore{
+		ID:            db.ID,
+		IsClimber:     db.IsClimber,
+		MaleClimber:   db.MaleClimber,
+		FemaleClimber: db.FemaleClimber,
 	}
 }
