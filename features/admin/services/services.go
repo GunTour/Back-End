@@ -100,11 +100,20 @@ func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCor
 	return resAccepted, res, nil
 }
 
-func (as *adminService) UpdateRanger(data domain.RangerCore, id uint) (domain.RangerCore, error) {
-	res, err := as.qry.EditRanger(data, id)
+func (as *adminService) UpdateRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, error) {
+	res, resU, err := as.qry.EditRanger(data, datas, id)
 	if err != nil {
-		return domain.RangerCore{}, err
+		return domain.RangerCore{}, domain.UserCore{}, err
 	}
 
-	return res, nil
+	return res, resU, nil
+}
+
+func (as *adminService) RemoveRanger(id int) error {
+	err := as.qry.DeleteRanger(id)
+	if err != nil {
+		return errors.New("no data")
+	}
+
+	return nil
 }

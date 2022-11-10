@@ -73,7 +73,8 @@ type Repository interface {
 	UpdateProduct(newProduct ProductCore) (ProductCore, error)
 	DeleteProduct(id int) error
 	GetAllRanger() ([]RangerCore, []RangerCore, error)
-	EditRanger(data RangerCore, id uint) (RangerCore, error)
+	EditRanger(data RangerCore, datas UserCore, id uint) (RangerCore, UserCore, error)
+	DeleteRanger(id int) error
 }
 
 type Services interface {
@@ -84,7 +85,8 @@ type Services interface {
 	EditProduct(newProduct ProductCore, file multipart.File, fileheader *multipart.FileHeader) (ProductCore, error)
 	RemoveProduct(id int) error
 	ShowAllRanger() ([]RangerCore, []RangerCore, error)
-	UpdateRanger(data RangerCore, id uint) (RangerCore, error)
+	UpdateRanger(data RangerCore, datas UserCore, id uint) (RangerCore, UserCore, error)
+	RemoveRanger(id int) error
 }
 
 type Handler interface {

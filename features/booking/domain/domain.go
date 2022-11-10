@@ -1,16 +1,14 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/labstack/echo/v4"
 )
 
 type Core struct {
 	ID                  uint
 	IdUser              uint
-	DateStart           time.Time
-	DateEnd             time.Time
+	DateStart           string
+	DateEnd             string
 	Entrance            string
 	Ticket              int
 	IdRanger            uint
@@ -34,6 +32,17 @@ type BookingProductCore struct {
 	RentPrice   int
 }
 
+type Pendaki struct {
+	Email   string
+	Address string
+}
+
+type Ranger struct {
+	UserID   int
+	FullName string
+	Email    string
+}
+
 type Repository interface {
 	Get(idUser uint) ([]Core, error)
 	GetID(idBooking uint) (Core, error)
@@ -42,6 +51,7 @@ type Repository interface {
 	Update(newBooking Core) (Core, error)
 	Delete(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
+	GetEmailData(userPen, userRan int) (Pendaki, Ranger)
 }
 
 type Services interface {
@@ -52,6 +62,7 @@ type Services interface {
 	UpdateData(newBooking Core) (Core, error)
 	DeleteData(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
+	GetEmail(userPen, userRan int) (Pendaki, Ranger)
 }
 
 type Handler interface {

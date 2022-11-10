@@ -2,7 +2,6 @@ package repository
 
 import (
 	"GunTour/features/booking/domain"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -10,8 +9,8 @@ import (
 type Booking struct {
 	gorm.Model
 	IdUser          uint
-	DateStart       time.Time
-	DateEnd         time.Time
+	DateStart       string
+	DateEnd         string
 	Entrance        string
 	Ticket          int
 	IdRanger        uint
@@ -33,6 +32,17 @@ type BookingProduct struct {
 	ProductQty  int
 	ProductName string `gorm:"-:migration;<-:false"`
 	RentPrice   int    `gorm:"-:migration;<-:false"`
+}
+
+type Pendaki struct {
+	Email   string
+	Address string
+}
+
+type Ranger struct {
+	UserID   int
+	FullName string
+	Email    string
 }
 
 func FromDomain(db domain.Core) Booking {
@@ -147,4 +157,19 @@ func ToDomainArrayRanger(dp []Booking) []domain.Core {
 		})
 	}
 	return res
+}
+
+func (m *Ranger) ToModelRanger() domain.Ranger {
+	return domain.Ranger{
+		UserID:   m.UserID,
+		FullName: m.FullName,
+		Email:    m.Email,
+	}
+}
+
+func (m *Pendaki) ToModelPendaki() domain.Pendaki {
+	return domain.Pendaki{
+		Email:   m.Email,
+		Address: m.Address,
+	}
 }

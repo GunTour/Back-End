@@ -50,6 +50,27 @@ func (_m *Repository) Get(idUser uint) ([]domain.Core, error) {
 	return r0, r1
 }
 
+// GetEmailData provides a mock function with given fields: userPen, userRan
+func (_m *Repository) GetEmailData(userPen int, userRan int) (domain.Pendaki, domain.Ranger) {
+	ret := _m.Called(userPen, userRan)
+
+	var r0 domain.Pendaki
+	if rf, ok := ret.Get(0).(func(int, int) domain.Pendaki); ok {
+		r0 = rf(userPen, userRan)
+	} else {
+		r0 = ret.Get(0).(domain.Pendaki)
+	}
+
+	var r1 domain.Ranger
+	if rf, ok := ret.Get(1).(func(int, int) domain.Ranger); ok {
+		r1 = rf(userPen, userRan)
+	} else {
+		r1 = ret.Get(1).(domain.Ranger)
+	}
+
+	return r0, r1
+}
+
 // GetID provides a mock function with given fields: idBooking
 func (_m *Repository) GetID(idBooking uint) (domain.Core, error) {
 	ret := _m.Called(idBooking)

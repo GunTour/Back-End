@@ -129,6 +129,7 @@ type RangerApplyResponse struct {
 type RangerAccepted struct {
 	ID          uint   `json:"id_ranger" form:"id_ranger"`
 	Status      string `json:"status" form:"status"`
+	Phone       string `json:"phone" form:"phone"`
 	StatusApply string `json:"status_apply" form:"status_apply"`
 }
 
@@ -139,6 +140,10 @@ type GetRangerArrayResponse struct {
 	MessageArray string                `json:"message" form:"message"`
 	DataArray    string                `json:"data_apply" form:"data_apply"`
 	DataApply    []RangerApplyResponse `json:"data" form:"data"`
+}
+
+type GetUserPhone struct {
+	Phone string `json:"phone" form:"phone"`
 }
 
 func ToResponse(core interface{}, code string) interface{} {
@@ -153,8 +158,24 @@ func ToResponse(core interface{}, code string) interface{} {
 	case "ranger":
 		cnv := core.(domain.RangerCore)
 		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply}
+	case "user":
+		cnv := core.(domain.UserCore)
+		res = GetUserPhone{Phone: cnv.Phone}
 	}
 
+	return res
+}
+
+func ToResponseUser(core interface{}, code string, cores interface{}, codes string) interface{} {
+	var res interface{}
+	switch code {
+	case "ranger":
+		cnv := core.(domain.RangerCore)
+		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, Phone: cnv.User.Phone, StatusApply: cnv.StatusApply}
+	case "user":
+		cnv := core.(domain.UserCore)
+		res = GetUserPhone{Phone: cnv.Phone}
+	}
 	return res
 }
 

@@ -51,6 +51,10 @@ type RangerFormat struct {
 	Role        string
 }
 
+type UserPhone struct {
+	Phone string `json:"phone" form:"phone"`
+}
+
 func ToDomainClimber(i interface{}) domain.ClimberCore {
 	cnv := i.(ClimberFormat)
 	return domain.ClimberCore{IsClimber: cnv.IsClimber, FemaleClimber: cnv.FemaleClimber, MaleClimber: cnv.MaleClimber}
@@ -83,4 +87,13 @@ func ToDomainRanger(i interface{}) domain.RangerCore {
 		return domain.RangerCore{ID: cnv.ID, UserID: cnv.UserID, Status: cnv.Status, StatusApply: cnv.StatusApply, User: domain.UserCore{Role: "ranger"}}
 	}
 	return domain.RangerCore{}
+}
+
+func ToDomainUser(i interface{}) domain.UserCore {
+	switch i.(type) {
+	case UserPhone:
+		cnv := i.(UserPhone)
+		return domain.UserCore{Phone: cnv.Phone}
+	}
+	return domain.UserCore{}
 }

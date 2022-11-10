@@ -60,6 +60,12 @@ type BookingProduct struct {
 	RentPrice   int    `gorm:"-:migration;<-:false"`
 }
 
+type UserInfo struct {
+	Email        string
+	Fullname     string
+	Photoprofile string
+}
+
 func FromCore(uc domain.Core) User {
 	return User{
 		Model:       gorm.Model{ID: uint(uc.ID), CreatedAt: uc.CreatedAt, UpdatedAt: uc.UpdatedAt},
@@ -114,4 +120,12 @@ func ToCoreArray(ua []User) []domain.Core {
 		})
 	}
 	return arr
+}
+
+func (u *UserInfo) ToModelUserInfo() domain.UserInfo {
+	return domain.UserInfo{
+		Email:        u.Email,
+		Fullname:     u.Fullname,
+		Photoprofile: u.Photoprofile,
+	}
 }
