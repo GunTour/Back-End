@@ -40,7 +40,7 @@ func TestInsert(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	repo := new(mocks.Repository)
-	data := domain.Core{ID: 1, FullName: "same", Email: "same@gmail.com"}
+	data := domain.Core{ID: 1, FullName: "same", Email: "same@gmail.com", Password: "Same1234"}
 	returnRespon := domain.Core{ID: 1, FullName: "same", Email: "same@gmail.com", Role: "pendaki"}
 	var file multipart.File
 	var FileHeader *multipart.FileHeader
@@ -58,7 +58,6 @@ func TestUpdate(t *testing.T) {
 	t.Run("failed update user", func(t *testing.T) {
 		repo.On("Edit", mock.Anything, 1).Return(domain.Core{}, errors.New("some problem on database")).Once()
 		usecase := New(repo)
-
 		res, err := usecase.Update(domain.Core{}, file, FileHeader, 1)
 		assert.Empty(t, res)
 		assert.NotNil(t, err)
@@ -97,21 +96,22 @@ func TestDelete(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	repo := new(mocks.Repository)
+	input := domain.Core{Email: "ssss@gmail.com", Password: "Same1234"}
 	t.Run("success login", func(t *testing.T) {
-		repo.On("Login", mock.Anything).Return(domain.Core{Password: "$2a$10$uaFEnmPloNX9eoMbUNXb5eeq59BECM9hwi.pfSwB61rRfjijlM/N. "}, nil).Once()
+		repo.On("Login", mock.Anything).Return(domain.Core{Password: "$2a$10$rV5osQeweSIUxr0nwzVQj.pzXYR6sh1TG0QxIcwoayYFgwJuiojjy"}, nil).Once()
 		srv := New(repo)
-		input := domain.Core{FullName: "Same", Email: "same@gmail.com", Password: "asdf"}
 		res, err := srv.Login(input)
 		assert.NotEmpty(t, res)
 		assert.Nil(t, err)
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("wrong email login", func(t *testing.T) {
-		repo.On("Login", mock.Anything).Return(domain.Core{Password: "asgfasg"}, errors.New("password not match")).Once()
+	t.Run("password not match login", func(t *testing.T) {
+		repo.On("Login", mock.Anything).Return(domain.Core{Password: "$2a$10$rV5osQeweSIUxr0nwzVQj.pzXYR6sh1TG0QxIcwoayYFgwJuiojjy"}, errors.New("password not match")).Once()
 		srv := New(repo)
-		input := domain.Core{FullName: "Same", Email: "same@gmail.com", Password: "asdf"}
+		input := domain.Core{Email: "khalidrian@gmail.com", Password: "Same123"}
 		res, err := srv.Login(input)
+		// assert.NotEmpty(t, er)
 		assert.Empty(t, res)
 		assert.EqualError(t, err, "password not match")
 		repo.AssertExpectations(t)

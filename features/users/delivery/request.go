@@ -37,7 +37,7 @@ func ToCore(i interface{}) domain.Core {
 	switch i.(type) {
 	case RegisterFormat:
 		cnv := i.(RegisterFormat)
-		return domain.Core{FullName: cnv.FullName, Email: cnv.Email, Password: cnv.Password, UserPicture: cnv.UserPicture}
+		return domain.Core{FullName: cnv.FullName, Email: cnv.Email, Password: cnv.Password, UserPicture: "https://guntour.s3.ap-southeast-1.amazonaws.com/posts/iTs1Ve2IJ71i6wSGzMBp-profile.jpg"}
 	case LoginFormat:
 		cnv := i.(LoginFormat)
 		return domain.Core{Email: cnv.Email, Password: cnv.Password}

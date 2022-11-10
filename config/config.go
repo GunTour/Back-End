@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -33,19 +32,21 @@ func initConfig() *AppConfig {
 
 	godotenv.Load("config.env")
 
-	serverPortConv, err := strconv.Atoi(os.Getenv("SERVER_PORT"))
-	if err != nil {
-		log.Fatal("error parse server port")
-		return nil
-	}
-	app.ServerPort = serverPortConv
+	// serverPortConv, err := strconv.Atoi(os.Getenv("SERVER_PORT"))
+	// if err != nil {
+	// 	log.Fatal("error parse server port")
+	// 	return nil
+	// }
+	// app.ServerPort = serverPortConv
+	app.ServerPort = 8000
 
-	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		log.Fatal("error parse db port")
-		return nil
-	}
-	app.DBPort = port
+	// port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	// if err != nil {
+	// 	log.Fatal("error parse db port")
+	// 	return nil
+	// }
+	// app.DBPort = port
+	app.DBPort = 3306
 
 	app.DBUser = os.Getenv("DB_USERNAME")
 	app.DBPass = os.Getenv("DB_PASSWORD")
