@@ -84,7 +84,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 		if id == 0 {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
 		} else if role == "ranger" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unauthorized access detected"))
 		}
 
 		res, err := bs.srv.GetRangerBooking(uint(id))
@@ -133,8 +133,8 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 				})
 			}
 
-			Start := fmt.Sprintf("%s", input.DateStart)
-			End := fmt.Sprintf("%s", input.DateEnd)
+			Start := fmt.Sprintf("%sT07:20:50.52Z", input.DateStart)
+			End := fmt.Sprintf("%sT07:20:50.52Z", input.DateEnd)
 
 			events := &calendar.Event{
 				Summary:     "Day of Your Climbing",
@@ -184,7 +184,7 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 
 		id, err := strconv.Atoi(c.Param("id_booking"))
 		if err != nil {
-			return c.JSON(http.StatusBadGateway, FailResponse("id booking must integer"))
+			return c.JSON(http.StatusBadRequest, FailResponse("id booking must integer"))
 		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {

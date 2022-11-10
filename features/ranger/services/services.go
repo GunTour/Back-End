@@ -27,6 +27,7 @@ func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file mult
 
 	data.Status = "off"
 	data.StatusApply = "waiting"
+	data.Price = 100000
 
 	res, err := rs.qry.Add(data, dataUser)
 	if err != nil {

@@ -208,7 +208,10 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
 		}
 
-		rangerId, _ := strconv.Atoi(c.Param("id_ranger"))
+		rangerId, err := strconv.Atoi(c.Param("id_ranger"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, FailResponse("page must integer"))
+		}
 
 		var input RangerFormat
 
