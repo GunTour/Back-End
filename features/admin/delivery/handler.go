@@ -24,7 +24,7 @@ type adminHandler struct {
 func New(e *echo.Echo, srv domain.Services) {
 	handler := adminHandler{srv: srv}
 	e.GET("/admin/pendaki", handler.GetPendaki(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PENDAKI
-	e.POST("/admin/pendaki", handler.AddClimber(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // GET LIST PENDAKI
+	e.POST("/admin/pendaki", handler.AddClimber(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD TOTAL CLIMBER
 	e.GET("/admin/product", handler.GetProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                   // GET LIST PRODUCT
 	e.POST("/admin/product", handler.AddProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                  // ADD NEW PRODUCT
 	e.PUT("/admin/product/:id_product", handler.EditProduct(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))      // UPDATE DATA PRODUCT
@@ -34,6 +34,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.DELETE("/admin/ranger/:id_ranger", handler.RemoveRanger(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))    // DELETE RANGER
 }
 
+// GET LIST PENDAKI
 func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -49,6 +50,7 @@ func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
 	}
 }
 
+// ADD TOTAL CLIMBER
 func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -77,6 +79,7 @@ func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 	}
 }
 
+// GET LIST PRODUCT
 func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -100,6 +103,7 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 	}
 }
 
+// ADD NEW PRODUCT
 func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -133,6 +137,7 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 	}
 }
 
+// EDIT DATA PRODUCT
 func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UpdateFormat
@@ -166,6 +171,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 	}
 }
 
+// REMOVE PRODUCT
 func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -185,6 +191,7 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 	}
 }
 
+// GET RANGER LIST AND RANGER APPLY LIST
 func (ah *adminHandler) ShowAllRanger() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
@@ -194,6 +201,9 @@ func (ah *adminHandler) ShowAllRanger() echo.HandlerFunc {
 
 		resAccepted, res, err := ah.srv.ShowAllRanger()
 		if err != nil {
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(http.StatusNotFound, FailResponse("data not found."))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
@@ -201,8 +211,10 @@ func (ah *adminHandler) ShowAllRanger() echo.HandlerFunc {
 	}
 }
 
+// UPDATE RANGER STATUS
 func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		var input RangerFormat
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
@@ -213,17 +225,13 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse("page must integer"))
 		}
 
-		var input RangerFormat
-
 		input.ID = uint(rangerId)
-
 		if err := c.Bind(&input); err != nil {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot bind update data"))
 		}
 
 		validApply := input.StatusApply == "accepted" || input.StatusApply == "rejected"
 		validStatus := input.Status == "off" || input.Status == "duty" || input.Status == "available"
-
 		if input.Phone == "" {
 			if !validApply && !validStatus {
 				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
@@ -249,6 +257,7 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 	}
 }
 
+// REMOVE RANGER
 func (ah *adminHandler) RemoveRanger() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)

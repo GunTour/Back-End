@@ -5,7 +5,6 @@ import (
 	"GunTour/utils/helper"
 	"errors"
 	"mime/multipart"
-	"strings"
 )
 
 type adminService struct {
@@ -40,10 +39,7 @@ func (as *adminService) AddClimber(data domain.ClimberCore) (domain.ClimberCore,
 func (as *adminService) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	res, pages, totalPage, err := as.qry.GetProduct(page)
 	if err != nil {
-		if strings.Contains(err.Error(), "found") {
-			return []domain.ProductCore{}, 0, 0, errors.New("page not found")
-		}
-		return []domain.ProductCore{}, 0, 0, errors.New("no data")
+		return []domain.ProductCore{}, 0, 0, err
 	}
 
 	return res, pages, totalPage, nil
@@ -89,12 +85,7 @@ func (as *adminService) RemoveProduct(id int) error {
 func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCore, error) {
 	resAccepted, res, err := as.qry.GetAllRanger()
 	if err != nil {
-		if strings.Contains(err.Error(), "table") {
-			return nil, nil, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
-			return nil, nil, errors.New("no data")
-		}
-		return nil, nil, errors.New("no data")
+		return nil, nil, err
 	}
 
 	return resAccepted, res, nil
