@@ -41,7 +41,7 @@ func GetUrls() string {
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/gmail.send"},
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send"},
 		Endpoint:     google.Endpoint,
 		RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 	}
@@ -88,7 +88,7 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		config := &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
-			Scopes:       []string{"https://www.googleapis.com/auth/gmail.send"},
+			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send"},
 			Endpoint:     google.Endpoint,
 			RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 		}
