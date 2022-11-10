@@ -4,9 +4,7 @@ import (
 	"GunTour/features/ranger/domain"
 	"GunTour/utils/helper"
 	"errors"
-	"log"
 	"mime/multipart"
-	"strings"
 	"time"
 )
 
@@ -41,11 +39,7 @@ func (rs *rangerService) ShowAll(start time.Time, end time.Time) ([]domain.Core,
 
 	res, err := rs.qry.GetAll(start, end)
 	if err != nil {
-		log.Print(err.Error())
-		if strings.Contains(err.Error(), "found") {
-			return nil, errors.New("no data")
-		}
-		return nil, errors.New("there is problem on server")
+		return nil, err
 	}
 
 	return res, nil

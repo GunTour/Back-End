@@ -34,31 +34,6 @@ func TestShowAll(t *testing.T) {
 		assert.Equal(t, 0, totalPage)
 		repo.AssertExpectations(t)
 	})
-	// repo := mocks.NewRepository(t)
-	// page := 1
-	// ret := []domain.Core{{ID: 1, ProductName: "tenda", RentPrice: 10000, ProductPicture: "https://guntour.s3.ap-southeast-1.amazonaws.com/posts/78Yawh7DexFdxltGofhy-1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"}}
-
-	// t.Run("success get all product", func(t *testing.T) {
-	// 	repo.On("GetAll", mock.Anything).Return(ret, 1, 1, nil).Once()
-	// 	srv := New(repo)
-	// 	res, pages, totalPage, err := srv.ShowAll(uint(page))
-	// 	assert.Nil(t, err)
-	// 	assert.NotEmpty(t, pages)
-	// 	assert.NotEmpty(t, totalPage)
-	// 	assert.Equal(t, ret, res)
-	// 	repo.AssertExpectations(t)
-	// })
-
-	// t.Run("failed get all product", func(t *testing.T) {
-	// 	repo.On("GetAll", mock.Anything).Return([]domain.Core{}, 0, 0, errors.New("no data")).Once()
-	// 	srv := New(repo)
-	// 	res, pages, totalPage, err := srv.ShowAll(uint(page))
-	// 	assert.NotNil(t, err)
-	// 	assert.Empty(t, res)
-	// 	assert.Equal(t, 0, pages)
-	// 	assert.Equal(t, 0, totalPage)
-	// 	repo.AssertExpectations(t)
-	// })
 }
 
 func TestShowByID(t *testing.T) {
@@ -79,7 +54,7 @@ func TestShowByID(t *testing.T) {
 		repo.On("GetByID", mock.Anything).Return(domain.Core{}, errors.New("no data")).Once()
 		srv := New(repo)
 		res, err := srv.ShowByID(uint(id))
-		assert.Nil(t, err)
+		assert.NotNil(t, err)
 		assert.Empty(t, res)
 		repo.AssertExpectations(t)
 	})

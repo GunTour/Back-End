@@ -3,7 +3,6 @@ package services
 import (
 	"GunTour/features/product/domain"
 	"errors"
-	"strings"
 )
 
 type productService struct {
@@ -29,11 +28,7 @@ func (ps *productService) ShowByID(id uint) (domain.Core, error) {
 
 	res, err := ps.qry.GetByID(id)
 	if err != nil {
-		if strings.Contains(err.Error(), "table") {
-			return domain.Core{}, errors.New("database error")
-		} else if strings.Contains(err.Error(), "found") {
-			return domain.Core{}, errors.New("no data")
-		}
+		return domain.Core{}, err
 	}
 	return res, nil
 
