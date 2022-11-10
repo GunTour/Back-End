@@ -238,6 +238,7 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			// c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
 			// helper.Openbrowser("localhost:8000/gmail")
 		}
+
 		if err != nil {
 			if strings.Contains(err.Error(), "found") {
 				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))

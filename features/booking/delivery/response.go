@@ -141,3 +141,7 @@ func ToResponseArray(core interface{}, code string) interface{} {
 	}
 	return res
 }
+
+func ToDomainCheckMidtrans(i *coreapi.TransactionStatusResponse) domain.Core {
+	return domain.Core{OrderId: i.OrderID, StatusBooking: i.TransactionStatus}
+}

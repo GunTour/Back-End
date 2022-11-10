@@ -117,7 +117,6 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
-		input.StatusBooking = "unpaid"
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
 		res, err := bs.srv.InsertData(cnv)
@@ -243,7 +242,7 @@ func (bs *bookingHandler) UpdateMidtrans() echo.HandlerFunc {
 		}
 
 		res := ToDomain(input)
-		bs.srv.UpdateData(res)
+		bs.srv.UpdateMidtrans(res)
 		return c.JSON(http.StatusOK, SuccessResponseNoData("Success update data."))
 	}
 }
