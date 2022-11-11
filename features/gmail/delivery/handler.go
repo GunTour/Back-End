@@ -7,13 +7,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/gmail/v1"
 )
 
@@ -26,22 +25,15 @@ func New(e *echo.Echo, srv domain.Services) {
 	// e.GET("/gmail/url", GetUrl()) // GET LIST PENDAKI
 	e.GET("/gmail", handler.GoSend())
 	e.PUT("/gmail/send", handler.GoSend())
-}
-
-func getClient(config *oauth2.Config, code string) *http.Client {
-	// The file token.json stores the user's access and refresh tokens, and is
-	// created automatically when the authorization flow completes for the first
-	// time.
-	tok := getTokenFromWeb(config, code)
-
-	return config.Client(oauth2.NoContext, tok)
+	e.GET("/calendar", handler.GoCalendar())
+	e.POST("/calendar/send", handler.GoCalendar())
 }
 
 func GetUrls() string {
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send"},
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
 		Endpoint:     google.Endpoint,
 		RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 	}
@@ -52,31 +44,19 @@ func GetUrls() string {
 	return authURL
 }
 
-func openbrowser(url string) {
-	var err error
-	switch runtime.GOOS {
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	default:
-		err = fmt.Errorf("unsupported platform")
+func GetUrlsCal() string {
+	config := &oauth2.Config{
+		ClientID:     os.Getenv("CLIENT_ID"),
+		ClientSecret: os.Getenv("CLIENT_SECRET"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
+		Endpoint:     google.Endpoint,
+		RedirectURL:  os.Getenv("REDIRECT_CALENDAR"),
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
-// Request a token from the web, then returns the retrieved token.
-func getTokenFromWeb(config *oauth2.Config, code string) *oauth2.Token {
-
-	tok, err := config.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		log.Fatalf("Unable to retrieve token from web: %v", err)
-	}
-	return tok
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	authURL = strings.ReplaceAll(authURL, "\u0026", "&")
+	// log.Print(authURL)
+	return authURL
 }
 
 func (gh *gmailHandler) GoSend() echo.HandlerFunc {
@@ -88,7 +68,7 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		config := &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
-			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send"},
+			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
 			Endpoint:     google.Endpoint,
 			RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
 		}
@@ -150,5 +130,77 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 		} else {
 			return c.JSON(http.StatusAccepted, SuccessResponseRanger("success update status ranger", ToResponse(ranger, "ranger")))
 		}
+	}
+}
+
+func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var Code string
+		var client *http.Client
+
+		config := &oauth2.Config{
+			ClientID:     os.Getenv("CLIENT_ID"),
+			ClientSecret: os.Getenv("CLIENT_SECRET"),
+			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
+			Endpoint:     google.Endpoint,
+			RedirectURL:  os.Getenv("REDIRECT_CALENDAR"),
+		}
+
+		Code = c.QueryParam("code")
+		book := gh.srv.GetPesanCal()
+		if Code == "" {
+			resCode, err := gh.srv.GetCode()
+			if err != nil {
+				authURL := GetUrlsCal()
+				log.Print(authURL)
+				return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
+			}
+			Code = resCode.Code
+			tok := FromDomain(resCode)
+			client = config.Client(oauth2.NoContext, tok)
+		} else {
+			tok, err := config.Exchange(oauth2.NoContext, Code)
+			if err != nil {
+				authURL := GetUrlsCal()
+				// c.Redirect(http.Redirect(w, r, ))
+				return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
+			}
+			toks := config.TokenSource(oauth2.NoContext, tok)
+			s, err := toks.Token()
+			client = config.Client(oauth2.NoContext, s)
+			res := ToDomain(s, Code)
+			gh.srv.UpdateCode(res)
+		}
+
+		calendarService, err := calendar.New(client)
+		if err != nil {
+			GetUrlsCal()
+			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
+		}
+
+		event := &calendar.Event{
+			Summary:     "Your Climbing Day",
+			Location:    "Taman Nasional Gunung Gede",
+			Description: "Prepare for your greatest adventure.",
+			Start: &calendar.EventDateTime{
+				DateTime: fmt.Sprintf("%vT07:20:50.52Z", book.DateStart.Format("2006-01-02")),
+				TimeZone: "Asia/Jakarta",
+			},
+			End: &calendar.EventDateTime{
+				DateTime: fmt.Sprintf("%vT07:20:50.52Z", book.DateEnd.Format("2006-01-02")),
+				TimeZone: "Asia/Jakarta",
+			},
+			Attendees: []*calendar.EventAttendee{
+				{Email: fmt.Sprintf("%v", book.Email)},
+			},
+		}
+
+		calendarID := "primary"
+		event, err = calendarService.Events.Insert(calendarID, event).Do()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, FailResponse("unable to create an event."))
+		}
+		return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponse(book, "booking")))
+
 	}
 }
