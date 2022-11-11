@@ -6,8 +6,8 @@ import (
 
 type RegisterFormat struct {
 	IdUser        uint             `json:"id_user" form:"id_user"`
-	DateStart     string           `json:"date_start" form:"date_start"`
-	DateEnd       string           `json:"date_end" form:"date_end"`
+	DateStart     string           `json:"date_start" form:"date_start  validate:"required""`
+	DateEnd       string           `json:"date_end" form:"date_end  validate:"required""`
 	Entrance      string           `json:"entrance" form:"entrance" validate:"required"`
 	Ticket        int              `json:"ticket" form:"ticket" validate:"required"`
 	OrderId       string           `json:"order_id" form:"order_id"`
@@ -15,7 +15,6 @@ type RegisterFormat struct {
 	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
 	StatusBooking string           `json:"status_booking" form:"status_booking"`
 	GrossAmount   int              `json:"gross_amount" form:"gross_amount" validate:"required"`
-	Token         string           `json:"token" form:"token"`
 }
 
 type BookingProduct struct {

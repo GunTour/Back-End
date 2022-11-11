@@ -43,3 +43,8 @@ func (bs *gmailService) GetPesan() (domain.PesanCore, domain.RangerCore) {
 	res, resRanger := bs.qry.GetPesan()
 	return res, resRanger
 }
+
+func (bs *gmailService) GetPesanCal() domain.BookingCore {
+	res := bs.qry.GetPesanCal()
+	return res
+}

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/gmail/domain"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -52,4 +53,19 @@ func (rq *repoQuery) GetPesan() (domain.PesanCore, domain.RangerCore) {
 	res := ToDomainPesan(resQry)
 	resRanger := ToDomainRanger(resQryRanger)
 	return res, resRanger
+}
+
+func (rq *repoQuery) GetPesanCal() domain.BookingCore {
+	var resQry Booking
+	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
+		return domain.BookingCore{}
+	}
+
+	if err := rq.db.Select("bookings.date_start", "bookings.date_end", "users.email").Order("bookings.created_at desc").Joins("left join users on users.id=bookings.id_user").Where("bookings.id_user = ?", resQry.IdUser).First(&resQry).Scan(&resQry).Error; err != nil {
+		log.Print(resQry)
+		return domain.BookingCore{}
+	}
+
+	res := ToDomainBooking(resQry)
+	return res
 }

@@ -4,7 +4,6 @@ import (
 	"GunTour/features/booking/domain"
 	"GunTour/utils/middlewares"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -16,8 +15,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/oauth2"
-	"google.golang.org/api/calendar/v3"
-	"google.golang.org/api/option"
 )
 
 var (
@@ -112,7 +109,17 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 
 		er := validate.Struct(input)
 		if er != nil {
-			return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
+			if strings.Contains(er.Error(), "entrance") {
+				return c.JSON(http.StatusBadRequest, FailResponse("must fill required field entrance"))
+			} else if strings.Contains(er.Error(), "ticket") {
+				return c.JSON(http.StatusBadRequest, FailResponse("must fill required field ticket"))
+			} else if strings.Contains(er.Error(), "grossamount") {
+				return c.JSON(http.StatusBadRequest, FailResponse("must fill required field gross_amount"))
+			} else if strings.Contains(er.Error(), "date") {
+				c.JSON(http.StatusBadRequest, FailResponse("must input date time, or wrong input"))
+			} else {
+				return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
+			}
 		}
 
 		temp := uuid.New()
@@ -121,52 +128,60 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		cnv := ToDomain(input)
 		res, err := bs.srv.InsertData(cnv)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, FailResponse(err.Error()))
+			if strings.Contains(err.Error(), "datetime") {
+				c.JSON(http.StatusBadRequest, FailResponse("must input date time, or wrong input"))
+			}
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
-		if input.Token != "" {
-			pendaki, ranger := bs.srv.GetEmail(IdUser, int(input.IdRanger))
-			if pendaki.Email == "" {
-				return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-					"code":    500,
-					"message": "Internal Server Error",
-				})
-			}
-
-			Start := fmt.Sprintf("%sT07:20:50.52Z", input.DateStart)
-			End := fmt.Sprintf("%sT07:20:50.52Z", input.DateEnd)
-
-			events := &calendar.Event{
-				Summary:     "Day of Your Climbing",
-				Description: "Climbing Day",
-				Start: &calendar.EventDateTime{
-					DateTime: Start,
-					TimeZone: "Asia/Jakarta",
-				},
-				End: &calendar.EventDateTime{
-					DateTime: End,
-					TimeZone: "Asia/Jakarta",
-				},
-				Attendees: []*calendar.EventAttendee{
-					{Email: pendaki.Email},
-					{Email: ranger.Email},
-				},
-			}
-
-			tokenOauth := &oauth2.Token{AccessToken: input.Token}
-
-			client := bs.oauth.Client(c.Request().Context(), tokenOauth)
-
-			srv, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
-			if err != nil {
-				log.Printf("Unable to retrieve Calendar client: %v", err)
-			}
-
-			_, err = srv.Events.Insert("primary", events).SendUpdates("all").Do()
-			if err != nil {
-				log.Printf("Unable to create event. %v\n", err)
-			}
+		if input.DateStart != "" && input.DateEnd != "" && input.Ticket != 0 {
+			c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
+			// helper.Openbrowser("localhost:8000/gmail")
 		}
+
+		// if input.Token != "" {
+		// 	pendaki, ranger := bs.srv.GetEmail(IdUser, int(input.IdRanger))
+		// 	if pendaki.Email == "" {
+		// 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		// 			"code":    500,
+		// 			"message": "Internal Server Error",
+		// 		})
+		// 	}
+
+		// 	Start := fmt.Sprintf("%sT07:20:50.52Z", input.DateStart)
+		// 	End := fmt.Sprintf("%sT07:20:50.52Z", input.DateEnd)
+
+		// 	events := &calendar.Event{
+		// 		Summary:     "Day of Your Climbing",
+		// 		Description: "Climbing Day",
+		// 		Start: &calendar.EventDateTime{
+		// 			DateTime: Start,
+		// 			TimeZone: "Asia/Jakarta",
+		// 		},
+		// 		End: &calendar.EventDateTime{
+		// 			DateTime: End,
+		// 			TimeZone: "Asia/Jakarta",
+		// 		},
+		// 		Attendees: []*calendar.EventAttendee{
+		// 			{Email: pendaki.Email},
+		// 			{Email: ranger.Email},
+		// 		},
+		// 	}
+
+		// 	tokenOauth := &oauth2.Token{AccessToken: input.Token}
+
+		// 	client := bs.oauth.Client(c.Request().Context(), tokenOauth)
+
+		// 	srv, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
+		// 	if err != nil {
+		// 		log.Printf("Unable to retrieve Calendar client: %v", err)
+		// 	}
+
+		// 	_, err = srv.Events.Insert("primary", events).SendUpdates("all").Do()
+		// 	if err != nil {
+		// 		log.Printf("Unable to create event. %v\n", err)
+		// 	}
+		// }
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
 	}

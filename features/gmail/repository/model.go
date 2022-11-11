@@ -33,6 +33,42 @@ type Ranger struct {
 	StatusApply string
 }
 
+type Date struct {
+	gorm.Model
+	DateStart time.Time
+	DateEnd   time.Time
+	Email     string
+}
+
+type Booking struct {
+	gorm.Model
+	IdUser          uint
+	DateStart       time.Time
+	DateEnd         time.Time
+	Entrance        string
+	Ticket          int
+	IdRanger        uint
+	GrossAmount     int
+	Token           string
+	OrderId         string
+	Link            string
+	StatusBooking   string
+	StatusPendakian string
+	FullName        string           `gorm:"-:migration;<-:false"`
+	Phone           string           `gorm:"-:migration;<-:false"`
+	Email           string           `gorm:"-:migration;<-:false"`
+	BookingProducts []BookingProduct `gorm:"foreignKey:IdBooking"`
+}
+
+type BookingProduct struct {
+	gorm.Model
+	IdBooking   uint
+	IdProduct   uint
+	ProductQty  int
+	ProductName string `gorm:"-:migration;<-:false"`
+	RentPrice   int    `gorm:"-:migration;<-:false"`
+}
+
 func FromDomain(dc domain.Code) Code {
 	return Code{
 		Model:        gorm.Model{ID: dc.ID},
@@ -69,5 +105,36 @@ func ToDomainRanger(dc Ranger) domain.RangerCore {
 		ID:          dc.ID,
 		Status:      dc.Status,
 		StatusApply: dc.StatusApply,
+	}
+}
+
+func ToDomainDate(d Date) domain.DateCore {
+	return domain.DateCore{
+		ID:        d.ID,
+		DateStart: d.DateStart,
+		DateEnd:   d.DateEnd,
+		Email:     d.Email,
+	}
+}
+
+func ToDomainBooking(db Booking) domain.BookingCore {
+	return domain.BookingCore{
+		ID:                  db.ID,
+		IdUser:              db.IdUser,
+		DateStart:           db.DateStart,
+		DateEnd:             db.DateEnd,
+		Entrance:            db.Entrance,
+		Ticket:              db.Ticket,
+		IdRanger:            db.IdRanger,
+		GrossAmount:         db.GrossAmount,
+		Token:               db.Token,
+		OrderId:             db.OrderId,
+		Link:                db.Link,
+		StatusBooking:       db.StatusBooking,
+		StatusPendakian:     db.StatusPendakian,
+		FullName:            db.FullName,
+		Phone:               db.Phone,
+		Email:               db.Email,
+		BookingProductCores: []domain.BookingProductCore{},
 	}
 }
