@@ -111,13 +111,13 @@ func (gh *gmailHandler) GoSend() echo.HandlerFunc {
 				"From: Guntour@gmail.com\r\n" +
 					fmt.Sprintf("To: %v\r\n", msg.Email) +
 					"Subject: Your form apply for ranger rejected\r\n\r\n" +
-					"Mohon maaf, kami tidak dapat menerima permintaan anda\n Anda tidak memenuhi syarat yang dibutuhkan\n Terima kasih!")
+					"Assalamu'alaikum Wr. Wb.\n\nMohon maaf, kami tidak dapat menerima permintaan anda.\nAnda tidak memenuhi syarat yang dibutuhkan.\nAnda dapat mengajukan diri kembali dilain waktu.\n\nTerima kasih!")
 		} else {
 			messageStr = []byte(
 				"From: Guntour@gmail.com\r\n" +
 					fmt.Sprintf("To: %v\r\n", msg.Email) +
 					"Subject: Your form apply for ranger accepted\r\n\r\n" +
-					"Selamat anda diterima menjadi ranger untuk aplikasi kami\n Mohon bantuan dan kerja samanya\n Terima kasih!")
+					"Assalamu'alaikum Wr. Wb.\n\nSelamat anda diterima menjadi ranger untuk aplikasi kami.\nMohon bantuan dan kerja samanya.\n\nTerima kasih!")
 		}
 
 		// Place messageStr into message.Raw in base64 encoded format

@@ -147,9 +147,9 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
-		// if input.DateStart != "" && input.DateEnd != "" && input.Ticket != 0 {
-		// 	c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
-		// }
+		if input.Start != "" && input.End != "" && input.Ticket != 0 {
+			c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
+		}
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
 	}
