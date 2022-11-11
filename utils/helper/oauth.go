@@ -14,22 +14,6 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-var (
-	googleOauthConfig *oauth2.Config
-)
-
-func InitOauth() *oauth2.Config {
-	config := &oauth2.Config{
-		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
-		Endpoint:     google.Endpoint,
-		RedirectURL:  os.Getenv("REDIRECT_CALENDAR"),
-	}
-
-	return config
-}
-
 func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 	var messageStr []byte
 	config := &oauth2.Config{

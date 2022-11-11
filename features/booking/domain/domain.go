@@ -63,7 +63,6 @@ type Repository interface {
 	Update(newBooking Core) (Core, error)
 	Delete(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
-	GetEmailData(userPen, userRan int) (Pendaki, Ranger)
 	GetCode() (Code, error)
 }
 
@@ -75,7 +74,6 @@ type Services interface {
 	UpdateData(newBooking Core) (Core, error)
 	DeleteData(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
-	GetEmail(userPen, userRan int) (Pendaki, Ranger)
 	GetCode() (Code, error)
 }
 

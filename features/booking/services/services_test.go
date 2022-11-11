@@ -165,3 +165,47 @@ func TestGetDetail(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
+
+func TestGetCode(t *testing.T) {
+	repo := mocks.NewRepository(t)
+	t.Run("Sukses Get Code", func(t *testing.T) {
+		repo.On("GetCode", mock.Anything).Return(domain.Code{ID: uint(1), Code: "445451dasasd", TokenType: "Bearer", AccessToken: "1235325dfsa"}, nil).Once()
+		srv := New(repo)
+		res, err := srv.GetCode()
+		assert.Nil(t, err)
+		assert.NotEmpty(t, res)
+		repo.AssertExpectations(t)
+	})
+	t.Run("Failed Get All Booking", func(t *testing.T) {
+		repo.On("GetCode", mock.Anything).Return(domain.Code{}, errors.New("no data")).Once()
+		srv := New(repo)
+		res, err := srv.GetCode()
+		assert.NotNil(t, err)
+		assert.Empty(t, res)
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestUpdateMidtrans(t *testing.T) {
+	repo := new(mocks.Repository)
+	data := domain.Core{ID: 1, OrderId: "Order-79c31a08-4d37-4f86-bcf2-ecba91091851"}
+
+	t.Run("success update booking", func(t *testing.T) {
+		repo.On("UpdateMidtrans", mock.Anything).Return(nil).Once()
+
+		usecase := New(repo)
+		err := usecase.UpdateMidtrans(data)
+		assert.Nil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("failed update booking", func(t *testing.T) {
+		repo.On("UpdateMidtrans", mock.Anything).Return(errors.New("some problem on database")).Once()
+		usecase := New(repo)
+
+		err := usecase.UpdateMidtrans(domain.Core{})
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+}

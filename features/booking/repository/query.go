@@ -3,7 +3,6 @@ package repository
 import (
 	"GunTour/features/booking/domain"
 	"errors"
-	"log"
 
 	"gorm.io/gorm"
 )
@@ -144,39 +143,6 @@ func (rq *repoQuery) UpdateMidtrans(newBooking domain.Core) error {
 	}
 
 	return nil
-}
-
-func (rq *repoQuery) GetEmailData(userPen, userRan int) (domain.Pendaki, domain.Ranger) {
-	var pen Pendaki
-	var ran Ranger
-
-	getPendaki := rq.db.Model(&Booking{}).Select("users.email, users.address").Joins("join users on bookings.user_id = users.id").
-		Where("bookings.user_id = ?", userPen).Limit(1).Scan(&pen)
-
-	if getPendaki.Error != nil {
-		log.Println("query error", getPendaki.Error)
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	if getPendaki.RowsAffected == 0 {
-		log.Println("data not found in db")
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	getRanger := rq.db.Model(&Booking{}).Select("users.email").Joins("join users on bookings.user_id = users.id").
-		Where("bookings.user_id = ?", userRan).Scan(&ran)
-
-	if getRanger.Error != nil {
-		log.Println("query error", getPendaki.Error)
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	if getRanger.RowsAffected == 0 {
-		log.Println("data not found in db")
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	return pen.ToModelPendaki(), ran.ToModelRanger()
 }
 
 func (rq *repoQuery) GetCode() (domain.Code, error) {

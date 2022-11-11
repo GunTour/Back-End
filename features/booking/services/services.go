@@ -79,12 +79,6 @@ func (bs *bookingService) UpdateMidtrans(newBooking domain.Core) error {
 	return nil
 }
 
-func (bs *bookingService) GetEmail(userPen, userRan int) (domain.Pendaki, domain.Ranger) {
-	pendaki, ranger := bs.qry.GetEmailData(userPen, userRan)
-
-	return pendaki, ranger
-}
-
 func (bs *bookingService) GetCode() (domain.Code, error) {
 	res, err := bs.qry.GetCode()
 	if err != nil {
