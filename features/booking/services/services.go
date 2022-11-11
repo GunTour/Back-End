@@ -84,3 +84,12 @@ func (bs *bookingService) GetEmail(userPen, userRan int) (domain.Pendaki, domain
 
 	return pendaki, ranger
 }
+
+func (bs *bookingService) GetCode() (domain.Code, error) {
+	res, err := bs.qry.GetCode()
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}

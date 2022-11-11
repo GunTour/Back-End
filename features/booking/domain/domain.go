@@ -22,6 +22,7 @@ type Core struct {
 	StatusPendakian     string
 	FullName            string
 	Phone               string
+	Email               string
 	BookingProductCores []BookingProductCore
 }
 
@@ -45,6 +46,15 @@ type Ranger struct {
 	Email    string
 }
 
+type Code struct {
+	ID           uint
+	Code         string
+	AccessToken  string
+	TokenType    string
+	RefreshToken string
+	Expiry       time.Time
+}
+
 type Repository interface {
 	Get(idUser uint) ([]Core, error)
 	GetID(idBooking uint) (Core, error)
@@ -54,6 +64,7 @@ type Repository interface {
 	Delete(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
 	GetEmailData(userPen, userRan int) (Pendaki, Ranger)
+	GetCode() (Code, error)
 }
 
 type Services interface {
@@ -65,6 +76,7 @@ type Services interface {
 	DeleteData(idBooking uint) error
 	UpdateMidtrans(newBooking Core) error
 	GetEmail(userPen, userRan int) (Pendaki, Ranger)
+	GetCode() (Code, error)
 }
 
 type Handler interface {

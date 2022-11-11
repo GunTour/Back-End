@@ -47,7 +47,7 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 		Where("id_booking=?", idBooking).Find(&resProductQry).Scan(&resProductQry)
 
 	// selesai dari DB
-	res := ToDomainCore(resQry, resProductQry)
+	res := ToDomainCore(resQry, resProductQry, string(""))
 	return res, nil
 }
 
@@ -69,7 +69,13 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
 	var productCnv []BookingProduct
+	var mail string
+
 	if err := rq.db.Create(&cnv).Error; err != nil {
+		return domain.Core{}, err
+	}
+
+	if err := rq.db.Model(&User{}).Select("email").Find(&mail).Error; err != nil {
 		return domain.Core{}, err
 	}
 
@@ -86,8 +92,9 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 			return domain.Core{}, err
 		}
 	}
+
 	// selesai dari DB
-	newBooking = ToDomainCore(cnv, productCnv)
+	newBooking = ToDomainCore(cnv, productCnv, mail)
 	return newBooking, nil
 }
 
@@ -116,7 +123,7 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 		}
 	}
 	// selesai dari DB
-	newBooking = ToDomainCore(cnv, productCnv)
+	newBooking = ToDomainCore(cnv, productCnv, string(""))
 	return newBooking, nil
 }
 
@@ -170,4 +177,13 @@ func (rq *repoQuery) GetEmailData(userPen, userRan int) (domain.Pendaki, domain.
 	}
 
 	return pen.ToModelPendaki(), ran.ToModelRanger()
+}
+
+func (rq *repoQuery) GetCode() (domain.Code, error) {
+	var resQry Code
+	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
+		return domain.Code{}, err
+	}
+	res := ToDomainCode(resQry)
+	return res, nil
 }

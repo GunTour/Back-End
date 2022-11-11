@@ -7,6 +7,21 @@ import (
 	"gorm.io/gorm"
 )
 
+type User struct {
+	gorm.Model
+	FullName    string
+	Email       string `gorm:"unique"`
+	Password    string
+	Role        string
+	Phone       string
+	Address     string
+	Dob         string
+	Gender      string
+	UserPicture string
+	Token       string    `gorm:"-:migration;<-:false"`
+	Bookings    []Booking `gorm:"foreignKey:IdUser"`
+}
+
 type Booking struct {
 	gorm.Model
 	IdUser          uint
@@ -23,6 +38,7 @@ type Booking struct {
 	StatusPendakian string
 	FullName        string           `gorm:"-:migration;<-:false"`
 	Phone           string           `gorm:"-:migration;<-:false"`
+	Email           string           `gorm:"-:migration;<-:false"`
 	BookingProducts []BookingProduct `gorm:"foreignKey:IdBooking"`
 }
 
@@ -44,6 +60,15 @@ type Ranger struct {
 	UserID   int
 	FullName string
 	Email    string
+}
+
+type Code struct {
+	gorm.Model
+	Code         string
+	AccessToken  string
+	TokenType    string
+	RefreshToken string
+	Expiry       time.Time
 }
 
 func FromDomain(db domain.Core) Booking {
@@ -91,7 +116,18 @@ func ToDomain(db Booking) domain.Core {
 	}
 }
 
-func ToDomainCore(db Booking, dp []BookingProduct) domain.Core {
+func ToDomainCode(dc Code) domain.Code {
+	return domain.Code{
+		ID:           dc.ID,
+		Code:         dc.Code,
+		AccessToken:  dc.AccessToken,
+		TokenType:    dc.TokenType,
+		RefreshToken: dc.RefreshToken,
+		Expiry:       dc.Expiry,
+	}
+}
+
+func ToDomainCore(db Booking, dp []BookingProduct, mail string) domain.Core {
 	var res []domain.BookingProductCore
 	for _, val := range dp {
 		res = append(res, domain.BookingProductCore{
@@ -118,6 +154,7 @@ func ToDomainCore(db Booking, dp []BookingProduct) domain.Core {
 		StatusBooking:       db.StatusBooking,
 		StatusPendakian:     db.StatusPendakian,
 		FullName:            db.FullName,
+		Email:               mail,
 		BookingProductCores: res,
 	}
 }

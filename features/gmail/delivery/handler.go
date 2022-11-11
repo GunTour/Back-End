@@ -183,11 +183,11 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 			Location:    "Taman Nasional Gunung Gede",
 			Description: "Prepare for your greatest adventure.",
 			Start: &calendar.EventDateTime{
-				DateTime: fmt.Sprintf("%vT07:20:50.52Z", book.DateStart.Format("2006-01-02")),
+				DateTime: fmt.Sprintf("%vT00:20:50.52Z", book.DateStart.Format("2006-01-02")),
 				TimeZone: "Asia/Jakarta",
 			},
 			End: &calendar.EventDateTime{
-				DateTime: fmt.Sprintf("%vT07:20:50.52Z", book.DateEnd.Format("2006-01-02")),
+				DateTime: fmt.Sprintf("%vT01:20:50.52Z", book.DateEnd.Format("2006-01-02")),
 				TimeZone: "Asia/Jakarta",
 			},
 			Attendees: []*calendar.EventAttendee{
