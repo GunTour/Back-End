@@ -48,7 +48,7 @@ type ClimberResponse struct {
 type GetPendakiResponse struct {
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
-	Phone     string    `json:"phone" form:"phone"`
+	Entrance  string    `json:"entrance" form:"entrance"`
 	Start     string    `json:"date_start" form:"date_start"`
 	End       string    `json:"date_end" form:"date_end"`
 	DateStart time.Time `json:"-" form:"-"`
@@ -176,14 +176,6 @@ func ToResponseUser(core interface{}, coreUser interface{}, code string) interfa
 func ToResponseArray(core interface{}, code string) interface{} {
 	var res interface{}
 	switch code {
-	case "getpendaki":
-		var arr []GetPendakiResponse
-		val := core.([]domain.BookingCore)
-		for _, cnv := range val {
-			arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone,
-				Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02")})
-		}
-		res = arr
 	case "climber":
 		val := core.(domain.ClimberCore)
 		res = ClimberResponse{IsClimber: val.IsClimber, MaleClimber: val.MaleClimber, FemaleClimber: val.FemaleClimber}
@@ -253,7 +245,7 @@ func ToResponsePendaki(core interface{}, climbercore interface{}, message string
 	var arr []GetPendakiResponse
 	val := core.([]domain.BookingCore)
 	for _, cnv := range val {
-		arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone,
+		arr = append(arr, GetPendakiResponse{IdUser: cnv.IdUser, FullName: cnv.FullName, Entrance: cnv.Entrance,
 			Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02")})
 	}
 	return PendakiResponse{Message: message, Climber: arrClimb, Data: arr}

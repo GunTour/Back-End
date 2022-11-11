@@ -22,9 +22,11 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 	var resQry []Booking
 	var resQryClimber Climber
 
-	rq.db.Order("created_at desc").First(&resQryClimber)
+	if err := rq.db.Order("created_at desc").First(&resQryClimber).Error; err != nil {
+		return nil, domain.ClimberCore{}, errors.New("cannot get climber data")
+	}
 
-	if err := rq.db.Select("bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end").
+	if err := rq.db.Select("bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
 		Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, domain.ClimberCore{}, err
