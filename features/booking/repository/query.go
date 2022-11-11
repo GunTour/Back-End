@@ -3,7 +3,6 @@ package repository
 import (
 	"GunTour/features/booking/domain"
 	"errors"
-	"log"
 
 	"gorm.io/gorm"
 )
@@ -47,7 +46,7 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 		Where("id_booking=?", idBooking).Find(&resProductQry).Scan(&resProductQry)
 
 	// selesai dari DB
-	res := ToDomainCore(resQry, resProductQry)
+	res := ToDomainCore(resQry, resProductQry, string(""))
 	return res, nil
 }
 
@@ -69,7 +68,13 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
 	var productCnv []BookingProduct
+	var mail string
+
 	if err := rq.db.Create(&cnv).Error; err != nil {
+		return domain.Core{}, err
+	}
+
+	if err := rq.db.Model(&User{}).Select("email").Find(&mail).Error; err != nil {
 		return domain.Core{}, err
 	}
 
@@ -86,8 +91,9 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 			return domain.Core{}, err
 		}
 	}
+
 	// selesai dari DB
-	newBooking = ToDomainCore(cnv, productCnv)
+	newBooking = ToDomainCore(cnv, productCnv, mail)
 	return newBooking, nil
 }
 
@@ -116,7 +122,7 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 		}
 	}
 	// selesai dari DB
-	newBooking = ToDomainCore(cnv, productCnv)
+	newBooking = ToDomainCore(cnv, productCnv, string(""))
 	return newBooking, nil
 }
 
@@ -139,35 +145,11 @@ func (rq *repoQuery) UpdateMidtrans(newBooking domain.Core) error {
 	return nil
 }
 
-func (rq *repoQuery) GetEmailData(userPen, userRan int) (domain.Pendaki, domain.Ranger) {
-	var pen Pendaki
-	var ran Ranger
-
-	getPendaki := rq.db.Model(&Booking{}).Select("users.email, users.address").Joins("join users on bookings.user_id = users.id").
-		Where("bookings.user_id = ?", userPen).Limit(1).Scan(&pen)
-
-	if getPendaki.Error != nil {
-		log.Println("query error", getPendaki.Error)
-		return domain.Pendaki{}, domain.Ranger{}
+func (rq *repoQuery) GetCode() (domain.Code, error) {
+	var resQry Code
+	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
+		return domain.Code{}, err
 	}
-
-	if getPendaki.RowsAffected == 0 {
-		log.Println("data not found in db")
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	getRanger := rq.db.Model(&Booking{}).Select("users.email").Joins("join users on bookings.user_id = users.id").
-		Where("bookings.user_id = ?", userRan).Scan(&ran)
-
-	if getRanger.Error != nil {
-		log.Println("query error", getPendaki.Error)
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	if getRanger.RowsAffected == 0 {
-		log.Println("data not found in db")
-		return domain.Pendaki{}, domain.Ranger{}
-	}
-
-	return pen.ToModelPendaki(), ran.ToModelRanger()
+	res := ToDomainCode(resQry)
+	return res, nil
 }

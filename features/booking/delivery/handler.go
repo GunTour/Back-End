@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"GunTour/features/booking/domain"
+	"GunTour/utils/helper"
 	"GunTour/utils/middlewares"
 	"errors"
 	"log"
@@ -148,7 +149,15 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		}
 
 		if input.Start != "" && input.End != "" && input.Ticket != 0 {
-			c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
+			resCode, err := bs.srv.GetCode()
+			if err != nil {
+				c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
+			}
+
+			err = helper.EventCalendar(resCode, res)
+			if err != nil {
+				c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
+			}
 		}
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
