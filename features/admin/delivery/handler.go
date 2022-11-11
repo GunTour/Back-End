@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"GunTour/features/admin/domain"
+	"GunTour/utils/helper"
 	"GunTour/utils/middlewares"
 	"net/http"
 	"os"
@@ -240,7 +241,7 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 
 		cnv := ToDomainRanger(input)
 		conv := ToDomainUser(input)
-		res, resU, err := ah.srv.UpdateRanger(cnv, conv, uint(rangerId))
+		res, resU, resP, err := ah.srv.UpdateRanger(cnv, conv, uint(rangerId))
 
 		if err != nil {
 			if strings.Contains(err.Error(), "found") {
@@ -249,8 +250,15 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 		if input.StatusApply != "" {
-			c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
-			// helper.Openbrowser("localhost:8000/gmail")
+			resCode, err := ah.srv.GetCode()
+			if err != nil {
+				c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
+			}
+
+			err = helper.SendMail(resCode, resP)
+			if err != nil {
+				c.Redirect(http.StatusTemporaryRedirect, "/gmail/send")
+			}
 		}
 
 		return c.JSON(http.StatusAccepted, SuccessResponse("success update status ranger", ToResponseUser(res, resU, "ranger")))

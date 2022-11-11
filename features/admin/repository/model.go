@@ -72,6 +72,15 @@ type Climber struct {
 	FemaleClimber int
 }
 
+type Code struct {
+	gorm.Model
+	Code         string
+	AccessToken  string
+	TokenType    string
+	RefreshToken string
+	Expiry       time.Time
+}
+
 func FromDomainClimber(db domain.ClimberCore) Climber {
 	return Climber{
 		Model:         gorm.Model{ID: db.ID},
@@ -107,6 +116,26 @@ func FromDomainBooking(db domain.BookingCore) Booking {
 		Link:            db.Link,
 		StatusBooking:   db.StatusBooking,
 		StatusPendakian: db.StatusPendakian,
+	}
+}
+
+func ToDomainCode(dc Code) domain.Code {
+	return domain.Code{
+		ID:           dc.ID,
+		Code:         dc.Code,
+		AccessToken:  dc.AccessToken,
+		TokenType:    dc.TokenType,
+		RefreshToken: dc.RefreshToken,
+		Expiry:       dc.Expiry,
+	}
+}
+
+func ToDomainPesan(dc Pesan) domain.PesanCore {
+	return domain.PesanCore{
+		ID:       dc.ID,
+		IdRanger: dc.IdRanger,
+		Email:    dc.Email,
+		Status:   dc.Status,
 	}
 }
 
