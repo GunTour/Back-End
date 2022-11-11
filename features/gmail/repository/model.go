@@ -108,15 +108,6 @@ func ToDomainRanger(dc Ranger) domain.RangerCore {
 	}
 }
 
-func ToDomainDate(d Date) domain.DateCore {
-	return domain.DateCore{
-		ID:        d.ID,
-		DateStart: d.DateStart,
-		DateEnd:   d.DateEnd,
-		Email:     d.Email,
-	}
-}
-
 func ToDomainBooking(db Booking) domain.BookingCore {
 	return domain.BookingCore{
 		ID:                  db.ID,
@@ -136,5 +127,37 @@ func ToDomainBooking(db Booking) domain.BookingCore {
 		Phone:               db.Phone,
 		Email:               db.Email,
 		BookingProductCores: []domain.BookingProductCore{},
+	}
+}
+
+func ToDomainCore(db Booking, dp []BookingProduct) domain.BookingCore {
+	var res []domain.BookingProductCore
+	for _, val := range dp {
+		res = append(res, domain.BookingProductCore{
+			ID:          val.ID,
+			IdBooking:   val.IdBooking,
+			IdProduct:   val.IdProduct,
+			ProductQty:  val.ProductQty,
+			ProductName: val.ProductName,
+			RentPrice:   val.RentPrice,
+		})
+	}
+	return domain.BookingCore{
+		ID:                  db.ID,
+		IdUser:              db.IdUser,
+		DateStart:           db.DateStart,
+		DateEnd:             db.DateEnd,
+		Entrance:            db.Entrance,
+		Ticket:              db.Ticket,
+		IdRanger:            db.IdRanger,
+		GrossAmount:         db.GrossAmount,
+		Token:               db.Token,
+		OrderId:             db.OrderId,
+		Link:                db.Link,
+		StatusBooking:       db.StatusBooking,
+		StatusPendakian:     db.StatusPendakian,
+		FullName:            db.FullName,
+		Email:               db.Email,
+		BookingProductCores: res,
 	}
 }

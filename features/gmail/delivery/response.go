@@ -58,6 +58,30 @@ type RangerAcceptedNoMail struct {
 	Url         string `json:"email_sender" form:"email_sender"`
 }
 
+type BookingProduct struct {
+	ID          uint
+	IdBooking   uint
+	IdProduct   uint   `json:"id_product" form:"id_product"`
+	ProductQty  int    `json:"product_qty" form:"product_qty"`
+	ProductName string `json:"product_name" form:"product_name"`
+	RentPrice   int    `json:"rent_price" form:"rent_price"`
+}
+
+type DetailResponse struct {
+	ID            uint             `json:"id_booking" form:"id_booking"`
+	Start         string           `json:"date_start" form:"date_start"`
+	End           string           `json:"date_end" form:"date_end"`
+	Entrance      string           `json:"entrance" form:"entrance"`
+	Ticket        int              `json:"ticket" form:"ticket"`
+	Product       []BookingProduct `json:"product" form:"product"`
+	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
+	GrossAmount   int              `json:"gross_amount" form:"gross_amount"`
+	OrderId       string           `json:"order_id" form:"order_id"`
+	Link          string           `json:"link" form:"link"`
+	StatusBooking string           `json:"status" form:"status"`
+	DateStart     time.Time        `json:"-" form:"-"`
+	DateEnd       time.Time        `json:"-" form:"-"`
+}
 type BookingMake struct {
 	ID        uint      `json:"id_booking" form:"id_booking"`
 	DateStart time.Time `json:"date_start" form:"date_start"`
@@ -80,7 +104,13 @@ func ToResponse(core interface{}, code string) interface{} {
 		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply}
 	case "book":
 		cnv := core.(domain.BookingCore)
-		res = BookingMake{ID: cnv.ID, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket}
+		var arr []BookingProduct
+		for _, val := range cnv.BookingProductCores {
+			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty,
+				ProductName: val.ProductName, RentPrice: val.RentPrice})
+		}
+		res = DetailResponse{ID: cnv.ID, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket,
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking}
 	}
 
 	return res
@@ -94,7 +124,13 @@ func ToResponseGagal(core interface{}, authURL string, code string) interface{} 
 		res = RangerAcceptedNoMail{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply, Url: authURL}
 	case "book":
 		cnv := core.(domain.BookingCore)
-		res = BookingMake{ID: cnv.ID, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket, Url: authURL}
+		var arr []BookingProduct
+		for _, val := range cnv.BookingProductCores {
+			arr = append(arr, BookingProduct{ID: val.ID, IdBooking: val.IdBooking, IdProduct: val.IdProduct, ProductQty: val.ProductQty,
+				ProductName: val.ProductName, RentPrice: val.RentPrice})
+		}
+		res = DetailResponse{ID: cnv.ID, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket,
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking}
 	}
 
 	return res
