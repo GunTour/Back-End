@@ -39,7 +39,7 @@ func (ah *adminHandler) GetPendaki() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		res, resClimber, err := ah.srv.GetPendaki()
 
@@ -55,7 +55,7 @@ func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 
 		var input ClimberFormat
@@ -75,7 +75,7 @@ func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
 		}
 
-		return c.JSON(http.StatusOK, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
 	}
 }
 
@@ -84,7 +84,7 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		page, err := strconv.Atoi(c.QueryParam("page"))
 		if err != nil {
@@ -108,7 +108,7 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		var input RegisterFormat
 		if err := c.Bind(&input); err != nil {
@@ -133,7 +133,7 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success add product", ToResponse(res, "addproduct")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success add product", ToResponse(res, "addproduct")))
 	}
 }
 
@@ -144,7 +144,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 
 		id, err := strconv.Atoi(c.Param("id_product"))
@@ -167,7 +167,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusNotFound, FailResponse("data not found."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success update product", ToResponse(res, "update")))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success update product", ToResponse(res, "update")))
 	}
 }
 
@@ -176,7 +176,7 @@ func (ah *adminHandler) RemoveProduct() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		id, er := strconv.Atoi(c.Param("id_product"))
 		if er != nil {
@@ -196,7 +196,7 @@ func (ah *adminHandler) ShowAllRanger() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 
 		resAccepted, res, err := ah.srv.ShowAllRanger()
@@ -217,7 +217,7 @@ func (ah *adminHandler) UpdateRanger() echo.HandlerFunc {
 		var input RangerFormat
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 
 		rangerId, err := strconv.Atoi(c.Param("id_ranger"))
@@ -262,7 +262,7 @@ func (ah *adminHandler) RemoveRanger() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := middlewares.ExtractToken(c)
 		if role != "admin" {
-			return c.JSON(http.StatusUnauthorized, FailResponse("jangan macam-macam, anda bukan admin"))
+			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		id, er := strconv.Atoi(c.Param("id_ranger"))
 		if er != nil {

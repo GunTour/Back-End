@@ -5,6 +5,7 @@ import (
 	mocks "GunTour/mocks/booking"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -12,8 +13,8 @@ import (
 
 func TestInsert(t *testing.T) {
 	repo := new(mocks.Repository)
-	Start := "2022-11-10"
-	End := "2022-11-12"
+	Start, _ := time.Parse("2006-01-02", "2022-11-10")
+	End, _ := time.Parse("2006-01-02", "2022-11-12")
 	input := domain.Core{IdUser: uint(1), DateStart: Start, DateEnd: End, Entrance: "Cibodas", Ticket: 3,
 		OrderId: "Order-101", BookingProductCores: nil, IdRanger: uint(1), GrossAmount: 120000, StatusBooking: "unpaid"}
 	returnRespon := domain.Core{ID: 1, IdUser: uint(1), DateStart: Start, DateEnd: End, Entrance: "Cibodas", Ticket: 3,
@@ -43,8 +44,8 @@ func TestInsert(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	repo := new(mocks.Repository)
-	Start := "2022-11-10"
-	End := "2022-11-12"
+	Start, _ := time.Parse("2006-01-02", "2022-11-10")
+	End, _ := time.Parse("2006-01-02", "2022-11-12")
 	data := domain.Core{ID: 1, IdUser: uint(1), DateStart: Start, DateEnd: End, Entrance: "Cibodas", Ticket: 3,
 		OrderId: "Order-101", BookingProductCores: nil, IdRanger: uint(1), GrossAmount: 120000, StatusBooking: "unpaid"}
 	returnRespon := domain.Core{ID: 1, IdUser: uint(1), DateStart: Start, DateEnd: End, Entrance: "Cibodas", Ticket: 3,
@@ -121,8 +122,8 @@ func TestGet(t *testing.T) {
 
 func TestGetRanger(t *testing.T) {
 	repo := mocks.NewRepository(t)
-	Start := "2022-11-10"
-	End := "2022-11-12"
+	Start, _ := time.Parse("2006-01-02", "2022-11-10")
+	End, _ := time.Parse("2006-01-02", "2022-11-12")
 	t.Run("Sukses Get Ranger Booking", func(t *testing.T) {
 		repo.On("GetRanger", mock.Anything).Return([]domain.Core{{ID: uint(1), IdUser: uint(1), FullName: "Bambang", Phone: "0822", DateStart: Start, DateEnd: End, Ticket: 3}}, nil).Once()
 		srv := New(repo)
@@ -143,8 +144,8 @@ func TestGetRanger(t *testing.T) {
 
 func TestGetDetail(t *testing.T) {
 	repo := mocks.NewRepository(t)
-	Start := "2022-11-10"
-	End := "2022-11-12"
+	Start, _ := time.Parse("2006-01-02", "2022-11-10")
+	End, _ := time.Parse("2006-01-02", "2022-11-12")
 	returnRespon := domain.Core{ID: 1, IdUser: uint(1), DateStart: Start, DateEnd: End, Entrance: "Cibodas", Ticket: 3,
 		OrderId: "Order-101", BookingProductCores: nil, IdRanger: uint(1), GrossAmount: 120000, StatusBooking: "unpaid"}
 	t.Run("Sukses Get Detail Booking", func(t *testing.T) {

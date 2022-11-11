@@ -174,7 +174,7 @@ func FromDomainPesan(mail string, dr Ranger) Pesan {
 		Model:    gorm.Model{ID: dr.ID},
 		IdRanger: dr.ID,
 		Email:    mail,
-		Status:   dr.Status,
+		Status:   dr.StatusApply,
 	}
 }
 

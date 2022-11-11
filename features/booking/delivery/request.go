@@ -2,12 +2,13 @@ package delivery
 
 import (
 	"GunTour/features/booking/domain"
+	"time"
 )
 
 type RegisterFormat struct {
 	IdUser        uint             `json:"id_user" form:"id_user"`
-	DateStart     string           `json:"date_start" form:"date_start  validate:"required""`
-	DateEnd       string           `json:"date_end" form:"date_end  validate:"required""`
+	Start         string           `json:"date_start" form:"date_start  validate:"required""`
+	End           string           `json:"date_end" form:"date_end  validate:"required""`
 	Entrance      string           `json:"entrance" form:"entrance" validate:"required"`
 	Ticket        int              `json:"ticket" form:"ticket" validate:"required"`
 	OrderId       string           `json:"order_id" form:"order_id"`
@@ -15,6 +16,8 @@ type RegisterFormat struct {
 	IdRanger      uint             `json:"id_ranger" form:"id_ranger"`
 	StatusBooking string           `json:"status_booking" form:"status_booking"`
 	GrossAmount   int              `json:"gross_amount" form:"gross_amount" validate:"required"`
+	DateStart     time.Time        `json:"-" form:"-"`
+	DateEnd       time.Time        `json:"-" form:"-"`
 }
 
 type BookingProduct struct {
@@ -29,8 +32,8 @@ type BookingProduct struct {
 type UpdateFormat struct {
 	ID              uint             `json:"id" form:"id"`
 	IdUser          uint             `json:"id_user" form:"id_user"`
-	DateStart       string           `json:"date_start" form:"date_start"`
-	DateEnd         string           `json:"date_end" form:"date_end"`
+	Start           string           `json:"date_start" form:"date_start"`
+	End             string           `json:"date_end" form:"date_end"`
 	Entrance        string           `json:"entrance" form:"entrance"`
 	Ticket          int              `json:"ticket" form:"ticket"`
 	Product         []BookingProduct `json:"product" form:"product"`
@@ -38,6 +41,8 @@ type UpdateFormat struct {
 	GrossAmount     int              `json:"gross_amount" form:"gross_amount"`
 	StatusBooking   string           `json:"status" form:"status"`
 	StatusPendakian string           `json:"status_pendakian" form:"status_pendakian"`
+	DateStart       time.Time        `json:"-" form:"-"`
+	DateEnd         time.Time        `json:"-" form:"-"`
 }
 
 type UpdateMidtrans struct {
@@ -60,9 +65,6 @@ func ToDomain(i interface{}) domain.Core {
 		}
 		return domain.Core{IdUser: cnv.IdUser, DateStart: cnv.DateStart, DateEnd: cnv.DateEnd, Entrance: cnv.Entrance, Ticket: cnv.Ticket,
 			OrderId: cnv.OrderId, BookingProductCores: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, StatusBooking: "unpaid"}
-	case GetId:
-		cnv := i.(GetId)
-		return domain.Core{ID: cnv.id}
 	case UpdateFormat:
 		var arr []domain.BookingProductCore
 		cnv := i.(UpdateFormat)

@@ -9,12 +9,12 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"golang.org/x/oauth2"
 )
 
 var (
@@ -22,14 +22,13 @@ var (
 )
 
 type bookingHandler struct {
-	srv   domain.Services
-	oauth *oauth2.Config
+	srv domain.Services
 }
 
 func New(e *echo.Echo, srv domain.Services) {
 	handler := bookingHandler{srv: srv}
 	e.POST("/booking", handler.InsertData(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))               // TAMBAH BOOKING
-	e.GET("/booking", handler.GetAll(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                    // GET BOOKING
+	e.GET("/booking", handler.GetAll(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))                    // SHOW ALL USER'S BOOKING DATA
 	e.GET("/booking/:id_booking", handler.GetDetail(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))     // GET BOOKING DETAIL
 	e.DELETE("/booking/:id_booking", handler.DeleteData(), middleware.JWT([]byte(os.Getenv("JWT_SECRET")))) // DELETE BOOKING
 	e.PUT("/booking/:id_booking", handler.UpdateData(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))    // UPDATE BOOKING
@@ -37,6 +36,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.POST("/midtrans", handler.UpdateMidtrans())                                                           // CALLBACK UPDATE MIDTRANS
 }
 
+// SHOW ALL USER'S BOOKING DATA
 func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, role := middlewares.ExtractToken(c)
@@ -54,6 +54,7 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 	}
 }
 
+// SHOW USER'S DETAIL BOOKING
 func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, role := middlewares.ExtractToken(c)
@@ -75,6 +76,7 @@ func (bs *bookingHandler) GetDetail() echo.HandlerFunc {
 	}
 }
 
+// SHOW LIST RANGER'S BOOKING DATA
 func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, role := middlewares.ExtractToken(c)
@@ -92,6 +94,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 	}
 }
 
+// ADD BOOKING
 func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input RegisterFormat
@@ -122,6 +125,16 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 			}
 		}
 
+		input.DateStart, er = time.Parse("2006-01-02", input.Start)
+		if er != nil {
+			c.JSON(http.StatusBadRequest, FailResponse("wrong input date start"))
+		}
+
+		input.DateEnd, _ = time.Parse("2006-01-02", input.End)
+		if er != nil {
+			c.JSON(http.StatusBadRequest, FailResponse("wrong input date end"))
+		}
+
 		temp := uuid.New()
 		input.OrderId = "Order-" + temp.String()
 		input.IdUser = uint(IdUser)
@@ -129,64 +142,20 @@ func (bs *bookingHandler) InsertData() echo.HandlerFunc {
 		res, err := bs.srv.InsertData(cnv)
 		if err != nil {
 			if strings.Contains(err.Error(), "datetime") {
-				c.JSON(http.StatusBadRequest, FailResponse("must input date time, or wrong input"))
+				return c.JSON(http.StatusBadRequest, FailResponse("must input date time, or wrong input"))
 			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server"))
 		}
 
-		if input.DateStart != "" && input.DateEnd != "" && input.Ticket != 0 {
-			c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
-			// helper.Openbrowser("localhost:8000/gmail")
-		}
-
-		// if input.Token != "" {
-		// 	pendaki, ranger := bs.srv.GetEmail(IdUser, int(input.IdRanger))
-		// 	if pendaki.Email == "" {
-		// 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-		// 			"code":    500,
-		// 			"message": "Internal Server Error",
-		// 		})
-		// 	}
-
-		// 	Start := fmt.Sprintf("%sT07:20:50.52Z", input.DateStart)
-		// 	End := fmt.Sprintf("%sT07:20:50.52Z", input.DateEnd)
-
-		// 	events := &calendar.Event{
-		// 		Summary:     "Day of Your Climbing",
-		// 		Description: "Climbing Day",
-		// 		Start: &calendar.EventDateTime{
-		// 			DateTime: Start,
-		// 			TimeZone: "Asia/Jakarta",
-		// 		},
-		// 		End: &calendar.EventDateTime{
-		// 			DateTime: End,
-		// 			TimeZone: "Asia/Jakarta",
-		// 		},
-		// 		Attendees: []*calendar.EventAttendee{
-		// 			{Email: pendaki.Email},
-		// 			{Email: ranger.Email},
-		// 		},
-		// 	}
-
-		// 	tokenOauth := &oauth2.Token{AccessToken: input.Token}
-
-		// 	client := bs.oauth.Client(c.Request().Context(), tokenOauth)
-
-		// 	srv, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
-		// 	if err != nil {
-		// 		log.Printf("Unable to retrieve Calendar client: %v", err)
-		// 	}
-
-		// 	_, err = srv.Events.Insert("primary", events).SendUpdates("all").Do()
-		// 	if err != nil {
-		// 		log.Printf("Unable to create event. %v\n", err)
-		// 	}
+		// if input.DateStart != "" && input.DateEnd != "" && input.Ticket != 0 {
+		// 	c.Redirect(http.StatusTemporaryRedirect, "/calendar/send")
 		// }
 
 		return c.JSON(http.StatusCreated, SuccessResponse("success add booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
+// UPDATE BOOKING DATA
 func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UpdateFormat
@@ -207,10 +176,22 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 
-		if input.DateStart == "" && input.DateEnd == "" && input.Entrance == "" && input.Ticket == 0 && input.Product == nil && input.GrossAmount == 0 {
+		if input.End == "" && input.Start == "" && input.Entrance == "" && input.Ticket == 0 && input.Product == nil && input.GrossAmount == 0 {
 			return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
 		}
 
+		if input.Start != "" {
+			input.DateStart, err = time.Parse("2006-01-02", input.Start)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, FailResponse("wrong input date start"))
+			}
+		}
+		if input.End != "" {
+			input.DateEnd, err = time.Parse("2006-01-02", input.End)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, FailResponse("wrong input date end"))
+			}
+		}
 		input.IdUser = uint(IdUser)
 		cnv := ToDomain(input)
 
@@ -222,10 +203,11 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 
-		return c.JSON(http.StatusCreated, SuccessResponse("success edit booking plan", ToResponse(res, "getdetails")))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success edit booking plan", ToResponse(res, "getdetails")))
 	}
 }
 
+// DELETE BOOKING DATA BY ID
 func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, err := strconv.Atoi(c.Param("id_booking"))
@@ -249,6 +231,7 @@ func (bs *bookingHandler) DeleteData() echo.HandlerFunc {
 	}
 }
 
+// CALLBACK MIDTRANS
 func (bs *bookingHandler) UpdateMidtrans() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input UpdateMidtrans
@@ -258,6 +241,6 @@ func (bs *bookingHandler) UpdateMidtrans() echo.HandlerFunc {
 
 		res := ToDomain(input)
 		bs.srv.UpdateMidtrans(res)
-		return c.JSON(http.StatusOK, SuccessResponseNoData("Success update data."))
+		return c.JSON(http.StatusAccepted, SuccessResponseNoData("Success update data."))
 	}
 }
