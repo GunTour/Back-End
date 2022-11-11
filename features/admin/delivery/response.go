@@ -146,6 +146,7 @@ type GetUserPhone struct {
 	Phone string `json:"phone" form:"phone"`
 }
 
+// Mengembalikan response untuk add product, update product
 func ToResponse(core interface{}, code string) interface{} {
 	var res interface{}
 	switch code {
@@ -155,17 +156,12 @@ func ToResponse(core interface{}, code string) interface{} {
 	case "update":
 		cnv := core.(domain.ProductCore)
 		res = ProductResponse{ID: cnv.ID, ProductName: cnv.ProductName, RentPrice: cnv.RentPrice, Detail: cnv.Detail, Note: cnv.Note, ProductPicture: cnv.ProductPicture}
-	case "ranger":
-		cnv := core.(domain.RangerCore)
-		res = RangerAccepted{ID: cnv.ID, Status: cnv.Status, StatusApply: cnv.StatusApply}
-	case "user":
-		cnv := core.(domain.UserCore)
-		res = GetUserPhone{Phone: cnv.Phone}
 	}
 
 	return res
 }
 
+// Mengembalikan Re
 func ToResponseUser(core interface{}, coreUser interface{}, code string) interface{} {
 	var res interface{}
 	switch code {

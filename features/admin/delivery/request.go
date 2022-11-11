@@ -39,10 +39,6 @@ type UpdateMidtrans struct {
 	StatusBooking string `json:"status" form:"status"`
 }
 
-type GetId struct {
-	id uint `param:"id"`
-}
-
 type RangerFormat struct {
 	ID          uint   `json:"id_ranger" form:"id_ranger"`
 	UserID      uint   `json:"id_user" form:"id_user"`
