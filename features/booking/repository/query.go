@@ -74,7 +74,7 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 		return domain.Core{}, err
 	}
 
-	if err := rq.db.Model(&User{}).Select("email").Find(&mail).Error; err != nil {
+	if err := rq.db.Model(&User{}).Where("id=?", cnv.IdUser).Select("email").Find(&mail).Error; err != nil {
 		return domain.Core{}, err
 	}
 
