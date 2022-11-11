@@ -200,7 +200,7 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("unable to create an event."))
 		}
-		return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponse(book, "booking")))
+		return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponse(book, "book")))
 
 	}
 }
