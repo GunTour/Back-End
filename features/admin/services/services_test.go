@@ -199,22 +199,25 @@ func TestUpdateRanger(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	returnRespon := domain.RangerCore{ID: uint(1), UserID: uint(1), StatusApply: "accepted"}
 	returnRespon2 := domain.UserCore{Phone: returnRespon.User.Phone}
+	returnRespon3 := domain.PesanCore{IdRanger: uint(1)}
 	t.Run("Sukses Update Ranger Status", func(t *testing.T) {
-		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(returnRespon, returnRespon2, nil).Once()
+		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(returnRespon, returnRespon2, returnRespon3, nil).Once()
 		srv := New(repo)
-		res, resU, err := srv.UpdateRanger(returnRespon, returnRespon2, 1)
+		res, resU, resP, err := srv.UpdateRanger(returnRespon, returnRespon2, 1)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
+		assert.NotEmpty(t, resP)
 		assert.Equal(t, resU, domain.UserCore{})
 		repo.AssertExpectations(t)
 	})
 	t.Run("Failed Update Ranger Status", func(t *testing.T) {
-		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(domain.RangerCore{}, domain.UserCore{}, errors.New("no data")).Once()
+		repo.On("EditRanger", mock.Anything, mock.Anything, mock.Anything).Return(domain.RangerCore{}, domain.UserCore{}, domain.PesanCore{}, errors.New("no data")).Once()
 		srv := New(repo)
-		res, resU, err := srv.UpdateRanger(domain.RangerCore{}, domain.UserCore{}, 1)
+		res, resU, resP, err := srv.UpdateRanger(domain.RangerCore{}, domain.UserCore{}, 1)
 		assert.NotNil(t, err)
 		assert.Empty(t, res)
 		assert.Empty(t, resU)
+		assert.Empty(t, resP)
 		repo.AssertExpectations(t)
 	})
 }
@@ -242,6 +245,26 @@ func TestDeleteRanger(t *testing.T) {
 		err := useCase.RemoveRanger(0)
 		assert.Error(t, errors.New("error"))
 		assert.Equal(t, err, err)
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestGetCode(t *testing.T) {
+	repo := mocks.NewRepository(t)
+	t.Run("Sukses Get Code", func(t *testing.T) {
+		repo.On("GetCode", mock.Anything).Return(domain.Code{ID: uint(1), Code: "445451dasasd", TokenType: "Bearer", AccessToken: "1235325dfsa"}, nil).Once()
+		srv := New(repo)
+		res, err := srv.GetCode()
+		assert.Nil(t, err)
+		assert.NotEmpty(t, res)
+		repo.AssertExpectations(t)
+	})
+	t.Run("Failed Get All Booking", func(t *testing.T) {
+		repo.On("GetCode", mock.Anything).Return(domain.Code{}, errors.New("no data")).Once()
+		srv := New(repo)
+		res, err := srv.GetCode()
+		assert.NotNil(t, err)
+		assert.Empty(t, res)
 		repo.AssertExpectations(t)
 	})
 }

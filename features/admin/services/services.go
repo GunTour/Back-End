@@ -91,13 +91,13 @@ func (as *adminService) ShowAllRanger() ([]domain.RangerCore, []domain.RangerCor
 	return resAccepted, res, nil
 }
 
-func (as *adminService) UpdateRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, error) {
-	res, resU, err := as.qry.EditRanger(data, datas, id)
+func (as *adminService) UpdateRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, domain.PesanCore, error) {
+	res, resU, resP, err := as.qry.EditRanger(data, datas, id)
 	if err != nil {
-		return domain.RangerCore{}, domain.UserCore{}, err
+		return domain.RangerCore{}, domain.UserCore{}, domain.PesanCore{}, err
 	}
 
-	return res, resU, nil
+	return res, resU, resP, nil
 }
 
 func (as *adminService) RemoveRanger(id int) error {
@@ -107,4 +107,13 @@ func (as *adminService) RemoveRanger(id int) error {
 	}
 
 	return nil
+}
+
+func (as *adminService) GetCode() (domain.Code, error) {
+	res, err := as.qry.GetCode()
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
 }

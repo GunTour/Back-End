@@ -42,7 +42,7 @@ func (_m *Repository) DeleteRanger(id int) error {
 }
 
 // EditRanger provides a mock function with given fields: data, datas, id
-func (_m *Repository) EditRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, error) {
+func (_m *Repository) EditRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, domain.PesanCore, error) {
 	ret := _m.Called(data, datas, id)
 
 	var r0 domain.RangerCore
@@ -59,14 +59,21 @@ func (_m *Repository) EditRanger(data domain.RangerCore, datas domain.UserCore, 
 		r1 = ret.Get(1).(domain.UserCore)
 	}
 
-	var r2 error
-	if rf, ok := ret.Get(2).(func(domain.RangerCore, domain.UserCore, uint) error); ok {
+	var r2 domain.PesanCore
+	if rf, ok := ret.Get(2).(func(domain.RangerCore, domain.UserCore, uint) domain.PesanCore); ok {
 		r2 = rf(data, datas, id)
 	} else {
-		r2 = ret.Error(2)
+		r2 = ret.Get(2).(domain.PesanCore)
 	}
 
-	return r0, r1, r2
+	var r3 error
+	if rf, ok := ret.Get(3).(func(domain.RangerCore, domain.UserCore, uint) error); ok {
+		r3 = rf(data, datas, id)
+	} else {
+		r3 = ret.Error(3)
+	}
+
+	return r0, r1, r2, r3
 }
 
 // GetAllRanger provides a mock function with given fields:
@@ -99,6 +106,27 @@ func (_m *Repository) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, 
 	}
 
 	return r0, r1, r2
+}
+
+// GetCode provides a mock function with given fields:
+func (_m *Repository) GetCode() (domain.Code, error) {
+	ret := _m.Called()
+
+	var r0 domain.Code
+	if rf, ok := ret.Get(0).(func() domain.Code); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(domain.Code)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetPendaki provides a mock function with given fields:
