@@ -161,7 +161,7 @@ func ToResponse(core interface{}, code string) interface{} {
 	return res
 }
 
-// Mengembalikan Re
+// Mengembalikan response ranger apply
 func ToResponseUser(core interface{}, coreUser interface{}, code string) interface{} {
 	var res interface{}
 	switch code {

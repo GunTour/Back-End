@@ -2,6 +2,7 @@ package repository
 
 import (
 	"GunTour/features/booking/domain"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -9,8 +10,8 @@ import (
 type Booking struct {
 	gorm.Model
 	IdUser          uint
-	DateStart       string
-	DateEnd         string
+	DateStart       time.Time
+	DateEnd         time.Time
 	Entrance        string
 	Ticket          int
 	IdRanger        uint

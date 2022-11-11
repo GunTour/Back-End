@@ -75,7 +75,7 @@ func (ah *adminHandler) AddClimber() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
 		}
 
-		return c.JSON(http.StatusOK, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success post climber", ToResponseArray(res, "climber")))
 	}
 }
 
@@ -133,7 +133,7 @@ func (ah *adminHandler) AddProduct() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success add product", ToResponse(res, "addproduct")))
+		return c.JSON(http.StatusCreated, SuccessResponse("success add product", ToResponse(res, "addproduct")))
 	}
 }
 
@@ -167,7 +167,7 @@ func (ah *adminHandler) EditProduct() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusNotFound, FailResponse("data not found."))
 		}
-		return c.JSON(http.StatusOK, SuccessResponse("success update product", ToResponse(res, "update")))
+		return c.JSON(http.StatusAccepted, SuccessResponse("success update product", ToResponse(res, "update")))
 	}
 }
 

@@ -1,14 +1,16 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/labstack/echo/v4"
 )
 
 type Core struct {
 	ID                  uint
 	IdUser              uint
-	DateStart           string
-	DateEnd             string
+	DateStart           time.Time
+	DateEnd             time.Time
 	Entrance            string
 	Ticket              int
 	IdRanger            uint

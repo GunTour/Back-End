@@ -153,7 +153,7 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 			if err != nil {
 				authURL := GetUrlsCal()
 				log.Print(authURL)
-				return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
+				return c.JSON(http.StatusCreated, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
 			}
 			Code = resCode.Code
 			tok := FromDomain(resCode)
@@ -163,7 +163,7 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 			if err != nil {
 				authURL := GetUrlsCal()
 				// c.Redirect(http.Redirect(w, r, ))
-				return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
+				return c.JSON(http.StatusCreated, SuccessResponseBooking("success make booking", ToResponseGagal(book, authURL, "book")))
 			}
 			toks := config.TokenSource(oauth2.NoContext, tok)
 			s, err := toks.Token()
@@ -175,7 +175,7 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 		calendarService, err := calendar.New(client)
 		if err != nil {
 			GetUrlsCal()
-			return c.JSON(http.StatusAccepted, SuccessResponse("berhasil", "redirect"))
+			return c.JSON(http.StatusCreated, SuccessResponse("berhasil", "redirect"))
 		}
 
 		event := &calendar.Event{
@@ -200,7 +200,7 @@ func (gh *gmailHandler) GoCalendar() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, FailResponse("unable to create an event."))
 		}
-		return c.JSON(http.StatusAccepted, SuccessResponseBooking("success make booking", ToResponse(book, "booking")))
+		return c.JSON(http.StatusCreated, SuccessResponseBooking("success make booking", ToResponse(book, "book")))
 
 	}
 }
