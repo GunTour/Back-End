@@ -19,7 +19,7 @@ func New(dbConn *gorm.DB) domain.Repository {
 
 func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 	var resQry []Booking
-	err := rq.db.Where("id_user=?", idUser).Find(&resQry)
+	err := rq.db.Order("created_at desc").Where("id_user=?", idUser).Find(&resQry)
 	if err.RowsAffected == 0 {
 		return []domain.Core{}, errors.New("no data")
 	}
@@ -52,7 +52,7 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 
 func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 	var resQry []Booking
-	err := rq.db.Select("bookings.id", "bookings.id_user", "users.full_name", "users.phone", "bookings.date_start", "bookings.date_end", "bookings.ticket").
+	err := rq.db.Order("bookings.created_at desc").Select("bookings.id", "bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end", "bookings.ticket").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
 		Where("bookings.id_ranger = ?", int(idRanger)).Find(&resQry).Scan(&resQry)
 
