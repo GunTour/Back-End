@@ -1,7 +1,7 @@
 package delivery
 
 import (
-	"GunTour/features/gmail/domain"
+	"GunTour/features/google/domain"
 
 	"golang.org/x/oauth2"
 )

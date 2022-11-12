@@ -6,7 +6,7 @@ import (
 	ar "GunTour/features/admin/repository"
 	rr "GunTour/features/ranger/repository"
 
-	gr "GunTour/features/gmail/repository"
+	gr "GunTour/features/google/repository"
 	ur "GunTour/features/users/repository"
 	"fmt"
 

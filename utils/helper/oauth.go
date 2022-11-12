@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -14,8 +15,18 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-func SendMail(resCode admin.Code, msg admin.PesanCore) error {
-	var messageStr []byte
+func AuthConfig() *oauth2.Config {
+	config := &oauth2.Config{
+		ClientID:     os.Getenv("CLIENT_ID"),
+		ClientSecret: os.Getenv("CLIENT_SECRET"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
+		Endpoint:     google.Endpoint,
+		RedirectURL:  os.Getenv("REDIRECT_GMAIL"),
+	}
+	return config
+}
+
+func AuthConfigCalendar() *oauth2.Config {
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
@@ -23,6 +34,12 @@ func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 		Endpoint:     google.Endpoint,
 		RedirectURL:  os.Getenv("REDIRECT_CALENDAR"),
 	}
+	return config
+}
+
+func SendMail(resCode admin.Code, msg admin.PesanCore) error {
+	var messageStr []byte
+	config := AuthConfig()
 
 	tok := &oauth2.Token{AccessToken: resCode.AccessToken, TokenType: resCode.TokenType, RefreshToken: resCode.RefreshToken, Expiry: resCode.Expiry}
 	client := config.Client(oauth2.NoContext, tok)
@@ -33,7 +50,6 @@ func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 	}
 	var message gmail.Message
 
-	// Compose the message
 	if msg.Status == "rejected" {
 		messageStr = []byte(
 			"From: Guntour@gmail.com\r\n" +
@@ -48,10 +64,8 @@ func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 				"Assalamu'alaikum Wr. Wb.\n\nSelamat anda diterima menjadi ranger untuk aplikasi kami.\nMohon bantuan dan kerja samanya.\n\nTerima kasih!")
 	}
 
-	// Place messageStr into message.Raw in base64 encoded format
 	message.Raw = base64.URLEncoding.EncodeToString(messageStr)
 
-	// Send the message
 	_, err = gmailService.Users.Messages.Send("me", &message).Do()
 	if err != nil {
 		return errors.New("cannot send mail")
@@ -61,14 +75,7 @@ func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 }
 
 func EventCalendar(resCode booking.Code, book booking.Core) error {
-	config := &oauth2.Config{
-		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
-		Endpoint:     google.Endpoint,
-		RedirectURL:  os.Getenv("REDIRECT_CALENDAR"),
-	}
-
+	config := AuthConfigCalendar()
 	tok := &oauth2.Token{AccessToken: resCode.AccessToken, TokenType: resCode.TokenType, RefreshToken: resCode.RefreshToken, Expiry: resCode.Expiry}
 	client := config.Client(oauth2.NoContext, tok)
 
@@ -100,4 +107,20 @@ func EventCalendar(resCode booking.Code, book booking.Core) error {
 		return errors.New("cannot insert to calendar")
 	}
 	return nil
+}
+
+func GetUrls() string {
+	config := AuthConfig()
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	authURL = strings.ReplaceAll(authURL, "\u0026", "&")
+
+	return authURL
+}
+
+func GetUrlsCal() string {
+	config := AuthConfigCalendar()
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	authURL = strings.ReplaceAll(authURL, "\u0026", "&")
+
+	return authURL
 }

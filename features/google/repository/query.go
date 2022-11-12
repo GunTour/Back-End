@@ -1,8 +1,7 @@
 package repository
 
 import (
-	"GunTour/features/gmail/domain"
-	"log"
+	"GunTour/features/google/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,28 +16,11 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
-func (rq *repoQuery) InsertCode(code string) error {
-	var resQry Code
-	resQry.Code = code
-	rq.db.Create(&resQry)
-
-	return nil
-}
-
-func (rq *repoQuery) UpdateCode(code domain.Code) error {
+func (rq *repoQuery) InsertCode(code domain.Code) error {
 	var resQry Code = FromDomain(code)
 	rq.db.Create(&resQry)
 
 	return nil
-}
-
-func (rq *repoQuery) GetCode() (domain.Code, error) {
-	var resQry Code
-	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {
-		return domain.Code{}, err
-	}
-	res := ToDomain(resQry)
-	return res, nil
 }
 
 func (rq *repoQuery) GetPesan() (domain.PesanCore, domain.RangerCore) {
@@ -74,6 +56,6 @@ func (rq *repoQuery) GetPesanCal() domain.BookingCore {
 		Where("id_booking=?", resQry.ID).Find(&resProductQry).Scan(&resProductQry)
 
 	res := ToDomainCore(resQry, resProductQry)
-	log.Print(res)
+
 	return res
 }

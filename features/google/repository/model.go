@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"GunTour/features/gmail/domain"
+	"GunTour/features/google/domain"
 	"time"
 
 	"gorm.io/gorm"
