@@ -82,7 +82,7 @@ type GetRangerResponse struct {
 	ID        uint      `json:"id_booking" form:"id_booking"`
 	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
 	FullName  string    `json:"fullname" form:"fullname"`
-	Phone     string    `json:"phone" form:"phone"`
+	Entrance  string    `json:"entrance" form:"entrance"`
 	Start     string    `json:"date_start" form:"date_start"`
 	End       string    `json:"date_end" form:"date_end"`
 	Ticket    int       `json:"ticket" form:"ticket"`
@@ -140,7 +140,7 @@ func ToResponseArray(core interface{}, code string) interface{} {
 		var arr []GetRangerResponse
 		val := core.([]domain.Core)
 		for _, cnv := range val {
-			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, FullName: cnv.FullName, Phone: cnv.Phone, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Ticket: cnv.Ticket})
+			arr = append(arr, GetRangerResponse{ID: cnv.ID, IdUser: cnv.IdUser, FullName: cnv.FullName, Entrance: cnv.Entrance, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Ticket: cnv.Ticket})
 		}
 		res = arr
 	}

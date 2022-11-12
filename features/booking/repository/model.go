@@ -188,7 +188,7 @@ func ToDomainArrayRanger(dp []Booking) []domain.Core {
 			ID:        val.ID,
 			IdUser:    val.IdUser,
 			FullName:  val.FullName,
-			Phone:     val.Phone,
+			Entrance:  val.Entrance,
 			DateStart: val.DateStart,
 			DateEnd:   val.DateEnd,
 			Ticket:    val.Ticket,
