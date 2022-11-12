@@ -24,12 +24,12 @@ func (rq *repoQuery) GetAll(page uint) ([]domain.Core, int, int, error) {
 	if page == 0 || page == 1 {
 		page = 1
 		if err := rq.db.Limit(8).Find(&resQry).Error; err != nil {
-			return nil, 0, 0, err
+			return nil, 0, 0, errors.New("no data")
 		}
 	} else {
 		i := (page - 1) * 8
 		if err := rq.db.Order("created_at desc").Offset(int(i)).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
-			return nil, 0, 0, err
+			return nil, 0, 0, errors.New("no data")
 		}
 	}
 

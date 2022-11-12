@@ -2,7 +2,6 @@ package services
 
 import (
 	"GunTour/features/product/domain"
-	"errors"
 )
 
 type productService struct {
@@ -17,7 +16,7 @@ func (ps *productService) ShowAll(page uint) ([]domain.Core, int, int, error) {
 
 	res, pages, totalPage, err := ps.qry.GetAll(page)
 	if err != nil {
-		return []domain.Core{}, 0, 0, errors.New("no data")
+		return []domain.Core{}, 0, 0, err
 	}
 
 	return res, pages, totalPage, nil

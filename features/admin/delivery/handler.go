@@ -93,12 +93,13 @@ func (ah *adminHandler) GetProduct() echo.HandlerFunc {
 		}
 
 		res, pages, totalPage, err := ah.srv.GetProduct(page)
-
 		if err != nil {
 			if strings.Contains(err.Error(), "page") {
 				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			} else if strings.Contains(err.Error(), "no data") {
+				return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", pages, totalPage, "getproduct")))
 			}
-			return c.JSON(http.StatusNotFound, FailResponse("no data."))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", pages, totalPage, "getproduct")))
 	}

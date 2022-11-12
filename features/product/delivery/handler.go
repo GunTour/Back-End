@@ -31,8 +31,10 @@ func (ph *productHandler) ShowAll() echo.HandlerFunc {
 		if err != nil {
 			if strings.Contains(err.Error(), "page") {
 				return c.JSON(http.StatusNotFound, FailResponse("page not found."))
+			} else if strings.Contains(err.Error(), "no data") {
+				return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", uint(pages), uint(totalPage), "getproduct")))
 			}
-			return c.JSON(http.StatusNotFound, FailResponse("no data."))
+			return c.JSON(http.StatusInternalServerError, FailResponse("there is a problem on server."))
 		}
 
 		return c.JSON(http.StatusOK, SuccessResponseProduct(ToResponseProduct(res, "success get all product", uint(pages), uint(totalPage), "getproduct")))

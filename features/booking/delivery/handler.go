@@ -46,8 +46,10 @@ func (bs *bookingHandler) GetAll() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, FailResponse("unaothorized access detected"))
 		}
 		res, err := bs.srv.GetAll(uint(id))
-
 		if err != nil {
+			if strings.Contains(err.Error(), "no data") {
+				return c.JSON(http.StatusOK, SuccessResponse("success get booking history.", ToResponseArray(res, "getall")))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking history", ToResponseArray(res, "getall")))
