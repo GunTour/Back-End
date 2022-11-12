@@ -82,7 +82,7 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 		id, role := middlewares.ExtractToken(c)
 		if id == 0 {
 			return c.JSON(http.StatusBadRequest, FailResponse("cannot validate token"))
-		} else if role == "ranger" {
+		} else if role != "ranger" {
 			return c.JSON(http.StatusUnauthorized, FailResponse("unauthorized access detected"))
 		}
 

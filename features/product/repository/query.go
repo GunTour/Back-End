@@ -28,7 +28,7 @@ func (rq *repoQuery) GetAll(page uint) ([]domain.Core, int, int, error) {
 		}
 	} else {
 		i := (page - 1) * 8
-		if err := rq.db.Offset(int(i)).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
+		if err := rq.db.Order("created_at desc").Offset(int(i)).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
 			return nil, 0, 0, err
 		}
 	}

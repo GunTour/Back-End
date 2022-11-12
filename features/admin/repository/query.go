@@ -61,7 +61,7 @@ func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error
 		}
 	} else {
 		i := (page - 1) * 8
-		if err := rq.db.Offset(i).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
+		if err := rq.db.Order("created_at desc").Offset(i).Limit(8).Find(&resQry).Scan(&resQry).Error; err != nil {
 			return nil, 0, 0, err
 		}
 	}
