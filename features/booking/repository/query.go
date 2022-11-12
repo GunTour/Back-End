@@ -55,7 +55,6 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 	err := rq.db.Order("bookings.created_at desc").Select("bookings.id", "bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end", "bookings.ticket").
 		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
 		Where("bookings.id_ranger = ?", int(idRanger)).Find(&resQry).Scan(&resQry)
-
 	if err.RowsAffected == 0 {
 		return []domain.Core{}, errors.New("no data")
 	}
