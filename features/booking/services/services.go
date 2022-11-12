@@ -36,7 +36,7 @@ func (bs *bookingService) GetDetail(idBooking uint) (domain.Core, error) {
 func (bs *bookingService) GetRangerBooking(idRanger uint) ([]domain.Core, error) {
 	res, err := bs.qry.GetRanger(idRanger)
 	if err != nil {
-		return []domain.Core{}, errors.New("no data")
+		return []domain.Core{}, err
 	}
 
 	return res, nil

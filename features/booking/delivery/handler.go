@@ -88,6 +88,9 @@ func (bs *bookingHandler) GetRangerBooking() echo.HandlerFunc {
 
 		res, err := bs.srv.GetRangerBooking(uint(id))
 		if err != nil {
+			if strings.Contains(err.Error(), "no data") {
+				return c.JSON(http.StatusNotFound, SuccessResponse("no data.", ToResponseArray(res, "getranger")))
+			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server."))
 		}
 		return c.JSON(http.StatusOK, SuccessResponse("success get booking ranger", ToResponseArray(res, "getranger")))
