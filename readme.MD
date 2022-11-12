@@ -85,7 +85,7 @@ The main features that this application has are:
 
 Entity Relationship Diagram
 
-[![GunTour-ERD][erd-screenshot]](https://github.com/GunTour/Back-End/tree/main/readme/erd.jpg)
+[![GunTour-ERD][erd-screenshot]](https://github.com/GunTour/Back-End/blob/main/readme/erd.jpg)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -128,7 +128,7 @@ Entity Relationship Diagram
 
 _For more examples, please refer to the [OPEN API](https://app.swaggerhub.com/apis-docs/khalidrianda/GunTour/1.0.0#/)_
 
-[![GunTour-API][product-screenshot]](https://github.com/GunTour/Back-End/tree/main/readme/GunTour.gif)
+[![GunTour-API][product-screenshot]](https://github.com/GunTour/Back-End/blob/main/readme/GunTour.gif)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -188,7 +188,7 @@ Dany
 [issues-shield]: https://img.shields.io/github/issues/GunTour/Back-End.svg?style=for-the-badge
 [issues-url]: https://github.com/GunTour/Back-End/issues
 [license-shield]: https://img.shields.io/github/license/GunTour/Back-End.svg?style=for-the-badge
-[license-url]: https://github.com/GunTour/Back-End/blob/readme/LICENSE.txt
+[license-url]: https://github.com/GunTour/Back-End/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url-1]: https://linkedin.com/in/khalidrianda
 [linkedin-url-2]: https://linkedin.com/in/mochammaddany
