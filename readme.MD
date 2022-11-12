@@ -165,11 +165,13 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Khalid - [Khalid](https://www.linkedin.com/in/khalidrianda) - khalidrianda12@gmail.com
+Khalid 
+- [![LinkedIn-Khalid][linkedin-shield]][linkedin-url-1]
+- [![Email-Khalid][email-shield]][email-1]
 
-Dany - [Dany](https://www.linkedin.com/in/mochammaddany) - mochammaddany@gmail.com
-
-Project Link: [https://github.com/GunTour/Back-End](https://github.com/GunTour/Back-End)
+Dany
+- [![LinkedIn-Dany][linkedin-shield]][linkedin-url-2]
+- [![Email-Dany][email-shield]][email-2]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -204,3 +206,6 @@ Project Link: [https://github.com/GunTour/Back-End](https://github.com/GunTour/B
 [calendar-url]: https://github.com/googleapis/google-api-go-client
 [AWS]: https://img.shields.io/badge/AWS-EC2-orange
 [aws-url]: https://aws.amazon.com/
+[email-shield]: https://img.shields.io/badge/gmail-DD0031?style=for-the-badge&logo=gmail&logoColor=white
+[email-1]: khalidrianda12@gmail.com
+[email-2]: mochammaddany@gmail.com
