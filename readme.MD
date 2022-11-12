@@ -51,4 +51,4 @@ Fitur utama yang dimilikii aplikasi ini adalah :
 - [Muhammad Dany](https://github.com/mdanys)
 
 ##  📉 Database Schema:
-![ERD](https://github.com/GunTour/Back-End/blob/main/guntour.jpg)
+![ERD](https://github.com/GunTour/Back-End/blob/main/ERD/guntour.jpg)
