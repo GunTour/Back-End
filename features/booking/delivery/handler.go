@@ -5,7 +5,6 @@ import (
 	"GunTour/utils/helper"
 	"GunTour/utils/middlewares"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -181,7 +180,6 @@ func (bs *bookingHandler) UpdateData() echo.HandlerFunc {
 		}
 		input.ID = uint(id)
 		if err := c.Bind(&input); err != nil {
-			log.Print(input)
 			return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 		}
 

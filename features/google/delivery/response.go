@@ -1,7 +1,7 @@
 package delivery
 
 import (
-	"GunTour/features/gmail/domain"
+	"GunTour/features/google/domain"
 	"fmt"
 	"time"
 
@@ -79,6 +79,7 @@ type DetailResponse struct {
 	OrderId       string           `json:"order_id" form:"order_id"`
 	Link          string           `json:"link" form:"link"`
 	StatusBooking string           `json:"status" form:"status"`
+	URL           string           `json:"url" form:"url"`
 	DateStart     time.Time        `json:"-" form:"-"`
 	DateEnd       time.Time        `json:"-" form:"-"`
 }
@@ -130,7 +131,7 @@ func ToResponseGagal(core interface{}, authURL string, code string) interface{} 
 				ProductName: val.ProductName, RentPrice: val.RentPrice})
 		}
 		res = DetailResponse{ID: cnv.ID, Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket,
-			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking}
+			Product: arr, IdRanger: cnv.IdRanger, GrossAmount: cnv.GrossAmount, OrderId: cnv.OrderId, Link: cnv.Link, StatusBooking: cnv.StatusBooking, URL: authURL}
 	}
 
 	return res

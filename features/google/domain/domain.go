@@ -65,17 +65,13 @@ type BookingProductCore struct {
 }
 
 type Repository interface {
-	InsertCode(code string) error
-	UpdateCode(code Code) error
-	GetCode() (Code, error)
+	InsertCode(code Code) error
 	GetPesan() (PesanCore, RangerCore)
 	GetPesanCal() BookingCore
 }
 
 type Services interface {
-	AddCode(Code string) error
-	UpdateCode(code Code) error
-	GetCode() (Code, error)
+	InsertCode(code Code) error
 	GetPesan() (PesanCore, RangerCore)
 	GetPesanCal() BookingCore
 }
