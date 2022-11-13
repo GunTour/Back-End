@@ -27,6 +27,7 @@ func New(e *echo.Echo, srv domain.Service) {
 	e.GET("/ranger", handler.ShowAll(), middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
 }
 
+// HANDLER TO POST APPLY FORM RANGER
 func (rh *rangerHandler) Apply() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
@@ -66,6 +67,7 @@ func (rh *rangerHandler) Apply() echo.HandlerFunc {
 	}
 }
 
+// HANDLER TO GET RANGER'S DATA BASED ON DATE
 func (rh *rangerHandler) ShowAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 

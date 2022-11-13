@@ -16,6 +16,7 @@ func New(db *gorm.DB) domain.Repository {
 	return &repoQuery{db: db}
 }
 
+// QUERY TO GET ALL PRODUCT DATA
 func (rq *repoQuery) GetAll(page uint) ([]domain.Core, int, int, error) {
 	var resQry []Product
 	var sum float64
@@ -52,6 +53,7 @@ func (rq *repoQuery) GetAll(page uint) ([]domain.Core, int, int, error) {
 	return res, int(page), int(totalPage), nil
 }
 
+// QUERY TO GET PRODUCT DETAIL
 func (rq *repoQuery) GetByID(id uint) (domain.Core, error) {
 
 	var data Product

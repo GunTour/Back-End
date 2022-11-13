@@ -35,6 +35,7 @@ func FailResponse(msg interface{}) map[string]interface{} {
 	}
 }
 
+// STRUCT RESPONSE GET PENDAKI
 type PendakiResponse struct {
 	Message string               `json:"message" form:"message"`
 	Climber ClimberResponse      `json:"climber" form:"climber"`
@@ -55,18 +56,7 @@ type GetPendakiResponse struct {
 	DateEnd   time.Time `json:"-" form:"-"`
 }
 
-type GetBookingResponse struct {
-	ID        uint      `json:"id_booking" form:"id_booking"`
-	IdUser    uint      `json:"id_pendaki" form:"id_pendaki"`
-	FullName  string    `json:"fullname" form:"fullname"`
-	Start     string    `json:"date_start" form:"date_start"`
-	End       string    `json:"date_end" form:"date_end"`
-	Entrance  string    `json:"entrance" form:"entrance"`
-	Ticket    int       `json:"ticket" form:"ticket"`
-	DateStart time.Time `json:"-" form:"-"`
-	DateEnd   time.Time `json:"-" form:"-"`
-}
-
+// STRUCT FOR GET RANGER RESPONSE
 type GetRangerResponse struct {
 	ID            uint      `json:"id" form:"id"`
 	IdUser        uint      `json:"id_user" form:"id_user"`
@@ -93,6 +83,7 @@ type GetRangerApplyResponse struct {
 	DateEnd   time.Time `json:"-" form:"-"`
 }
 
+// STRUCT FOR GET ALL PRODUCT
 type GetProductResponse struct {
 	Message   string            `json:"message" form:"message"`
 	Page      int               `json:"page" form:"page"`
@@ -179,14 +170,6 @@ func ToResponseArray(core interface{}, code string) interface{} {
 	case "climber":
 		val := core.(domain.ClimberCore)
 		res = ClimberResponse{IsClimber: val.IsClimber, MaleClimber: val.MaleClimber, FemaleClimber: val.FemaleClimber}
-	case "getbooking":
-		var arr []GetBookingResponse
-		val := core.([]domain.BookingCore)
-		for _, cnv := range val {
-			arr = append(arr, GetBookingResponse{ID: uint(cnv.ID), IdUser: cnv.IdUser, FullName: cnv.FullName,
-				Start: cnv.DateStart.Format("2006-01-02"), End: cnv.DateEnd.Format("2006-01-02"), Entrance: cnv.Entrance, Ticket: cnv.Ticket})
-		}
-		res = arr
 	case "getproduct":
 		var arr []ProductResponse
 		val := core.([]domain.ProductCore)

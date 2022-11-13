@@ -17,6 +17,7 @@ func New(db *gorm.DB) domain.Repository {
 	return &repoQuery{db: db}
 }
 
+// QUERY TO INSERT DATA RANGER
 func (rq *repoQuery) Add(data domain.Core, dataUser domain.User) (domain.Core, error) {
 
 	var cnv Ranger = FromCore(data)
@@ -42,6 +43,7 @@ func (rq *repoQuery) Add(data domain.Core, dataUser domain.User) (domain.Core, e
 
 }
 
+// QUERY TO GET RANGER DATA
 func (rq *repoQuery) GetAll(start time.Time, end time.Time) ([]domain.Core, error) {
 
 	var data []Ranger

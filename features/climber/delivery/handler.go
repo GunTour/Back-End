@@ -16,6 +16,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.GET("/climber", handler.ShowClimber()) // GET LIST PENDAKI
 }
 
+// HANDLER TO SHOW CLIMBER DATA
 func (ch *climberHandler) ShowClimber() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		res, err := ch.srv.ShowClimber()

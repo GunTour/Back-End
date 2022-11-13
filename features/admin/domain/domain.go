@@ -80,6 +80,8 @@ type PesanCore struct {
 	Email    string
 	Status   string
 }
+
+// DOMAIN REPOSITORY
 type Repository interface {
 	GetPendaki() ([]BookingCore, ClimberCore, error)
 	InsertClimber(data ClimberCore) (ClimberCore, error)
@@ -93,6 +95,7 @@ type Repository interface {
 	GetCode() (Code, error)
 }
 
+// DOMAIN SERVICES
 type Services interface {
 	GetPendaki() ([]BookingCore, ClimberCore, error)
 	AddClimber(data ClimberCore) (ClimberCore, error)
@@ -106,10 +109,10 @@ type Services interface {
 	GetCode() (Code, error)
 }
 
+// DOMAIN HANDLER
 type Handler interface {
 	GetPendaki() echo.HandlerFunc
 	AddClimber() echo.HandlerFunc
-	// GetRanger() echo.HandlerFunc
 	GetProduct() echo.HandlerFunc
 	AddProduct() echo.HandlerFunc
 	EditProduct() echo.HandlerFunc

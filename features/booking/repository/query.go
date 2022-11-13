@@ -17,6 +17,7 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
+// GET USER'S BOOKING DATA
 func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 	var resQry []Booking
 	err := rq.db.Order("created_at desc").Where("id_user=?", idUser).Find(&resQry)
@@ -29,6 +30,7 @@ func (rq *repoQuery) Get(idUser uint) ([]domain.Core, error) {
 	return res, nil
 }
 
+// GET BOOKING DETAIL'S DATA
 func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 	var resQry Booking
 	var resProductQry []BookingProduct
@@ -45,11 +47,11 @@ func (rq *repoQuery) GetID(idBooking uint) (domain.Core, error) {
 		Order("booking_products.created_at desc").Joins("left join products on products.id = booking_products.id_product").
 		Where("id_booking=?", idBooking).Find(&resProductQry).Scan(&resProductQry)
 
-	// selesai dari DB
 	res := ToDomainCore(resQry, resProductQry, string(""))
 	return res, nil
 }
 
+// GET ALL RANGER DATA
 func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 	var resQry []Booking
 	rq.db.Model(&Ranger{}).Order("created_at desc").Where("user_id=?", idRanger).Select("id").First(&idRanger)
@@ -60,11 +62,11 @@ func (rq *repoQuery) GetRanger(idRanger uint) ([]domain.Core, error) {
 		return []domain.Core{}, errors.New("no data")
 	}
 
-	// selesai dari DB
 	res := ToDomainArrayRanger(resQry)
 	return res, nil
 }
 
+// INSERT BOOKING DATA
 func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
 	var productCnv []BookingProduct
@@ -92,11 +94,11 @@ func (rq *repoQuery) Insert(newBooking domain.Core) (domain.Core, error) {
 		}
 	}
 
-	// selesai dari DB
 	newBooking = ToDomainCore(cnv, productCnv, mail)
 	return newBooking, nil
 }
 
+// UPDATE BOOKING'S DATA
 func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 	var cnv Booking = FromDomain(newBooking)
 	var productCnv []BookingProduct
@@ -121,11 +123,12 @@ func (rq *repoQuery) Update(newBooking domain.Core) (domain.Core, error) {
 			return domain.Core{}, err
 		}
 	}
-	// selesai dari DB
+
 	newBooking = ToDomainCore(cnv, productCnv, string(""))
 	return newBooking, nil
 }
 
+// DELETE BOOKING'S DATA
 func (rq *repoQuery) Delete(idBooking uint) error {
 	rq.db.Where("id_booking = ?", idBooking).Delete(&BookingProduct{})
 	err := rq.db.Where("id = ?", idBooking).Delete(&Booking{})
@@ -136,6 +139,7 @@ func (rq *repoQuery) Delete(idBooking uint) error {
 	return nil
 }
 
+// UPDATE STATUS BOOKING AFTER PAYMENT MIDTRANS
 func (rq *repoQuery) UpdateMidtrans(newBooking domain.Core) error {
 	var cnv Booking = FromDomain(newBooking)
 	if err := rq.db.Where("order_id = ?", cnv.OrderId).Updates(&cnv).Error; err != nil {
@@ -145,6 +149,7 @@ func (rq *repoQuery) UpdateMidtrans(newBooking domain.Core) error {
 	return nil
 }
 
+// GET OAUTH TOKEN
 func (rq *repoQuery) GetCode() (domain.Code, error) {
 	var resQry Code
 	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {

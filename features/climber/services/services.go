@@ -15,6 +15,7 @@ func New(repo domain.Repository) domain.Services {
 	}
 }
 
+// SERVICE TO SHOW CLIMBER DATA
 func (as *climberService) ShowClimber() (domain.Core, error) {
 	res, err := as.qry.GetClimber()
 	if err != nil {

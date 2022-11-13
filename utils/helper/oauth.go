@@ -37,6 +37,7 @@ func AuthConfigCalendar() *oauth2.Config {
 	return config
 }
 
+// FUNC TO SEND EMAIL
 func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 	var messageStr []byte
 	config := AuthConfig()
@@ -74,6 +75,7 @@ func SendMail(resCode admin.Code, msg admin.PesanCore) error {
 	return nil
 }
 
+// FUNC TO ADD EVENT ON GOOGLE CALENDAR
 func EventCalendar(resCode booking.Code, book booking.Core) error {
 	config := AuthConfigCalendar()
 	tok := &oauth2.Token{AccessToken: resCode.AccessToken, TokenType: resCode.TokenType, RefreshToken: resCode.RefreshToken, Expiry: resCode.Expiry}
@@ -109,6 +111,7 @@ func EventCalendar(resCode booking.Code, book booking.Core) error {
 	return nil
 }
 
+// FUNC TO GET GMAIL AUTH
 func GetUrls() string {
 	config := AuthConfig()
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
@@ -117,6 +120,7 @@ func GetUrls() string {
 	return authURL
 }
 
+// FUNC TO GET CALENDAR AUTH
 func GetUrlsCal() string {
 	config := AuthConfigCalendar()
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
