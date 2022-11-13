@@ -157,7 +157,9 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		res, err := uh.srv.Login(cnv)
 		if err != nil {
 			if strings.Contains(err.Error(), "an invalid client request") {
-				return c.JSON(http.StatusBadRequest, FailResponse("an invalid client request."))
+				return c.JSON(http.StatusBadRequest, FailResponse("email doesn't exist."))
+			} else if strings.Contains(err.Error(), "password not match") {
+				return c.JSON(http.StatusBadRequest, FailResponse("password not match."))
 			}
 			return c.JSON(http.StatusInternalServerError, FailResponse("there is problem on server"))
 		}
