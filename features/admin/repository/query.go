@@ -18,6 +18,7 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
+// TAKE DATA PENDAKI
 func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
 	var resQry []Booking
 	var resQryClimber Climber
@@ -39,6 +40,7 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 	return res, resClimber, nil
 }
 
+// ADD DATA CLIMBER
 func (rq *repoQuery) InsertClimber(data domain.ClimberCore) (domain.ClimberCore, error) {
 	var resQry Climber = FromDomainClimber(data)
 	if err := rq.db.Create(&resQry).Error; err != nil {
@@ -49,6 +51,7 @@ func (rq *repoQuery) InsertClimber(data domain.ClimberCore) (domain.ClimberCore,
 	return data, nil
 }
 
+// GET PRODUCT DATA
 func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error) {
 	var resQry []Product
 	var sum float64
@@ -80,11 +83,11 @@ func (rq *repoQuery) GetProduct(page int) ([]domain.ProductCore, int, int, error
 		return nil, 0, 0, errors.New("page not found")
 	}
 
-	// selesai dari DB
 	res := ToDomainProductArr(resQry)
 	return res, page, int(totalPage), nil
 }
 
+// ADD PRODUCT
 func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
 	var res Product = FromDomainProduct(newProduct)
 	if err := rq.db.Create(&res).Error; err != nil {
@@ -95,6 +98,7 @@ func (rq *repoQuery) InsertProduct(newProduct domain.ProductCore) (domain.Produc
 	return newProduct, nil
 }
 
+// UPDATE PRODUCT
 func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.ProductCore, error) {
 	var res Product = FromDomainProduct(newProduct)
 	err := rq.db.Where("id=?", newProduct.ID).Updates(&res)
@@ -105,6 +109,8 @@ func (rq *repoQuery) UpdateProduct(newProduct domain.ProductCore) (domain.Produc
 	newProduct = ToDomainProduct(res)
 	return newProduct, nil
 }
+
+// DELETE PRODUCT
 func (rq *repoQuery) DeleteProduct(id int) error {
 	err := rq.db.Where("id=?", id).Delete(&Product{})
 	if err.RowsAffected == 0 {
@@ -113,6 +119,7 @@ func (rq *repoQuery) DeleteProduct(id int) error {
 	return nil
 }
 
+// GET DATA RANGER
 func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, error) {
 	var data []Ranger
 	var datas []Ranger
@@ -132,6 +139,7 @@ func (rq *repoQuery) GetAllRanger() ([]domain.RangerCore, []domain.RangerCore, e
 	return resAccepted, res, nil
 }
 
+// EDIT DATA RANGER
 func (rq *repoQuery) EditRanger(data domain.RangerCore, datas domain.UserCore, id uint) (domain.RangerCore, domain.UserCore, domain.PesanCore, error) {
 	var cnv Ranger = FromDomainRanger(data)
 	var conv User = FromDomainUser(datas)
@@ -170,6 +178,7 @@ func (rq *repoQuery) EditRanger(data domain.RangerCore, datas domain.UserCore, i
 	return res, resU, pesan, nil
 }
 
+// DELETE DATA RANGER
 func (rq *repoQuery) DeleteRanger(id int) error {
 	err := rq.db.Where("id=?", id).Delete(&Ranger{})
 	if err.RowsAffected == 0 {
@@ -178,6 +187,7 @@ func (rq *repoQuery) DeleteRanger(id int) error {
 	return nil
 }
 
+// GET OAUTH TOKEN
 func (rq *repoQuery) GetCode() (domain.Code, error) {
 	var resQry Code
 	if err := rq.db.Order("created_at desc").First(&resQry).Error; err != nil {

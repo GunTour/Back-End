@@ -4,6 +4,7 @@ import (
 	"unicode"
 )
 
+// FUNC TO VALIDATE PASSWORD STRENGTH
 func Password(pass string) string {
 	var (
 		upp, low, num bool
@@ -21,9 +22,6 @@ func Password(pass string) string {
 		case unicode.IsNumber(char):
 			num = true
 			tot++
-		// case unicode.IsPunct(char) || unicode.IsSymbol(char):
-		//     sym = true
-		//     tot++
 		default:
 			return "tidak ada password"
 		}
@@ -35,8 +33,6 @@ func Password(pass string) string {
 		return "password must contain lowercase"
 	} else if !num {
 		return "password must contain numeric"
-		// } else if !sym {
-		//     return "password must contain symbol"
 	} else if tot < 8 {
 		return "password must have minumum 8 character"
 	}

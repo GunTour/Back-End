@@ -17,6 +17,7 @@ type AppConfig struct {
 	JWTSecret  string
 }
 
+// FUNC TO CREATE NEW CONFIG
 func NewConfig() *AppConfig {
 	cfg := initConfig()
 	if cfg == nil {
@@ -27,6 +28,7 @@ func NewConfig() *AppConfig {
 	return cfg
 }
 
+// FUNC TO INITIALIZE CONFIG FROM ENVIRONMENT
 func initConfig() *AppConfig {
 	var app AppConfig
 

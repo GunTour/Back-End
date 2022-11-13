@@ -19,6 +19,7 @@ func New(e *echo.Echo, srv domain.Service) {
 	e.GET("/product/:id_product", handler.ShowByID())
 }
 
+// HANDLER TO SHOW ALL PRODUCT'S DATA
 func (ph *productHandler) ShowAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
@@ -42,6 +43,7 @@ func (ph *productHandler) ShowAll() echo.HandlerFunc {
 	}
 }
 
+// HANDLER TO SHOW PRODUCT'S DETAIL
 func (ph *productHandler) ShowByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 

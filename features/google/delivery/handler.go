@@ -25,6 +25,7 @@ func New(e *echo.Echo, srv domain.Services) {
 	e.POST("/calendar/send", handler.GoCalendar())
 }
 
+// HANDLER TO TAKE CALLBACK FROM GOOGLE OAUTH2
 func (gh *googleHandler) GoSend() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var Code string
@@ -77,6 +78,7 @@ func (gh *googleHandler) GoSend() echo.HandlerFunc {
 	}
 }
 
+// HANDLER TO TAKE CALLBACK FROM GOOGLE OAUTH2
 func (gh *googleHandler) GoCalendar() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var Code string

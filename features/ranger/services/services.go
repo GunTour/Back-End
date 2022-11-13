@@ -16,6 +16,7 @@ func New(repo domain.Repository) domain.Service {
 	return &rangerService{qry: repo}
 }
 
+// SERVICE TO APPLY FORM RANGER
 func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file multipart.File, fileheader *multipart.FileHeader) (domain.Core, error) {
 
 	if fileheader != nil {
@@ -35,6 +36,7 @@ func (rs *rangerService) Apply(data domain.Core, dataUser domain.User, file mult
 
 }
 
+// SERVICE TO SHOW RANGERS AVALAIBLE
 func (rs *rangerService) ShowAll(start time.Time, end time.Time) ([]domain.Core, error) {
 
 	res, err := rs.qry.GetAll(start, end)

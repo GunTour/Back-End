@@ -8,6 +8,7 @@ import (
 	"github.com/midtrans/midtrans-go/snap"
 )
 
+// FUNC TO MAKE PAYMENT ORDER MIDTRANS
 func OrderMidtrans(orderId string, price int64) *snap.Response {
 	midtrans.ServerKey = os.Getenv("MIDTRANS_SERVER")
 	midtrans.ClientKey = os.Getenv("MIDTRANS_CLIENT")
@@ -30,6 +31,7 @@ func OrderMidtrans(orderId string, price int64) *snap.Response {
 	return snapResp
 }
 
+// FUNC TO CHECK PAYMENT
 func CheckMidtrans(orderId string) *coreapi.TransactionStatusResponse {
 	midtrans.ServerKey = os.Getenv("MIDTRANS_SERVER")
 	midtrans.ClientKey = os.Getenv("MIDTRANS_CLIENT")

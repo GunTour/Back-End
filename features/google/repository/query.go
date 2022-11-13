@@ -16,6 +16,7 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
+// INSERT TOKEN
 func (rq *repoQuery) InsertCode(code domain.Code) error {
 	var resQry Code = FromDomain(code)
 	rq.db.Create(&resQry)
@@ -23,6 +24,7 @@ func (rq *repoQuery) InsertCode(code domain.Code) error {
 	return nil
 }
 
+// GET RANGER MESSAGE
 func (rq *repoQuery) GetPesan() (domain.PesanCore, domain.RangerCore) {
 	var resQry Pesan
 	var resQryRanger Ranger
@@ -37,6 +39,7 @@ func (rq *repoQuery) GetPesan() (domain.PesanCore, domain.RangerCore) {
 	return res, resRanger
 }
 
+// GET BOOKING MESSAGE
 func (rq *repoQuery) GetPesanCal() domain.BookingCore {
 	var resQry Booking
 	var resProductQry []BookingProduct

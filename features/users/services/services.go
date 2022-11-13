@@ -18,6 +18,7 @@ func New(repo domain.Repository) domain.Service {
 	return &userService{qry: repo}
 }
 
+// SERVICE FOR REGISTER USER
 func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 	generate, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
@@ -36,6 +37,7 @@ func (us *userService) Insert(data domain.Core) (domain.Core, error) {
 
 }
 
+// SERVICE TO UPDATE USER'S DATA
 func (us *userService) Update(data domain.Core, file multipart.File, fileheader *multipart.FileHeader, id int) (domain.Core, error) {
 
 	if data.Password != "" {
@@ -60,6 +62,7 @@ func (us *userService) Update(data domain.Core, file multipart.File, fileheader 
 
 }
 
+// SERVICE TO DELETE USER
 func (us *userService) Delete(id int) (domain.Core, error) {
 
 	res, err := us.qry.Remove(id)
@@ -70,6 +73,7 @@ func (us *userService) Delete(id int) (domain.Core, error) {
 
 }
 
+// SERVICE TO LOGIN
 func (us *userService) Login(input domain.Core) (domain.Core, error) {
 
 	res, err := us.qry.Login(input)

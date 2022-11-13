@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// FUNC TO GENERATE TOKEN AFTER LOGIN
 func GenerateToken(id int, role string) string {
 	claim := make(jwt.MapClaims)
 	claim["authorized"] = true
@@ -27,6 +28,7 @@ func GenerateToken(id int, role string) string {
 	return str
 }
 
+// FUNC TO EXTRACT TOKEN
 func ExtractToken(c echo.Context) (id int, role string) {
 	token := c.Get("user").(*jwt.Token)
 	if token.Valid {

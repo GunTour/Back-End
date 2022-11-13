@@ -19,6 +19,7 @@ const charset = "abcdefghijklmnopqrstuvwxyz" +
 var seededRand *rand.Rand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
+// FUNC TO GENERATE RANDOM STRING
 func autoGenerate(length int, charset string) string {
 	b := make([]byte, length)
 	for i := range b {
@@ -31,6 +32,7 @@ func String(length int) string {
 	return autoGenerate(length, charset)
 }
 
+// FUNC TO UPLOAD FILE TO S3 BUCKET
 func UploadFile(file multipart.File, fileheader *multipart.FileHeader) (string, error) {
 
 	randomStr := String(20)
@@ -53,6 +55,7 @@ func UploadFile(file multipart.File, fileheader *multipart.FileHeader) (string, 
 	return res.Location, err
 }
 
+// FUNC TO UPLOAD DOCUMENT TO S3 BUCKET
 func UploadDocs(file multipart.File, fileheader *multipart.FileHeader) (string, error) {
 
 	randomStr := String(20)

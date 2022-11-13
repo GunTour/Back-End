@@ -17,6 +17,7 @@ func New(dbConn *gorm.DB) domain.Repository {
 	}
 }
 
+// GET CLIMBER DATA
 func (rq *repoQuery) GetClimber() (domain.Core, error) {
 	var resQryClimber Climber
 
