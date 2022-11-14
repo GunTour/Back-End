@@ -1,4 +1,4 @@
-<a name="GunTour Apps"></a>
+<a name="readme-top"></a>
 
 
 
@@ -7,8 +7,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn-Khalid][linkedin-shield]][linkedin-url-1]
-[![LinkedIn-Dany][linkedin-shield]][linkedin-url-2]
 
 
 
@@ -16,13 +14,13 @@
 <br />
 <div align="center">
   <a href="https://github.com/GunTour/Back-End">
-    <img src="readme/logo.png" alt="Logo" width="100" height="80">
+    <img src="readme/logo.png" alt="Logo" width="200px">
   </a>
 
 <h3 align="center">GunTour</h3>
 
   <p align="center">
-    Climbing Mountains Is Now Easier. Explore Mount Pangrango simply by registering and exploring.
+    This project is a website for mountaineers who want to book tickets and rental goods for climbing.
     <br />
     <a href="https://github.com/GunTour/Back-End"><strong>Explore the docs »</strong></a>
     <br />
@@ -42,8 +40,9 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#features">Features</a>
       <ul>
+        <li><a href="#entity-relationship-diagram">Entity Relationship Diagram</a></li>
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
@@ -63,12 +62,8 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## Features
 
-This application can be used by users as a place for climbers to order tickets to climb the mountain and can rent the tools needed for climbing and use the services of a ranger as a climbing guide. This application has been integrated with online payment merchants
-such as virtual accounts, bank transfers, debit cards, and e-wallets.
-
-The main features that this application has are:
 - Users
     - Users can register
     - Users can log in
@@ -83,7 +78,11 @@ The main features that this application has are:
     - Admin can see a list of rangers and a list of users who have volunteered to become rangers
     - Admin can add, edit, and delete products for rent
 
-Entity Relationship Diagram
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+### Entity Relationship Diagram
 
 [![GunTour-ERD][erd-screenshot]](https://github.com/GunTour/Back-End/blob/main/readme/erd.jpg)
 
@@ -93,12 +92,28 @@ Entity Relationship Diagram
 
 ### Built With
 
-* [![Golang][Go]][go-url]
-* [![Framework][Echo]][echo-url]
-* [![Oauth][Oauth]][oauth-url]
-* [![Gmail][Gmail]][mail-url]
-* [![Calendar][Calendar]][calendar-url]
-* [![Server][AWS]][aws-url]
+<div>
+    <a href="https://go.dev/">
+    <img src="https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png" title="Golang" alt="Golang" width="60"/>
+    </a>&nbsp;
+    <a href="https://code.visualstudio.com/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" title="Visual Studio Code" alt="Visual Studio Code" width="40"/>
+    </a>&nbsp;
+    <a href="https://developers.google.com/apis-explorer">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/24px-Google_%22G%22_Logo.svg.png" title="Google" alt="Google" width="40"/></a>&nbsp;
+    <a href="https://aws.amazon.com/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" title="AWS" alt="AWS" width="50"/></a>&nbsp;
+    <a href="https://www.mysql.com/">
+    <img src="https://1000logos.net/wp-content/uploads/2020/08/MySQL-Logo.png" title="MySQL" alt="MySQL" width="60"/></a>&nbsp;
+    <a href="https://hub.docker.com/">
+    <img src="https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png" title="Docker" alt="Docker" width="50"/></a>&nbsp;
+    <a href="https://swagger.io/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png" title="Swagger" alt="Swagger" width="40"/></a>&nbsp;
+    <a href="https://www.postman.com/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.png" title="Postman" alt="Postman" width="120"/></a>&nbsp;
+    <a href="https://www.cloudflare.com/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Cloudflare_Logo.svg" title="Cloudflare" alt="Cloudflare" width="120"/></a>&nbsp;
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -113,9 +128,21 @@ Entity Relationship Diagram
    ```bash
    git clone https://github.com/GunTour/Back-End
    ```
-2. Run project
+2. Get env at [config.env](https://drive.google.com/file/d/18dROVFu708Lsr2lgpA7PtkRxEybSmwJ7/view?usp=sharing)
+3. Enter your config in `config.env`
+   ```bash
+   AWS_REGION = "ENTER YOUR AWS REGION"
+   AWS_ACCESS_KEY_ID = "ENTER YOUR AWS ACCESS KEY ID"
+   AWS_SECRET_ACCESS_KEY = "ENTER YOUR AWS SECRET KEY ID"
+   MIDTRANS_SERVER = "ENTER YOUR MIDTRANS SERVER"
+   MIDTRANS_CLIENT = "ENTER YOUR MIDTRANS CLIENT"
+   CLIENT_ID = "ENTER YOUR GOOGLE OAUTH CLIENT ID"
+   CLIENT_SECRET = "ENTER YOUR GOOGLE OAUTH CLIENT SECRET"
+   ```
+4. Run project
    ```bash
    cd Back-End
+   paste your config.env
    go run .
    ```
 
@@ -124,7 +151,7 @@ Entity Relationship Diagram
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Documentation
 
 _For more examples, please refer to the [OPEN API](https://app.swaggerhub.com/apis-docs/khalidrianda/GunTour/1.0.0#/)_
 
@@ -165,13 +192,11 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Khalid 
-- [![LinkedIn-Khalid][linkedin-shield]][linkedin-url-1]
-- [![Email-Khalid][email-shield]][email-1]
+[![Khalid][khalid]][khalid-url]
+- [![LinkedIn-Khalid][linkedin-shield]][linkedin-url-1] [![Email-Khalid][email-shield]][email-1]
 
-Dany
-- [![LinkedIn-Dany][linkedin-shield]][linkedin-url-2]
-- [![Email-Dany][email-shield]][email-2]
+[![Dany][dany]][dany-url]
+- [![LinkedIn-Dany][linkedin-shield]][linkedin-url-2] [![Email-Dany][email-shield]][email-2]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -206,6 +231,10 @@ Dany
 [calendar-url]: https://github.com/googleapis/google-api-go-client
 [AWS]: https://img.shields.io/badge/AWS-EC2-orange
 [aws-url]: https://aws.amazon.com/
+[khalid]: https://img.shields.io/badge/-Khalid-black.svg?style=for-the-badge&logo=Khalid&colorB=555
+[dany]: https://img.shields.io/badge/-Dany-black.svg?style=for-the-badge&logo=Dany&colorB=555
+[khalid-url]: https://github.com/khalidrianda
+[dany-url]: https://github.com/mdanys
 [email-shield]: https://img.shields.io/badge/gmail-DD0031?style=for-the-badge&logo=gmail&logoColor=white
 [email-1]: khalidrianda12@gmail.com
 [email-2]: mochammaddany@gmail.com
