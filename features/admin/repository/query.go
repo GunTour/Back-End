@@ -32,7 +32,7 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end").
 		Order("bookings.date_start asc").Joins("left join users on users.id = bookings.id_user").
-		Where("bookings.date_start BETWEEN ? AND ?)", now, end).
+		Where("bookings.date_start BETWEEN ? AND ?", end, now).
 		Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, domain.ClimberCore{}, err
 	}
