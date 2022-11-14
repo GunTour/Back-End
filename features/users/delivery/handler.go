@@ -41,6 +41,13 @@ func (uh *userHandler) Insert() echo.HandlerFunc {
 
 		er := validate.Struct(input)
 		if er != nil {
+			if strings.Contains(er.Error(), "min") {
+				return c.JSON(http.StatusBadGateway, FailResponse("min. 4 character"))
+			} else if strings.Contains(er.Error(), "max") {
+				return c.JSON(http.StatusBadGateway, FailResponse("max. 30 character"))
+			} else if strings.Contains(er.Error(), "email") {
+				return c.JSON(http.StatusBadRequest, FailResponse("must input valid email"))
+			}
 			return c.JSON(http.StatusBadRequest, FailResponse(er.Error()))
 		}
 
@@ -84,6 +91,11 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 
 				err := validate.Struct(name)
 				if err != nil {
+					if strings.Contains(err.Error(), "min") {
+						return c.JSON(http.StatusBadGateway, FailResponse("min. 4 character"))
+					} else if strings.Contains(err.Error(), "max") {
+						return c.JSON(http.StatusBadGateway, FailResponse("max. 30 character"))
+					}
 					return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 				}
 			}
@@ -94,6 +106,9 @@ func (uh *userHandler) Update() echo.HandlerFunc {
 
 				err := validate.Struct(ema)
 				if err != nil {
+					if strings.Contains(err.Error(), "email") {
+						return c.JSON(http.StatusBadRequest, FailResponse("must input valid email"))
+					}
 					return c.JSON(http.StatusBadRequest, FailResponse(err.Error()))
 				}
 			}
