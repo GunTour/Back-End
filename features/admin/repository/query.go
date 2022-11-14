@@ -28,7 +28,8 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 	}
 
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end").
-		Order("bookings.created_at desc").Joins("left join users on users.id = bookings.id_user").
+		Order("bookings.date_start asc").Joins("left join users on users.id = bookings.id_user").
+		Where("bookings.date_start > date_sub(now(), interval 2 week)").
 		Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, domain.ClimberCore{}, err
 	}
