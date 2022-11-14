@@ -23,8 +23,9 @@ func New(dbConn *gorm.DB) domain.Repository {
 func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
 	var resQry []Booking
 	var resQryClimber Climber
-	now := time.Now()
-	end := now.AddDate(0, 0, 14)
+	now := time.Now().Format("2006-01-02")
+	start, _ := time.Parse("2006-01-02", now)
+	end := start.AddDate(0, 0, 14)
 
 	if err := rq.db.Order("created_at desc").First(&resQryClimber).Error; err != nil {
 		return nil, domain.ClimberCore{}, errors.New("cannot get climber data")
@@ -32,7 +33,7 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end").
 		Order("bookings.date_start asc").Joins("left join users on users.id = bookings.id_user").
-		Where("bookings.date_start BETWEEN ? AND ?", end, now).
+		Where("bookings.date_start BETWEEN ? AND ?", start, end).
 		Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, domain.ClimberCore{}, err
 	}
