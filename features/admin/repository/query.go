@@ -3,6 +3,7 @@ package repository
 import (
 	"GunTour/features/admin/domain"
 	"errors"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
@@ -22,6 +23,8 @@ func New(dbConn *gorm.DB) domain.Repository {
 func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, error) {
 	var resQry []Booking
 	var resQryClimber Climber
+	now := time.Now()
+	end := now.AddDate(0, 0, 14)
 
 	if err := rq.db.Order("created_at desc").First(&resQryClimber).Error; err != nil {
 		return nil, domain.ClimberCore{}, errors.New("cannot get climber data")
@@ -29,7 +32,7 @@ func (rq *repoQuery) GetPendaki() ([]domain.BookingCore, domain.ClimberCore, err
 
 	if err := rq.db.Select("bookings.id_user", "users.full_name", "bookings.entrance", "bookings.date_start", "bookings.date_end").
 		Order("bookings.date_start asc").Joins("left join users on users.id = bookings.id_user").
-		Where("bookings.date_start < date_add(now(), interval 2 week)").
+		Where("bookings.date_start BETWEEN ? AND ?)", now, end).
 		Find(&resQry).Scan(&resQry).Error; err != nil {
 		return nil, domain.ClimberCore{}, err
 	}
