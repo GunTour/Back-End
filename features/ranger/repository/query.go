@@ -52,7 +52,7 @@ func (rq *repoQuery) GetAll(start time.Time, end time.Time) ([]domain.Core, erro
 	rq.db.Model(&Booking{}).Where("date_start BETWEEN ? AND ? OR date_end BETWEEN ? AND ?",
 		start, end, start, end).Distinct("id_ranger").Select("id_ranger").Find(&idRanger)
 
-	err := rq.db.Not(&idRanger).Preload("User").Find(&data)
+	err := rq.db.Not(&idRanger).Not("status = 'off' OR status = 'duty'").Preload("User").Find(&data)
 	if err.RowsAffected == 0 {
 		return nil, errors.New("not found")
 	}
